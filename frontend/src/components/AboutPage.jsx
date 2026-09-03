@@ -40,7 +40,7 @@ export default function AboutPage({ onBackToDetector }) {
       </div>
 
       {/* Hero Dossier Card */}
-      <div className="glass-brutal rounded-xl p-7 sm:p-10 relative overflow-hidden shadow-[8px_8px_0px_#000000]">
+      <div className="glass-brutal rounded-xl p-6 sm:p-10 relative overflow-hidden shadow-[8px_8px_0px_#000000]">
         <div className="max-w-3xl">
           <div className="flex items-center gap-2 mb-4">
             <span className="px-3 py-1 rounded bg-[#00F5A0] text-black font-mono font-black text-xs border-2 border-black shadow-[2px_2px_0px_#000000]">
@@ -109,10 +109,10 @@ export default function AboutPage({ onBackToDetector }) {
           </div>
         </div>
 
-        {/* Hardware & Training Pipeline Stats */}
+        {/* Hardware & Training Pipeline Stats - Spacious Padding */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
-          <div className="p-4.5 rounded-lg bg-[#F8F9FA] dark:bg-black border-2 border-black dark:border-white shadow-[3px_3px_0px_#000000]">
-            <div className="flex items-center gap-2 text-xs font-mono font-black text-[#B45309] dark:text-[#FFE600] mb-1">
+          <div className="p-5 sm:p-6 rounded-lg bg-[#F8F9FA] dark:bg-black border-2 border-black dark:border-white shadow-[3px_3px_0px_#000000] flex flex-col justify-between min-h-[140px]">
+            <div className="flex items-center gap-2 text-xs font-mono font-black text-[#B45309] dark:text-[#FFE600] mb-2">
               <Database className="w-4 h-4 stroke-[3]" />
               50 GB TRAINING DATASET
             </div>
@@ -121,8 +121,8 @@ export default function AboutPage({ onBackToDetector }) {
             </p>
           </div>
 
-          <div className="p-4.5 rounded-lg bg-[#F8F9FA] dark:bg-black border-2 border-black dark:border-white shadow-[3px_3px_0px_#000000]">
-            <div className="flex items-center gap-2 text-xs font-mono font-black text-[#047857] dark:text-[#00F5A0] mb-1">
+          <div className="p-5 sm:p-6 rounded-lg bg-[#F8F9FA] dark:bg-black border-2 border-black dark:border-white shadow-[3px_3px_0px_#000000] flex flex-col justify-between min-h-[140px]">
+            <div className="flex items-center gap-2 text-xs font-mono font-black text-[#047857] dark:text-[#00F5A0] mb-2">
               <Cpu className="w-4 h-4 stroke-[3]" />
               RTX 3090 GPU PIPELINE
             </div>
@@ -131,8 +131,8 @@ export default function AboutPage({ onBackToDetector }) {
             </p>
           </div>
 
-          <div className="p-4.5 rounded-lg bg-[#F8F9FA] dark:bg-black border-2 border-black dark:border-white shadow-[3px_3px_0px_#000000]">
-            <div className="flex items-center gap-2 text-xs font-mono font-black text-[#0369A1] dark:text-[#00F0FF] mb-1">
+          <div className="p-5 sm:p-6 rounded-lg bg-[#F8F9FA] dark:bg-black border-2 border-black dark:border-white shadow-[3px_3px_0px_#000000] flex flex-col justify-between min-h-[140px]">
+            <div className="flex items-center gap-2 text-xs font-mono font-black text-[#0369A1] dark:text-[#00F0FF] mb-2">
               <Sparkles className="w-4 h-4 stroke-[3]" />
               DIFFUSIONGEMMA 26B
             </div>
@@ -146,7 +146,7 @@ export default function AboutPage({ onBackToDetector }) {
       {/* Engineering Deep-Dive Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Step 1: Fourier Physics */}
-        <div className="glass-brutal-card rounded-xl p-6 sm:p-7 border-2 border-black dark:border-white shadow-[6px_6px_0px_#000000] bg-white dark:bg-[#14141E] flex flex-col justify-between">
+        <div className="glass-brutal-card rounded-xl p-6 sm:p-7 border-2 border-black dark:border-white shadow-[6px_6px_0px_#000000] bg-white dark:bg-[#14141E] flex flex-col justify-between min-h-[280px]">
           <div>
             <div className="flex items-center justify-between pb-3 mb-4 border-b-2 border-black/10 dark:border-white/20">
               <span className="text-xs font-mono font-black px-3 py-1 rounded bg-[#00F0FF] text-black border border-black shadow-[2px_2px_0px_#000000]">
@@ -178,7 +178,7 @@ export default function AboutPage({ onBackToDetector }) {
         </div>
 
         {/* Step 2: NVIDIA Vision LLM */}
-        <div className="glass-brutal-card rounded-xl p-6 sm:p-7 border-2 border-black dark:border-white shadow-[6px_6px_0px_#000000] bg-white dark:bg-[#14141E] flex flex-col justify-between">
+        <div className="glass-brutal-card rounded-xl p-6 sm:p-7 border-2 border-black dark:border-white shadow-[6px_6px_0px_#000000] bg-white dark:bg-[#14141E] flex flex-col justify-between min-h-[280px]">
           <div>
             <div className="flex items-center justify-between pb-3 mb-4 border-b-2 border-black/10 dark:border-white/20">
               <span className="text-xs font-mono font-black px-3 py-1 rounded bg-[#FFE600] text-black border border-black shadow-[2px_2px_0px_#000000]">
