@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, AlertOctagon, Layers, Sparkles, Cpu } from 'lucide-react';
+import { ShieldCheck, AlertOctagon, Layers, Sparkles, Cpu, AlertTriangle, CheckCircle2 } from 'lucide-react';
 
 export default function VerdictBadge({ result }) {
   if (!result) return null;
@@ -10,9 +10,13 @@ export default function VerdictBadge({ result }) {
   const alpha = diagnostics.spectral_slope_alpha || 1.8;
   const hfRatio = diagnostics.high_freq_ratio !== undefined ? Math.round(diagnostics.high_freq_ratio * 100) : 45;
 
-  const ensemble = result.ensemble;
+  const ensemble = result.ensemble || {};
+  const activeEngine = ensemble.active_engine || 'ENSEMBLE';
+  const fallbackNotice = ensemble.fallback_notice;
   const localModel = result.local_model;
   const nvidia = result.nvidia_vision;
+
+  const isSingleModel = activeEngine !== 'ENSEMBLE';
 
   return (
     <div className={`relative overflow-hidden rounded-xl border-3 p-6 sm:p-7 backdrop-blur-2xl transition-all ${
@@ -26,16 +30,23 @@ export default function VerdictBadge({ result }) {
           <span className={`px-3.5 py-1.5 rounded-lg border-2 border-black font-mono font-black text-xs uppercase shadow-[2px_2px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF] ${
             isFake ? 'bg-[#FF2E63] text-white' : 'bg-[#00F5A0] text-black'
           }`}>
-            {isFake ? '⚠ ENSEMBLE: SYNTHETIC ARTIFACTS' : '✓ ENSEMBLE: AUTHENTIC EXPOSURE'}
+            {isFake ? '⚠ SYNTHETIC ARTIFACTS ISOLATED' : '✓ AUTHENTIC CAMERA EXPOSURE'}
           </span>
+
           <span className="text-xs font-mono font-black text-black dark:text-white">
-            // FUSED DUAL-LAYER WEIGHTED AVERAGE
+            {activeEngine === 'ENSEMBLE' && '// FUSED DUAL-LAYER WEIGHTED AVERAGE'}
+            {activeEngine === 'FOURIER_ONLY' && '// SINGLE-LAYER: 2D FOURIER PHYSICS ONLY'}
+            {activeEngine === 'NIM_ONLY' && '// SINGLE-LAYER: NVIDIA DIFFUSIONGEMMA 26B ONLY'}
           </span>
         </div>
 
         <div className="flex items-center gap-2 font-mono text-xs font-bold">
-          <span className="px-3 py-1 rounded bg-[#FFE600] text-black border-2 border-black font-black shadow-[2px_2px_0px_#000000]">
-            PHYSICS + VISION ENSEMBLE
+          <span className={`px-3 py-1 rounded border-2 border-black font-black shadow-[2px_2px_0px_#000000] ${
+            activeEngine === 'ENSEMBLE'
+              ? 'bg-[#FFE600] text-black'
+              : 'bg-[#00F0FF] text-black'
+          }`}>
+            {activeEngine === 'ENSEMBLE' ? '⚡ DUAL-MODEL ENSEMBLE' : '🔬 SINGLE MODEL ACTIVE'}
           </span>
           <span className="px-3 py-1 rounded bg-white dark:bg-black border-2 border-black dark:border-white text-black dark:text-white font-black">
             {result.processing_time_ms || 0}ms
@@ -61,7 +72,9 @@ export default function VerdictBadge({ result }) {
             <div className="flex items-center gap-2 mb-1">
               <span className="text-xs font-mono font-black uppercase text-[#B45309] dark:text-[#FFE600] tracking-wider flex items-center gap-1.5">
                 <Layers className="w-3.5 h-3.5" />
-                Combined Weighted Decision
+                {activeEngine === 'ENSEMBLE'
+                  ? 'Combined Weighted Decision (2 Models)'
+                  : `Single Model Decision: ${ensemble.active_engine_label || 'Active Engine'}`}
               </span>
             </div>
 
@@ -73,24 +86,26 @@ export default function VerdictBadge({ result }) {
 
             <p className="text-xs sm:text-sm text-slate-900 dark:text-white font-mono mt-2.5 max-w-2xl leading-relaxed font-bold">
               {isFake
-                ? 'Weighted consensus confirms generative synthesis. Frequency slope anomalies and/or neural visual artifacts detected across inspection layers.'
-                : 'Weighted consensus confirms authentic photographic capture. Obeys natural Poisson-Gaussian sensor physics and scene coherence.'}
+                ? 'Generative synthesis detected. Frequency slope anomalies and/or neural visual artifacts isolated across active inspection layers.'
+                : 'Authentic photographic capture confirmed. Obeys natural Poisson-Gaussian sensor physics and scene coherence.'}
             </p>
 
             {/* Individual Layer Telemetry Chips */}
             <div className="flex flex-wrap items-center gap-2 mt-4 text-xs font-mono font-black">
-              {localModel && (
+              {localModel && localModel.available && localModel.prediction && (
                 <span className="px-3 py-1 rounded bg-white dark:bg-[#181824] border-2 border-black dark:border-white text-black dark:text-white shadow-[2px_2px_0px_#000000] flex items-center gap-1.5">
                   <Cpu className="w-3.5 h-3.5 text-[#0284C7] dark:text-[#00F0FF]" />
                   Fourier Physics: {localModel.prediction?.toUpperCase()} ({Math.round(localModel.confidence * 100)}%)
                 </span>
               )}
+
               {nvidia && nvidia.available && (
                 <span className="px-3 py-1 rounded bg-white dark:bg-[#181824] border-2 border-black dark:border-white text-black dark:text-white shadow-[2px_2px_0px_#000000] flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-[#B45309] dark:text-[#FFE600]" />
                   NVIDIA Vision: {nvidia.prediction?.toUpperCase()} ({Math.round(nvidia.confidence * 100)}%)
                 </span>
               )}
+
               <span className="px-3 py-1 rounded bg-[#FFE600] text-black border-2 border-black shadow-[2px_2px_0px_#000000]">
                 SLOPE: α = {alpha}
               </span>
@@ -101,7 +116,7 @@ export default function VerdictBadge({ result }) {
         {/* Right Certainty Box */}
         <div className="bg-white dark:bg-black p-5 rounded-xl border-2 border-black dark:border-white shadow-[5px_5px_0px_#000000] dark:shadow-[5px_5px_0px_#FFFFFF] flex flex-col justify-between self-start lg:self-center min-w-[240px]">
           <span className="text-xs font-mono font-black text-black dark:text-white uppercase tracking-widest mb-1">
-            ENSEMBLE CONFIDENCE
+            {activeEngine === 'ENSEMBLE' ? 'ENSEMBLE CERTAINTY' : 'MODEL CERTAINTY'}
           </span>
 
           <div className="flex items-baseline gap-2 mb-2">
@@ -110,7 +125,9 @@ export default function VerdictBadge({ result }) {
             }`}>
               {confidencePercent}%
             </span>
-            <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">WEIGHTED</span>
+            <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">
+              {activeEngine === 'ENSEMBLE' ? 'WEIGHTED' : 'SINGLE'}
+            </span>
           </div>
 
           {/* Hard Segmented Bar */}
@@ -133,6 +150,19 @@ export default function VerdictBadge({ result }) {
           </div>
         </div>
       </div>
+
+      {/* Fallback Single-Model Notice Banner */}
+      {fallbackNotice && (
+        <div className="mt-4 p-3.5 rounded-lg border-2 border-black dark:border-[#00F0FF] bg-[#E0F2FE] dark:bg-[#082F49] shadow-[3px_3px_0px_#000000] flex items-start gap-2.5 text-xs font-mono font-bold text-slate-900 dark:text-white">
+          <AlertTriangle className="w-4 h-4 text-[#0284C7] dark:text-[#38BDF8] flex-shrink-0 mt-0.5 stroke-[2.5]" />
+          <div>
+            <span className="font-black text-[#0369A1] dark:text-[#38BDF8] uppercase mr-1">
+              Single-Model Operation Notice:
+            </span>
+            <span>{fallbackNotice}</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

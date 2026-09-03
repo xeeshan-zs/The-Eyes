@@ -4,7 +4,7 @@ Endpoints:
 - POST /predict: Accepts an image file, extracts multi-spectral 40-dim FFT fingerprint + model inference,
                  generates 2D FFT spectrum visualization and spectral diagnostics,
                  calls NVIDIA DiffusionGemma 26B Vision Forensics,
-                 and computes a Dual-Layer Weighted Ensemble Average verdict.
+                 and computes a Dual-Layer Weighted Ensemble Average verdict with intelligent single-model fallback.
 - GET /health: Health check and model readiness info.
 """
 
@@ -102,7 +102,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="AI vs Real Image Detector API",
     description="2D FFT Frequency Fingerprint Analysis and AI Image Detection",
-    version="2.4.0",
+    version="2.5.0",
     lifespan=lifespan,
 )
 
@@ -127,87 +127,145 @@ def health_check():
     }
 
 
-def run_model_inference(features: np.ndarray) -> tuple[str, float]:
+def run_model_inference(features: np.ndarray) -> Optional[tuple[str, float]]:
     """Runs prediction on 40-dim feature vector using the trained pipeline."""
     model = MODEL_STATE["model"]
+    if model is None:
+        return None
+
     features_2d = features.reshape(1, -1) if features.ndim == 1 else features
 
-    if model is not None:
-        try:
-            if hasattr(model, "predict_proba"):
-                probas = model.predict_proba(features_2d)[0]
-                classes = MODEL_STATE.get("classes") or getattr(model, "classes_", [0, 1])
+    try:
+        if hasattr(model, "predict_proba"):
+            probas = model.predict_proba(features_2d)[0]
+            classes = MODEL_STATE.get("classes") or getattr(model, "classes_", [0, 1])
 
-                fake_idx = 1
-                for idx, c in enumerate(classes):
-                    if str(c).lower() in ["fake", "ai", "1", "synthetic", "generated"]:
-                        fake_idx = idx
-                        break
+            fake_idx = 1
+            for idx, c in enumerate(classes):
+                if str(c).lower() in ["fake", "ai", "1", "synthetic", "generated"]:
+                    fake_idx = idx
+                    break
 
-                fake_prob = float(probas[fake_idx])
-                if fake_prob >= 0.50:
-                    return "fake", round(fake_prob, 4)
-                else:
-                    return "real", round(1.0 - fake_prob, 4)
-
-            elif hasattr(model, "decision_function"):
-                score = float(model.decision_function(features_2d)[0])
-                fake_prob = float(1.0 / (1.0 + np.exp(-score)))
-                if fake_prob >= 0.50:
-                    return "fake", round(fake_prob, 4)
-                else:
-                    return "real", round(1.0 - fake_prob, 4)
-
+            fake_prob = float(probas[fake_idx])
+            if fake_prob >= 0.50:
+                return "fake", round(fake_prob, 4)
             else:
-                pred = model.predict(features_2d)[0]
-                is_fake = str(pred).lower() in ["fake", "ai", "1", "true", "synthetic"]
-                return ("fake" if is_fake else "real"), 0.88
+                return "real", round(1.0 - fake_prob, 4)
 
-        except Exception as e:
-            logger.error(f"Inference error with model: {e}")
+        elif hasattr(model, "decision_function"):
+            score = float(model.decision_function(features_2d)[0])
+            fake_prob = float(1.0 / (1.0 + np.exp(-score)))
+            if fake_prob >= 0.50:
+                return "fake", round(fake_prob, 4)
+            else:
+                return "real", round(1.0 - fake_prob, 4)
 
-    return "real", 0.70
+        else:
+            pred = model.predict(features_2d)[0]
+            is_fake = str(pred).lower() in ["fake", "ai", "1", "true", "synthetic"]
+            return ("fake" if is_fake else "real"), 0.88
+
+    except Exception as e:
+        logger.error(f"Inference error with model: {e}")
+        return None
 
 
 def compute_ensemble_fusion(
-    fourier_pred: str,
-    fourier_conf: float,
+    fourier_result: Optional[tuple[str, float]],
     nvidia_res: Optional[Dict[str, Any]]
 ) -> tuple[str, float, Dict[str, Any]]:
-    """Calculates a dual-layer weighted average combining Fourier physics and NVIDIA vision."""
-    # Convert Fourier verdict to P(Fake)
-    p_fake_fourier = fourier_conf if fourier_pred == "fake" else (1.0 - fourier_conf)
+    """Calculates a dual-layer weighted average or graceful single-model fallback."""
+    fourier_ok = fourier_result is not None
+    nim_ok = bool(nvidia_res and nvidia_res.get("available"))
 
-    if nvidia_res and nvidia_res.get("available"):
+    # Case 1: Both models available (Dual-Layer Ensemble)
+    if fourier_ok and nim_ok:
+        fourier_pred, fourier_conf = fourier_result
+        p_fake_fourier = fourier_conf if fourier_pred == "fake" else (1.0 - fourier_conf)
+
         nim_pred = str(nvidia_res.get("prediction", "real")).lower()
         nim_conf = float(nvidia_res.get("confidence", 0.85))
         p_fake_nim = nim_conf if nim_pred == "fake" else (1.0 - nim_conf)
 
         # 50/50 Dual Layer Ensemble Average
         p_fake_fused = 0.50 * p_fake_fourier + 0.50 * p_fake_nim
-        mode = "Dual-Layer Ensemble (Fourier Physics + NVIDIA Vision)"
+
+        if p_fake_fused >= 0.50:
+            final_pred = "fake"
+            final_conf = round(p_fake_fused, 4)
+        else:
+            final_pred = "real"
+            final_conf = round(1.0 - p_fake_fused, 4)
+
+        meta = {
+            "active_engine": "ENSEMBLE",
+            "active_engine_label": "Dual-Layer Ensemble (Fourier Physics + NVIDIA NIM Vision)",
+            "models_count": 2,
+            "fourier_available": True,
+            "nim_available": True,
+            "fourier_p_fake": round(p_fake_fourier, 4),
+            "nim_p_fake": round(p_fake_nim, 4),
+            "fused_p_fake": round(p_fake_fused, 4),
+            "fourier_weight": 0.50,
+            "nim_weight": 0.50,
+            "fallback_notice": None,
+        }
+        return final_pred, final_conf, meta
+
+    # Case 2: Only Fourier Physics Available (NIM Offline)
+    elif fourier_ok and not nim_ok:
+        fourier_pred, fourier_conf = fourier_result
+        p_fake_fourier = fourier_conf if fourier_pred == "fake" else (1.0 - fourier_conf)
+
+        meta = {
+            "active_engine": "FOURIER_ONLY",
+            "active_engine_label": "Local 2D Fourier Physics Model",
+            "models_count": 1,
+            "fourier_available": True,
+            "nim_available": False,
+            "fourier_p_fake": round(p_fake_fourier, 4),
+            "nim_p_fake": None,
+            "fused_p_fake": round(p_fake_fourier, 4),
+            "fourier_weight": 1.0,
+            "nim_weight": 0.0,
+            "fallback_notice": "NVIDIA NIM was unavailable. Verdict answered solely by the Local 2D Fourier Physics Model.",
+        }
+        return fourier_pred, fourier_conf, meta
+
+    # Case 3: Only NVIDIA NIM Vision Available (Local Model Missing)
+    elif not fourier_ok and nim_ok:
+        nim_pred = str(nvidia_res.get("prediction", "real")).lower()
+        nim_conf = float(nvidia_res.get("confidence", 0.85))
+        is_fake = "fake" in nim_pred or "ai" in nim_pred
+        final_pred = "fake" if is_fake else "real"
+        p_fake_nim = nim_conf if is_fake else (1.0 - nim_conf)
+
+        meta = {
+            "active_engine": "NIM_ONLY",
+            "active_engine_label": "NVIDIA DiffusionGemma 26B (NIM)",
+            "models_count": 1,
+            "fourier_available": False,
+            "nim_available": True,
+            "fourier_p_fake": None,
+            "nim_p_fake": round(p_fake_nim, 4),
+            "fused_p_fake": round(p_fake_nim, 4),
+            "fourier_weight": 0.0,
+            "nim_weight": 1.0,
+            "fallback_notice": "Local Fourier model was unavailable. Verdict answered solely by NVIDIA DiffusionGemma 26B Vision.",
+        }
+        return final_pred, nim_conf, meta
+
+    # Case 4: Neither available (Emergency fallback)
     else:
-        p_fake_nim = None
-        p_fake_fused = p_fake_fourier
-        mode = "Single-Layer (Fourier Physics)"
-
-    if p_fake_fused >= 0.50:
-        final_pred = "fake"
-        final_conf = round(p_fake_fused, 4)
-    else:
-        final_pred = "real"
-        final_conf = round(1.0 - p_fake_fused, 4)
-
-    ensemble_meta = {
-        "mode": mode,
-        "fourier_p_fake": round(p_fake_fourier, 4),
-        "nim_p_fake": round(p_fake_nim, 4) if p_fake_nim is not None else None,
-        "fused_p_fake": round(p_fake_fused, 4),
-        "fourier_weight": 0.50 if p_fake_nim is not None else 1.0,
-        "nim_weight": 0.50 if p_fake_nim is not None else 0.0,
-    }
-
-    return final_pred, final_conf, ensemble_meta
+        meta = {
+            "active_engine": "HEURISTIC",
+            "active_engine_label": "Heuristic Frequency Slope Rule",
+            "models_count": 0,
+            "fourier_available": False,
+            "nim_available": False,
+            "fallback_notice": "Both primary inference engines were offline. Falling back to rule-based frequency slope inspection.",
+        }
+        return "real", 0.65, meta
 
 
 @app.post("/predict")
@@ -236,14 +294,14 @@ async def predict_image(file: UploadFile = File(...)):
 
         # 3. Extract 40-dim Fingerprint & Predict with Local Physics Model
         features = extract_fingerprint(image)
-        local_prediction, local_confidence = run_model_inference(features)
+        local_result = run_model_inference(features)
 
         # 4. NVIDIA DiffusionGemma 26B Multi-Modal Vision Inspection (Async)
         nvidia_vision_res = await check_image_with_nvidia_vision(image_bytes)
 
-        # 5. Dual-Layer Ensemble Average (Physics + Vision Fusion)
+        # 5. Dual-Layer Ensemble Average with Dynamic Fallback
         ensemble_pred, ensemble_conf, ensemble_meta = compute_ensemble_fusion(
-            local_prediction, local_confidence, nvidia_vision_res
+            local_result, nvidia_vision_res
         )
 
         # 6. Optional Sightengine GenAI Benchmark
@@ -259,8 +317,9 @@ async def predict_image(file: UploadFile = File(...)):
             "confidence": ensemble_conf,
             "ensemble": ensemble_meta,
             "local_model": {
-                "prediction": local_prediction,
-                "confidence": local_confidence,
+                "available": local_result is not None,
+                "prediction": local_result[0] if local_result else None,
+                "confidence": local_result[1] if local_result else None,
             },
             "nvidia_vision": nvidia_vision_res,
             "fft_spectrum_image": fft_spectrum_base64,
