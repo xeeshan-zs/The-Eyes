@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Eye, Activity, Crosshair, ArrowRightLeft, Sliders, LineChart, Layers, Download, Copy, Check, Terminal } from 'lucide-react';
+import { Eye, Activity, Crosshair, ArrowRightLeft, Sliders, LineChart, Download, Copy, Check, Sparkles } from 'lucide-react';
 import VerdictBadge from './VerdictBadge';
 import ApiComparison from './ApiComparison';
 import RadialProfileChart from './RadialProfileChart';
@@ -7,9 +7,9 @@ import ImageComparisonSlider from './ImageComparisonSlider';
 import ForensicMetrics from './ForensicMetrics';
 
 export default function ResultDashboard({ result, originalImagePreview, onReset }) {
-  const [activeTab, setActiveTab] = useState('dual'); // 'dual' | 'slider' | 'chart'
+  const [activeTab, setActiveTab] = useState('slider'); // 'slider' | 'dual' | 'chart'
   const [copied, setCopied] = useState(false);
-  const [showGridOverlay, setShowGridOverlay] = useState(true);
+  const [showReticle, setShowReticle] = useState(true);
 
   if (!result) return null;
 
@@ -30,51 +30,53 @@ export default function ResultDashboard({ result, originalImagePreview, onReset 
   };
 
   return (
-    <div className="space-y-4">
-      {/* 1. Main Classification Verdict Banner */}
+    <div className="space-y-5">
+      {/* 1. Hero Verdict HUD */}
       <VerdictBadge result={result} />
 
-      {/* 2. Numerical Forensic Telemetry Cards */}
+      {/* 2. Numerical Forensic Diagnostics */}
       <ForensicMetrics result={result} />
 
-      {/* 3. Diagnostic Workspace & View Mode Selector */}
-      <div className="bg-[#0D1117] border border-[#21262D] rounded-xl overflow-hidden">
-        {/* Workspace Toolbar */}
-        <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 bg-[#161B22]/70 border-b border-[#21262D]">
-          {/* Tab Navigation */}
-          <div className="flex items-center gap-1 bg-[#0D1117] p-1 rounded-lg border border-[#30363D]">
-            <button
-              onClick={() => setActiveTab('dual')}
-              className={`px-3 py-1 rounded-md text-xs font-mono font-medium transition-colors flex items-center gap-1.5 ${
-                activeTab === 'dual'
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              <Eye className="w-3.5 h-3.5" />
-              Dual Spatial / Spectrum
-            </button>
+      {/* 3. Forensic Multi-Lens Studio Viewport */}
+      <div className="glass-panel rounded-2xl overflow-hidden shadow-2xl">
+        {/* Viewport Toolbar */}
+        <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-3 bg-space-950/80 border-b border-white/[0.08]">
+          {/* Mode Switcher Tabs */}
+          <div className="flex items-center gap-1.5 bg-space-900/90 p-1.5 rounded-xl border border-white/[0.08]">
             <button
               onClick={() => setActiveTab('slider')}
-              className={`px-3 py-1 rounded-md text-xs font-mono font-medium transition-colors flex items-center gap-1.5 ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold transition-all flex items-center gap-2 ${
                 activeTab === 'slider'
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-cyan-500 text-space-950 shadow-glow-cyan'
+                  : 'text-slate-400 hover:text-white'
               }`}
             >
               <Sliders className="w-3.5 h-3.5" />
-              Split Wiper
+              Split Lens Wiper
             </button>
+
+            <button
+              onClick={() => setActiveTab('dual')}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold transition-all flex items-center gap-2 ${
+                activeTab === 'dual'
+                  ? 'bg-cyan-500 text-space-950 shadow-glow-cyan'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <Eye className="w-3.5 h-3.5" />
+              Dual Spatial / FFT
+            </button>
+
             <button
               onClick={() => setActiveTab('chart')}
-              className={`px-3 py-1 rounded-md text-xs font-mono font-medium transition-colors flex items-center gap-1.5 ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold transition-all flex items-center gap-2 ${
                 activeTab === 'chart'
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-cyan-500 text-space-950 shadow-glow-cyan'
+                  : 'text-slate-400 hover:text-white'
               }`}
             >
               <LineChart className="w-3.5 h-3.5" />
-              1D Azimuthal Radial Decay
+              1D Spectral Decay
             </button>
           </div>
 
@@ -82,7 +84,7 @@ export default function ResultDashboard({ result, originalImagePreview, onReset 
           <div className="flex items-center gap-2">
             <button
               onClick={handleCopyJson}
-              className="px-2.5 py-1 rounded-md bg-[#0D1117] border border-[#30363D] hover:border-[#484F58] text-slate-300 hover:text-white text-xs font-mono flex items-center gap-1.5 transition-colors"
+              className="px-3 py-1.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.08] text-slate-300 hover:text-white text-xs font-mono flex items-center gap-1.5 transition-colors"
               title="Copy JSON Payload"
             >
               {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-slate-400" />}
@@ -91,7 +93,7 @@ export default function ResultDashboard({ result, originalImagePreview, onReset 
 
             <button
               onClick={handleDownloadSpectrum}
-              className="px-2.5 py-1 rounded-md bg-[#0D1117] border border-[#30363D] hover:border-[#484F58] text-slate-300 hover:text-white text-xs font-mono flex items-center gap-1.5 transition-colors"
+              className="px-3 py-1.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.08] text-slate-300 hover:text-white text-xs font-mono flex items-center gap-1.5 transition-colors"
               title="Download FFT Spectrum PNG"
             >
               <Download className="w-3.5 h-3.5 text-slate-400" />
@@ -100,51 +102,59 @@ export default function ResultDashboard({ result, originalImagePreview, onReset 
 
             <button
               onClick={onReset}
-              className="px-3 py-1 rounded-md bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-bold text-xs font-mono flex items-center gap-1.5 transition-colors shadow-sm"
+              className="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-space-950 font-black text-xs font-mono flex items-center gap-1.5 transition-all shadow-glow-cyan"
             >
               <ArrowRightLeft className="w-3.5 h-3.5" />
-              <span>NEW IMAGE</span>
+              <span>ANALYZE ANOTHER</span>
             </button>
           </div>
         </div>
 
-        {/* Tab View Content */}
-        <div className="p-4 sm:p-5">
+        {/* Studio Viewport Content */}
+        <div className="p-5 sm:p-6">
+          {activeTab === 'slider' && (
+            <ImageComparisonSlider
+              originalImage={originalImagePreview}
+              fftImage={result.fft_spectrum_image}
+              filename={result.filename}
+            />
+          )}
+
           {activeTab === 'dual' && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Left: Input Image */}
-              <div className="bg-[#070A0F] border border-[#21262D] rounded-xl p-4 flex flex-col justify-between">
-                <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-[#21262D]">
+              <div className="glass-panel rounded-2xl p-5 flex flex-col justify-between shadow-xl">
+                <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/[0.08]">
                   <div className="flex items-center gap-2">
                     <Eye className="w-4 h-4 text-emerald-400" />
                     <span className="text-xs font-mono font-bold text-slate-200 uppercase">
-                      Spatial Domain (RGB Matrix)
+                      Spatial Pixel Domain (RGB)
                     </span>
                   </div>
-                  <span className="text-[10px] font-mono text-slate-400 truncate max-w-[180px]">
+                  <span className="text-[11px] font-mono text-slate-400 truncate max-w-[200px]">
                     {result.filename || 'input_image.png'}
                   </span>
                 </div>
 
-                <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-[#0D1117] border border-[#30363D] flex items-center justify-center">
+                <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-space-950 border border-white/[0.08] flex items-center justify-center">
                   <img
                     src={originalImagePreview}
                     alt="Input spatial image"
                     className="w-full h-full object-contain"
                   />
-                  <div className="absolute bottom-2 left-2 bg-[#070A0F]/80 backdrop-blur-md px-2 py-0.5 rounded text-[10px] font-mono text-emerald-300 border border-[#30363D]">
-                    Spatial Pixel Domain
+                  <div className="absolute bottom-2.5 left-2.5 bg-space-950/85 backdrop-blur-md px-2.5 py-1 rounded-md text-[10px] font-mono text-emerald-300 border border-emerald-500/30 shadow-lg">
+                    Spatial Matrix
                   </div>
                 </div>
 
-                <p className="mt-3 text-[11px] text-slate-400 leading-relaxed">
-                  Natural visual representation. High-frequency GAN or diffusion checkerboard artifacts are typically imperceptible in the spatial RGB domain.
+                <p className="mt-3.5 text-xs text-slate-400 leading-relaxed font-mono">
+                  Natural human visual domain. Generative neural network deconvolution grids and VAE latent noise floors are often imperceptible to the naked eye.
                 </p>
               </div>
 
               {/* Right: 2D FFT Frequency Spectrum */}
-              <div className="bg-[#070A0F] border border-[#21262D] rounded-xl p-4 flex flex-col justify-between">
-                <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-[#21262D]">
+              <div className="glass-panel rounded-2xl p-5 flex flex-col justify-between shadow-xl">
+                <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/[0.08]">
                   <div className="flex items-center gap-2">
                     <Activity className="w-4 h-4 text-cyan-400" />
                     <span className="text-xs font-mono font-bold text-slate-200 uppercase">
@@ -152,50 +162,42 @@ export default function ResultDashboard({ result, originalImagePreview, onReset 
                     </span>
                   </div>
                   <button
-                    onClick={() => setShowGridOverlay(!showGridOverlay)}
-                    className="text-[10px] font-mono text-cyan-400 hover:text-cyan-300 flex items-center gap-1 transition-colors"
+                    onClick={() => setShowReticle(!showReticle)}
+                    className="text-[11px] font-mono text-cyan-400 hover:text-cyan-300 flex items-center gap-1 transition-colors"
                   >
-                    <Crosshair className="w-3 h-3" />
-                    {showGridOverlay ? 'Grid: ON' : 'Grid: OFF'}
+                    <Crosshair className="w-3.5 h-3.5" />
+                    {showReticle ? 'Reticle: ON' : 'Reticle: OFF'}
                   </button>
                 </div>
 
-                <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-[#070A0F] border border-[#30363D] flex items-center justify-center">
+                <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-space-950 border border-white/[0.08] flex items-center justify-center">
                   <img
                     src={result.fft_spectrum_image}
                     alt="2D FFT Spectrum"
                     className="w-full h-full object-contain"
                   />
 
-                  {/* Frequency Polar Reticle Overlay */}
-                  {showGridOverlay && (
+                  {/* Reticle Guides */}
+                  {showReticle && (
                     <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-                      <div className="w-full h-[1px] bg-cyan-400/20" />
-                      <div className="h-full w-[1px] bg-cyan-400/20 absolute" />
-                      <div className="w-1/3 h-1/3 rounded-full border border-cyan-400/20 absolute" />
-                      <div className="w-2/3 h-2/3 rounded-full border border-cyan-400/15 absolute" />
-                      <div className="w-[95%] h-[95%] rounded-full border border-dashed border-cyan-400/10 absolute" />
+                      <div className="w-full h-[1px] bg-cyan-400/25" />
+                      <div className="h-full w-[1px] bg-cyan-400/25 absolute" />
+                      <div className="w-1/3 h-1/3 rounded-full border border-cyan-400/25 absolute" />
+                      <div className="w-2/3 h-2/3 rounded-full border border-cyan-400/20 absolute" />
+                      <div className="w-[95%] h-[95%] rounded-full border border-dashed border-cyan-400/15 absolute" />
                     </div>
                   )}
 
-                  <div className="absolute bottom-2 left-2 bg-[#070A0F]/80 backdrop-blur-md px-2 py-0.5 rounded text-[10px] font-mono text-cyan-300 border border-[#30363D]">
-                    Inferno Spectrum $\log(1+|F(u,v)|)$
+                  <div className="absolute bottom-2.5 left-2.5 bg-space-950/85 backdrop-blur-md px-2.5 py-1 rounded-md text-[10px] font-mono text-cyan-300 border border-cyan-500/30 shadow-lg">
+                    Inferno Spectrum log(1+|F(u,v)|)
                   </div>
                 </div>
 
-                <p className="mt-3 text-[11px] text-slate-400 leading-relaxed">
-                  Zero frequency DC is centered. Synthetic images exhibit periodic harmonic cross-spikes or high-frequency energy shelves along outer radial bands.
+                <p className="mt-3.5 text-xs text-slate-400 leading-relaxed font-mono">
+                  Centered zero frequency (DC). Latent diffusion &amp; GAN models manifest elevated energy shelves along outer radii and periodic harmonic cross-spikes.
                 </p>
               </div>
             </div>
-          )}
-
-          {activeTab === 'slider' && (
-            <ImageComparisonSlider
-              originalImage={originalImagePreview}
-              fftImage={result.fft_spectrum_image}
-              filename={result.filename}
-            />
           )}
 
           {activeTab === 'chart' && (

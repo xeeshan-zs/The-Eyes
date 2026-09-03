@@ -8,23 +8,55 @@ export default {
   theme: {
     extend: {
       colors: {
+        space: {
+          950: '#030712',
+          900: '#070C18',
+          850: '#0B1120',
+          800: '#11192C',
+          700: '#1E293B',
+          600: '#334155',
+        },
         cyber: {
-          bg: '#0B0F19',
-          card: '#111827',
-          border: '#1F2937',
-          accent: '#3B82F6',
-          cyan: '#06B6D4',
-          real: '#10B981',
-          fake: '#EF4444',
+          cyan: '#00F0FF',
+          blue: '#3B82F6',
+          purple: '#8B5CF6',
+          emerald: '#10B981',
+          mint: '#00F5A0',
+          rose: '#F43F5E',
+          crimson: '#FF2E63',
+          amber: '#F59E0B',
         }
       },
+      backgroundImage: {
+        'grid-pattern': "radial-gradient(circle, rgba(255, 255, 255, 0.08) 1px, transparent 1px)",
+        'radial-glow': "radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.12) 0%, transparent 60%)",
+      },
       boxShadow: {
-        'glow-emerald': '0 0 25px -5px rgba(16, 185, 129, 0.4)',
-        'glow-rose': '0 0 25px -5px rgba(239, 68, 68, 0.4)',
-        'glow-blue': '0 0 20px -5px rgba(59, 130, 246, 0.3)',
+        'glow-cyan': '0 0 30px -5px rgba(0, 240, 255, 0.35)',
+        'glow-emerald': '0 0 30px -5px rgba(16, 185, 129, 0.35)',
+        'glow-rose': '0 0 30px -5px rgba(244, 63, 94, 0.35)',
+        'glow-purple': '0 0 30px -5px rgba(139, 92, 246, 0.35)',
+        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
       },
       fontFamily: {
-        mono: ['JetBrains Mono', 'Fira Code', 'Courier New', 'monospace'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+      },
+      animation: {
+        'pulse-glow': 'pulseGlow 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'scan': 'scanLine 2s ease-in-out infinite alternate',
+        'spin-slow': 'spin 12s linear infinite',
+      },
+      keyframes: {
+        pulseGlow: {
+          '0%, 100%': { opacity: '0.4' },
+          '50%': { opacity: '0.8' },
+        },
+        scanLine: {
+          '0%': { top: '0%', opacity: '0.6' },
+          '50%': { opacity: '1' },
+          '100%': { top: '100%', opacity: '0.6' },
+        }
       }
     },
   },
