@@ -4,7 +4,7 @@ import Dropzone from './components/Dropzone';
 import SamplePresets from './components/SamplePresets';
 import ResultDashboard from './components/ResultDashboard';
 import AboutPage from './components/AboutPage';
-import { AlertCircle, Radio, Sparkles, Shield } from 'lucide-react';
+import { AlertCircle, Radio, Sparkles, Shield, Github } from 'lucide-react';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
