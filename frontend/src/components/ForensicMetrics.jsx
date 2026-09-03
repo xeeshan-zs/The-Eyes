@@ -18,7 +18,7 @@ export default function ForensicMetrics({ result }) {
       label: 'SPECTRAL SLOPE (α)',
       value: `α = ${alpha}`,
       badge: isAlphaAbnormal ? 'FLAT SLOPE' : 'NOMINAL 1/f²',
-      color: isAlphaAbnormal ? 'bg-brutal-pink text-white' : 'bg-brutal-green text-black',
+      badgeBg: isAlphaAbnormal ? 'bg-[#FF2E63] text-white' : 'bg-[#00F5A0] text-black',
       desc: isAlphaAbnormal ? 'Diffusion noise flattening' : 'Continuous optical decay',
       icon: Activity,
     },
@@ -26,7 +26,7 @@ export default function ForensicMetrics({ result }) {
       label: 'HF NOISE FLOOR',
       value: `${hfRatio}%`,
       badge: isHfAbnormal ? 'ELEVATED' : 'NATURAL',
-      color: isHfAbnormal ? 'bg-brutal-pink text-white' : 'bg-brutal-green text-black',
+      badgeBg: isHfAbnormal ? 'bg-[#FF2E63] text-white' : 'bg-[#00F5A0] text-black',
       desc: isHfAbnormal ? 'Outer frequency shelf' : 'Sensor grain roll-off',
       icon: Gauge,
     },
@@ -34,7 +34,7 @@ export default function ForensicMetrics({ result }) {
       label: 'SPECTRAL ENTROPY (H)',
       value: `${entropy}%`,
       badge: 'DISPERSION',
-      color: 'bg-brutal-yellow text-black',
+      badgeBg: 'bg-[#FFE600] text-black',
       desc: 'Azimuthal harmonic entropy',
       icon: Radio,
     },
@@ -42,40 +42,40 @@ export default function ForensicMetrics({ result }) {
       label: 'PIPELINE LATENCY',
       value: `${latency}ms`,
       badge: '0ms EGRESS',
-      color: 'bg-brutal-cyan text-black',
-      desc: 'Local FFT + classifier execution',
+      badgeBg: 'bg-[#00F0FF] text-black',
+      desc: 'Local FFT + classifier inference',
       icon: Timer,
     },
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       {METRICS.map((metric, idx) => {
         const Icon = metric.icon;
         return (
           <div
             key={idx}
-            className="glass-brutal-card rounded-xl p-4 flex flex-col justify-between hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
+            className="glass-brutal-card rounded-xl p-4.5 flex flex-col justify-between border-2 border-white shadow-[4px_4px_0px_#000000] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
           >
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-mono font-black tracking-wider uppercase text-slate-200">
+            <div className="flex items-center justify-between mb-2.5">
+              <span className="text-xs font-mono font-black tracking-wider uppercase text-white">
                 {metric.label}
               </span>
-              <Icon className="w-4 h-4 text-white stroke-[2.5]" />
+              <Icon className="w-5 h-5 text-white stroke-[2.5]" />
             </div>
 
             <div>
-              <div className="flex items-baseline gap-2 mb-1.5">
-                <span className="text-3xl font-black font-mono text-white tracking-tight">
+              <div className="flex items-baseline gap-2 mb-2">
+                <span className="text-3xl sm:text-4xl font-black font-mono text-white tracking-tight">
                   {metric.value}
                 </span>
               </div>
-              <div className="flex items-center gap-1.5 mb-1.5">
-                <span className={`text-[10px] font-mono font-black px-2 py-0.5 rounded border border-black shadow-[2px_2px_0px_#FFFFFF] ${metric.color}`}>
+              <div className="flex items-center gap-1.5 mb-2">
+                <span className={`text-[11px] font-mono font-black px-2.5 py-1 rounded border-2 border-black shadow-[2px_2px_0px_#FFFFFF] ${metric.badgeBg}`}>
                   {metric.badge}
                 </span>
               </div>
-              <p className="text-xs font-mono text-slate-300 font-medium truncate">
+              <p className="text-xs font-mono text-white font-bold truncate">
                 {metric.desc}
               </p>
             </div>

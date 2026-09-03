@@ -7,7 +7,7 @@ import ImageComparisonSlider from './ImageComparisonSlider';
 import ForensicMetrics from './ForensicMetrics';
 
 export default function ResultDashboard({ result, originalImagePreview, onReset }) {
-  const [activeTab, setActiveTab] = useState('slider'); // 'slider' | 'dual' | 'chart'
+  const [activeTab, setActiveTab] = useState('dual'); // 'dual' | 'slider' | 'chart'
   const [copied, setCopied] = useState(false);
   const [showReticle, setShowReticle] = useState(true);
 
@@ -30,7 +30,7 @@ export default function ResultDashboard({ result, originalImagePreview, onReset 
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* 1. Hero Verdict Badge */}
       <VerdictBadge result={result} />
 
@@ -38,80 +38,80 @@ export default function ResultDashboard({ result, originalImagePreview, onReset 
       <ForensicMetrics result={result} />
 
       {/* 3. Studio Multi-Lens Container */}
-      <div className="glass-brutal rounded-xl overflow-hidden shadow-[6px_6px_0px_#000000]">
+      <div className="glass-brutal rounded-xl overflow-hidden shadow-[8px_8px_0px_#000000]">
         {/* Toolbar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5 bg-black border-b-2 border-white/20">
+        <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 bg-black border-b-2 border-white">
           {/* Mode Switcher Tabs */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <button
-              onClick={() => setActiveTab('slider')}
-              className={`px-3.5 py-1.5 rounded text-xs font-mono font-black border-2 border-black transition-all ${
-                activeTab === 'slider'
-                  ? 'bg-brutal-yellow text-black shadow-[3px_3px_0px_#FFFFFF] translate-x-[-1px] translate-y-[-1px]'
-                  : 'bg-[#14141E] text-white hover:text-brutal-yellow hover:border-brutal-yellow'
+              onClick={() => setActiveTab('dual')}
+              className={`px-4 py-2 rounded-lg text-xs font-mono font-black border-2 transition-all flex items-center gap-2 ${
+                activeTab === 'dual'
+                  ? 'bg-[#FFE600] text-black border-black shadow-[3px_3px_0px_#FFFFFF] translate-x-[-1px] translate-y-[-1px]'
+                  : 'bg-[#181824] text-white border-white hover:bg-[#FFE600] hover:text-black hover:border-black shadow-[2px_2px_0px_#000000]'
               }`}
             >
-              <Sliders className="w-3.5 h-3.5 inline mr-1.5 stroke-[3]" />
-              SPLIT LENS
+              <Eye className="w-4 h-4 stroke-[3]" />
+              <span>DUAL GRID</span>
             </button>
 
             <button
-              onClick={() => setActiveTab('dual')}
-              className={`px-3.5 py-1.5 rounded text-xs font-mono font-black border-2 border-black transition-all ${
-                activeTab === 'dual'
-                  ? 'bg-brutal-yellow text-black shadow-[3px_3px_0px_#FFFFFF] translate-x-[-1px] translate-y-[-1px]'
-                  : 'bg-[#14141E] text-white hover:text-brutal-yellow hover:border-brutal-yellow'
+              onClick={() => setActiveTab('slider')}
+              className={`px-4 py-2 rounded-lg text-xs font-mono font-black border-2 transition-all flex items-center gap-2 ${
+                activeTab === 'slider'
+                  ? 'bg-[#FFE600] text-black border-black shadow-[3px_3px_0px_#FFFFFF] translate-x-[-1px] translate-y-[-1px]'
+                  : 'bg-[#181824] text-white border-white hover:bg-[#FFE600] hover:text-black hover:border-black shadow-[2px_2px_0px_#000000]'
               }`}
             >
-              <Eye className="w-3.5 h-3.5 inline mr-1.5 stroke-[3]" />
-              DUAL GRID
+              <Sliders className="w-4 h-4 stroke-[3]" />
+              <span>SPLIT LENS</span>
             </button>
 
             <button
               onClick={() => setActiveTab('chart')}
-              className={`px-3.5 py-1.5 rounded text-xs font-mono font-black border-2 border-black transition-all ${
+              className={`px-4 py-2 rounded-lg text-xs font-mono font-black border-2 transition-all flex items-center gap-2 ${
                 activeTab === 'chart'
-                  ? 'bg-brutal-yellow text-black shadow-[3px_3px_0px_#FFFFFF] translate-x-[-1px] translate-y-[-1px]'
-                  : 'bg-[#14141E] text-white hover:text-brutal-yellow hover:border-brutal-yellow'
+                  ? 'bg-[#FFE600] text-black border-black shadow-[3px_3px_0px_#FFFFFF] translate-x-[-1px] translate-y-[-1px]'
+                  : 'bg-[#181824] text-white border-white hover:bg-[#FFE600] hover:text-black hover:border-black shadow-[2px_2px_0px_#000000]'
               }`}
             >
-              <LineChart className="w-3.5 h-3.5 inline mr-1.5 stroke-[3]" />
-              1D DECAY
+              <LineChart className="w-4 h-4 stroke-[3]" />
+              <span>1D DECAY</span>
             </button>
           </div>
 
           {/* Action Toolbar */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <button
               onClick={handleCopyJson}
-              className="btn-brutal-dark px-3 py-1.5 rounded text-xs font-mono font-bold flex items-center gap-1.5"
+              className="px-3.5 py-2 rounded-lg bg-[#181824] text-white border-2 border-white hover:bg-white hover:text-black text-xs font-mono font-black flex items-center gap-1.5 shadow-[2px_2px_0px_#000000] transition-all"
               title="Copy JSON Payload"
             >
-              {copied ? <Check className="w-3.5 h-3.5 text-brutal-green stroke-[3]" /> : <Copy className="w-3.5 h-3.5" />}
+              {copied ? <Check className="w-4 h-4 text-[#00F5A0] stroke-[3]" /> : <Copy className="w-4 h-4 text-white" />}
               <span>{copied ? 'COPIED' : 'JSON'}</span>
             </button>
 
             <button
               onClick={handleDownloadSpectrum}
-              className="btn-brutal-dark px-3 py-1.5 rounded text-xs font-mono font-bold flex items-center gap-1.5"
+              className="px-3.5 py-2 rounded-lg bg-[#181824] text-white border-2 border-white hover:bg-white hover:text-black text-xs font-mono font-black flex items-center gap-1.5 shadow-[2px_2px_0px_#000000] transition-all"
               title="Download FFT PNG"
             >
-              <Download className="w-3.5 h-3.5" />
+              <Download className="w-4 h-4 text-white" />
               <span>EXPORT FFT</span>
             </button>
 
             <button
               onClick={onReset}
-              className="btn-brutal-yellow px-3.5 py-1.5 rounded text-xs font-mono font-black flex items-center gap-1.5"
+              className="px-4 py-2 rounded-lg bg-[#FFE600] text-black border-2 border-black text-xs font-mono font-black flex items-center gap-1.5 shadow-[3px_3px_0px_#FFFFFF] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all"
             >
-              <ArrowRightLeft className="w-3.5 h-3.5 stroke-[3]" />
+              <ArrowRightLeft className="w-4 h-4 stroke-[3]" />
               <span>NEW IMAGE</span>
             </button>
           </div>
         </div>
 
         {/* Viewport Content */}
-        <div className="p-5 sm:p-6">
+        <div className="p-6">
           {activeTab === 'slider' && (
             <ImageComparisonSlider
               originalImage={originalImagePreview}
@@ -123,17 +123,17 @@ export default function ResultDashboard({ result, originalImagePreview, onReset 
           {activeTab === 'dual' && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Left: Input Image */}
-              <div className="glass-brutal-card rounded-xl p-5 flex flex-col justify-between shadow-brutal">
-                <div className="flex items-center justify-between pb-3 mb-3 border-b-2 border-white/20">
+              <div className="glass-brutal-card rounded-xl p-5 flex flex-col justify-between border-2 border-white shadow-[6px_6px_0px_#000000]">
+                <div className="flex items-center justify-between pb-3.5 mb-3.5 border-b-2 border-white/30">
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded bg-brutal-green text-black font-mono font-black text-xs border border-black shadow-[2px_2px_0px_#FFFFFF]">
+                    <span className="px-3 py-1 rounded bg-[#00F5A0] text-black font-mono font-black text-xs border-2 border-black shadow-[2px_2px_0px_#FFFFFF]">
                       SPATIAL
                     </span>
-                    <span className="text-xs font-mono font-black text-white uppercase">
+                    <span className="text-xs font-mono font-black text-white uppercase tracking-wide">
                       Pixel Domain (RGB)
                     </span>
                   </div>
-                  <span className="text-xs font-mono font-bold text-slate-300 truncate max-w-[200px]">
+                  <span className="text-xs font-mono font-black text-white truncate max-w-[200px] bg-black px-2 py-0.5 rounded border border-white/50">
                     {result.filename || 'image.png'}
                   </span>
                 </div>
@@ -144,33 +144,33 @@ export default function ResultDashboard({ result, originalImagePreview, onReset 
                     alt="Input"
                     className="w-full h-full object-contain"
                   />
-                  <div className="absolute bottom-3 left-3 bg-black/95 px-3 py-1.5 rounded text-xs font-mono font-black text-brutal-green border-2 border-white shadow-brutal-sm">
+                  <div className="absolute bottom-3 left-3 bg-black px-3 py-1.5 rounded text-xs font-mono font-black text-[#00F5A0] border-2 border-[#00F5A0] shadow-[3px_3px_0px_#000000]">
                     RGB Matrix
                   </div>
                 </div>
 
-                <p className="mt-3.5 text-xs text-slate-200 font-mono leading-relaxed font-medium">
+                <p className="mt-4 text-xs text-white font-mono leading-relaxed font-bold">
                   Natural human visual domain. High-frequency neural upsampling and latent noise are often imperceptible to the naked eye.
                 </p>
               </div>
 
               {/* Right: FFT Spectrum */}
-              <div className="glass-brutal-card rounded-xl p-5 flex flex-col justify-between shadow-brutal">
-                <div className="flex items-center justify-between pb-3 mb-3 border-b-2 border-white/20">
+              <div className="glass-brutal-card rounded-xl p-5 flex flex-col justify-between border-2 border-white shadow-[6px_6px_0px_#000000]">
+                <div className="flex items-center justify-between pb-3.5 mb-3.5 border-b-2 border-white/30">
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded bg-brutal-cyan text-black font-mono font-black text-xs border border-black shadow-[2px_2px_0px_#FFFFFF]">
+                    <span className="px-3 py-1 rounded bg-[#00F0FF] text-black font-mono font-black text-xs border-2 border-black shadow-[2px_2px_0px_#FFFFFF]">
                       SPECTRAL
                     </span>
-                    <span className="text-xs font-mono font-black text-white uppercase">
+                    <span className="text-xs font-mono font-black text-white uppercase tracking-wide">
                       2D FFT Magnitude Spectrum
                     </span>
                   </div>
                   <button
                     onClick={() => setShowReticle(!showReticle)}
-                    className="text-xs font-mono font-black text-brutal-cyan hover:underline flex items-center gap-1"
+                    className="text-xs font-mono font-black text-[#FFE600] bg-black px-2.5 py-1 rounded border border-white hover:bg-[#FFE600] hover:text-black transition-colors flex items-center gap-1.5"
                   >
-                    <Crosshair className="w-4 h-4" />
-                    {showReticle ? 'Reticle: ON' : 'Reticle: OFF'}
+                    <Crosshair className="w-4 h-4 stroke-[3]" />
+                    <span>{showReticle ? 'RETICLE: ON' : 'RETICLE: OFF'}</span>
                   </button>
                 </div>
 
@@ -184,20 +184,20 @@ export default function ResultDashboard({ result, originalImagePreview, onReset 
                   {/* Reticle Guides */}
                   {showReticle && (
                     <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-                      <div className="w-full h-[2px] bg-brutal-cyan/40" />
-                      <div className="h-full w-[2px] bg-brutal-cyan/40 absolute" />
-                      <div className="w-1/3 h-1/3 rounded-full border-2 border-brutal-cyan/40 absolute" />
-                      <div className="w-2/3 h-2/3 rounded-full border-2 border-brutal-cyan/30 absolute" />
-                      <div className="w-[95%] h-[95%] rounded-full border-2 border-dashed border-brutal-cyan/25 absolute" />
+                      <div className="w-full h-[2px] bg-[#00F0FF]/50" />
+                      <div className="h-full w-[2px] bg-[#00F0FF]/50 absolute" />
+                      <div className="w-1/3 h-1/3 rounded-full border-2 border-[#00F0FF]/50 absolute" />
+                      <div className="w-2/3 h-2/3 rounded-full border-2 border-[#00F0FF]/40 absolute" />
+                      <div className="w-[95%] h-[95%] rounded-full border-2 border-dashed border-[#00F0FF]/35 absolute" />
                     </div>
                   )}
 
-                  <div className="absolute bottom-3 left-3 bg-black/95 px-3 py-1.5 rounded text-xs font-mono font-black text-brutal-cyan border-2 border-white shadow-brutal-sm">
+                  <div className="absolute bottom-3 left-3 bg-black px-3 py-1.5 rounded text-xs font-mono font-black text-[#00F0FF] border-2 border-[#00F0FF] shadow-[3px_3px_0px_#000000]">
                     Inferno Spectrum log(1+|F(u,v)|)
                   </div>
                 </div>
 
-                <p className="mt-3.5 text-xs text-slate-200 font-mono leading-relaxed font-medium">
+                <p className="mt-4 text-xs text-white font-mono leading-relaxed font-bold">
                   Centered zero frequency (DC). Latent diffusion &amp; GAN models manifest elevated energy shelves along outer radii and periodic harmonic cross-spikes.
                 </p>
               </div>

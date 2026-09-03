@@ -1,9 +1,9 @@
 """FastAPI Backend Server for AI vs Real Image Detector.
 
 Endpoints:
-- POST /predict: Accepts an image file, extracts multi-spectral 70-dim FFT fingerprint + model inference,
+- POST /predict: Accepts an image file, extracts multi-spectral 40-dim FFT fingerprint + model inference,
                  generates 2D FFT spectrum visualization and spectral diagnostics,
-                 and calls Sightengine GenAI API if configured.
+                 and calls NVIDIA DiffusionGemma 26B Vision Forensics & Sightengine APIs.
 - GET /health: Health check and model readiness info.
 """
 
@@ -28,8 +28,8 @@ from .feature_extractor import (
     compute_spectral_diagnostics,
 )
 from .sightengine_service import check_image_with_sightengine
+from .nvidia_service import check_image_with_nvidia_vision
 
-# Suppress sklearn unpickle warnings
 warnings.filterwarnings("ignore", category=UserWarning, module="sklearn")
 
 load_dotenv()
@@ -63,7 +63,6 @@ def load_detector_model():
                 MODEL_STATE["model_name"] = os.path.basename(abs_path)
                 classes = getattr(loaded, "classes_", None)
                 if classes is None and hasattr(loaded, "named_steps"):
-                    # Check pipeline classifier classes
                     for step in loaded.named_steps.values():
                         if hasattr(step, "classes_"):
                             classes = step.classes_
@@ -92,7 +91,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="AI vs Real Image Detector API",
     description="2D FFT Frequency Fingerprint Analysis and AI Image Detection",
-    version="2.2.0",
+    version="2.3.0",
     lifespan=lifespan,
 )
 
@@ -112,12 +111,13 @@ def health_check():
         "model_loaded": MODEL_STATE["model"] is not None,
         "model_file": MODEL_STATE["model_name"],
         "classes": MODEL_STATE["classes"],
+        "nvidia_vision_active": True,
         "sightengine_configured": bool(os.getenv("SIGHTENGINE_API_USER") and os.getenv("SIGHTENGINE_API_SECRET")),
     }
 
 
 def run_model_inference(features: np.ndarray) -> tuple[str, float]:
-    """Runs prediction on 70-dim feature vector using the trained pipeline."""
+    """Runs prediction on 40-dim feature vector using the trained pipeline."""
     model = MODEL_STATE["model"]
     features_2d = features.reshape(1, -1) if features.ndim == 1 else features
 
@@ -127,7 +127,6 @@ def run_model_inference(features: np.ndarray) -> tuple[str, float]:
                 probas = model.predict_proba(features_2d)[0]
                 classes = MODEL_STATE.get("classes") or getattr(model, "classes_", [0, 1])
                 
-                # Class 1 = AI-Generated / Fake, Class 0 = Real
                 fake_idx = 1
                 for idx, c in enumerate(classes):
                     if str(c).lower() in ["fake", "ai", "1", "synthetic", "generated"]:
@@ -156,7 +155,6 @@ def run_model_inference(features: np.ndarray) -> tuple[str, float]:
         except Exception as e:
             logger.error(f"Inference error with model: {e}")
 
-    # Fallback heuristic
     return "real", 0.70
 
 
@@ -184,11 +182,14 @@ async def predict_image(file: UploadFile = File(...)):
         # 2. Multi-Spectral Diagnostics & 1D Radial Curve
         diagnostics = compute_spectral_diagnostics(image)
 
-        # 3. Extract 70-dim Fingerprint & Predict with Trained Model
+        # 3. Extract 40-dim Fingerprint & Predict with Trained Model
         features = extract_fingerprint(image)
         prediction, confidence = run_model_inference(features)
 
-        # 4. Optional Sightengine GenAI Benchmark (Parallel / Async)
+        # 4. NVIDIA DiffusionGemma 26B Multi-Modal Vision Inspection
+        nvidia_vision_res = check_image_with_nvidia_vision(image_bytes)
+
+        # 5. Optional Sightengine GenAI Benchmark
         sightengine_res = await check_image_with_sightengine(image_bytes, filename=file.filename or "image.jpg")
 
         api_confidence = sightengine_res["confidence"] if sightengine_res else None
@@ -201,6 +202,7 @@ async def predict_image(file: UploadFile = File(...)):
             "confidence": confidence,
             "fft_spectrum_image": fft_spectrum_base64,
             "diagnostics": diagnostics,
+            "nvidia_vision": nvidia_vision_res,
             "api_confidence": api_confidence,
             "api_prediction": api_prediction,
             "api_available": sightengine_res is not None,
