@@ -42,6 +42,9 @@ MODEL_STATE: Dict[str, Any] = {
 }
 
 
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning, module="sklearn")
+
 def load_detector_model():
     """Searches for and loads the scikit-learn model file using joblib."""
     possible_paths = [
@@ -61,7 +64,11 @@ def load_detector_model():
                 MODEL_STATE["model_name"] = os.path.basename(abs_path)
                 classes = getattr(loaded, "classes_", None)
                 if classes is not None:
-                    MODEL_STATE["classes"] = list(classes)
+                    # Convert numpy scalars to native python int/str for JSON safety
+                    MODEL_STATE["classes"] = [
+                        int(c) if hasattr(c, "item") and isinstance(c.item(), int) else str(c)
+                        for c in classes
+                    ]
                 logger.info(f"Loaded model: {abs_path} (classes: {MODEL_STATE['classes']})")
                 return
             except Exception as e:
