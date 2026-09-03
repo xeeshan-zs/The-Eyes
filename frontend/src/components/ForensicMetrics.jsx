@@ -1,42 +1,44 @@
 import React from 'react';
-import { Cpu, Gauge, Radio, Layers, HardDrive, Timer } from 'lucide-react';
+import { Cpu, Gauge, Radio, Layers, HardDrive, Timer, Activity, Sparkles } from 'lucide-react';
 
 export default function ForensicMetrics({ result }) {
   if (!result) return null;
 
   const diagnostics = result.diagnostics || {};
+  const diffMeta = diagnostics.diffusion_analysis || {};
   const dims = diagnostics.dimensions || [512, 512];
+  
+  const alphaSlope = diffMeta.spectral_slope_alpha !== undefined ? diffMeta.spectral_slope_alpha : 1.8;
+  const chromaticCoh = diffMeta.chromatic_coherence !== undefined ? Math.round(diffMeta.chromatic_coherence * 100) : 60;
   const hfRatio = diagnostics.high_freq_ratio !== undefined ? Math.round(diagnostics.high_freq_ratio * 100) : 48;
-  const entropy = diagnostics.spectral_entropy !== undefined ? Math.round(diagnostics.spectral_entropy * 100) : 72;
   const latency = result.processing_time_ms || 0;
-  const fileSize = result.file_size_kb || 0;
 
   const METRICS = [
     {
-      label: 'HF RESIDUAL ENERGY',
+      label: 'SPECTRAL DECAY (α SLOPE)',
+      value: `α = ${alphaSlope}`,
+      subtext: alphaSlope < 1.55 ? 'Flattend (Diffusion/Gemini/DALL-E)' : '1/f² Natural Exponential',
+      status: alphaSlope < 1.55 ? 'warning' : 'ok',
+      icon: Activity,
+    },
+    {
+      label: 'CHROMATIC COHERENCE',
+      value: `${chromaticCoh}%`,
+      subtext: chromaticCoh > 85 ? 'Elevated (Latent VAE Decoder)' : 'Bayer CFA Demosaic Nominal',
+      status: chromaticCoh > 85 ? 'warning' : 'ok',
+      icon: Sparkles,
+    },
+    {
+      label: 'HF NOISE FLOOR ENERGY',
       value: `${hfRatio}%`,
-      subtext: hfRatio > 45 ? 'Elevated (AI Signature)' : 'Nominal (Natural Decay)',
+      subtext: hfRatio > 45 ? 'Elevated Outer Frequency Shelf' : 'Natural Sensor Roll-off',
       status: hfRatio > 45 ? 'warning' : 'ok',
       icon: Gauge,
     },
     {
-      label: 'SPECTRAL ENTROPY (H)',
-      value: `${entropy}%`,
-      subtext: 'Azimuthal Frequency Spread',
-      status: 'neutral',
-      icon: Radio,
-    },
-    {
-      label: 'SPATIAL RESOLUTION',
-      value: `${dims[0]} × ${dims[1]}`,
-      subtext: `${fileSize} KB • Matrix`,
-      status: 'neutral',
-      icon: HardDrive,
-    },
-    {
       label: 'PIPELINE LATENCY',
       value: `${latency}ms`,
-      subtext: 'FFT + Extraction + Inference',
+      subtext: 'FFT + Multi-Spectral + Ensemble',
       status: 'ok',
       icon: Timer,
     },

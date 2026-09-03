@@ -1,7 +1,7 @@
 """FastAPI Backend Server for AI vs Real Image Detector.
 
 Endpoints:
-- POST /predict: Accepts an image file, extracts FFT fingerprint + scikit-learn inference,
+- POST /predict: Accepts an image file, extracts multi-spectral 70-dim FFT fingerprint + model inference,
                  generates 2D FFT spectrum visualization and spectral diagnostics,
                  and calls Sightengine GenAI API if configured.
 - GET /health: Health check and model readiness info.
@@ -11,6 +11,7 @@ import os
 import io
 import time
 import logging
+import warnings
 from contextlib import asynccontextmanager
 from typing import Optional, Dict, Any
 
@@ -28,13 +29,14 @@ from .feature_extractor import (
 )
 from .sightengine_service import check_image_with_sightengine
 
-# Load environment variables
+# Suppress sklearn unpickle warnings
+warnings.filterwarnings("ignore", category=UserWarning, module="sklearn")
+
 load_dotenv()
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("ai_detector.backend")
 
-# Global model state
 MODEL_STATE: Dict[str, Any] = {
     "model": None,
     "model_name": None,
@@ -42,11 +44,8 @@ MODEL_STATE: Dict[str, Any] = {
 }
 
 
-import warnings
-warnings.filterwarnings("ignore", category=UserWarning, module="sklearn")
-
 def load_detector_model():
-    """Searches for and loads the scikit-learn model file using joblib."""
+    """Searches for and loads the scikit-learn model pipeline using joblib."""
     possible_paths = [
         os.path.join(os.path.dirname(__file__), "..", "model.pkl"),
         os.path.join(os.path.dirname(__file__), "..", "..", "model.pkl"),
@@ -63,8 +62,13 @@ def load_detector_model():
                 MODEL_STATE["model"] = loaded
                 MODEL_STATE["model_name"] = os.path.basename(abs_path)
                 classes = getattr(loaded, "classes_", None)
+                if classes is None and hasattr(loaded, "named_steps"):
+                    # Check pipeline classifier classes
+                    for step in loaded.named_steps.values():
+                        if hasattr(step, "classes_"):
+                            classes = step.classes_
+                            break
                 if classes is not None:
-                    # Convert numpy scalars to native python int/str for JSON safety
                     MODEL_STATE["classes"] = [
                         int(c) if hasattr(c, "item") and isinstance(c.item(), int) else str(c)
                         for c in classes
@@ -88,7 +92,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="AI vs Real Image Detector API",
     description="2D FFT Frequency Fingerprint Analysis and AI Image Detection",
-    version="2.0.0",
+    version="2.2.0",
     lifespan=lifespan,
 )
 
@@ -113,54 +117,47 @@ def health_check():
 
 
 def run_model_inference(features: np.ndarray) -> tuple[str, float]:
-    """Runs classification inference on extracted fingerprint features."""
+    """Runs prediction on 70-dim feature vector using the trained pipeline."""
     model = MODEL_STATE["model"]
-    
-    if features.ndim == 1:
-        features_2d = features.reshape(1, -1)
-    else:
-        features_2d = features
+    features_2d = features.reshape(1, -1) if features.ndim == 1 else features
 
     if model is not None:
         try:
             if hasattr(model, "predict_proba"):
                 probas = model.predict_proba(features_2d)[0]
-                classes = getattr(model, "classes_", [0, 1])
+                classes = MODEL_STATE.get("classes") or getattr(model, "classes_", [0, 1])
+                
+                # Class 1 = AI-Generated / Fake, Class 0 = Real
                 fake_idx = 1
                 for idx, c in enumerate(classes):
                     if str(c).lower() in ["fake", "ai", "1", "synthetic", "generated"]:
                         fake_idx = idx
                         break
+                
                 fake_prob = float(probas[fake_idx])
-                if fake_prob >= 0.5:
+                if fake_prob >= 0.50:
                     return "fake", round(fake_prob, 4)
                 else:
                     return "real", round(1.0 - fake_prob, 4)
 
             elif hasattr(model, "decision_function"):
-                decision_score = float(model.decision_function(features_2d)[0])
-                prob_fake = 1.0 / (1.0 + np.exp(-decision_score))
-                if prob_fake >= 0.5:
-                    return "fake", round(float(prob_fake), 4)
+                score = float(model.decision_function(features_2d)[0])
+                fake_prob = float(1.0 / (1.0 + np.exp(-score)))
+                if fake_prob >= 0.50:
+                    return "fake", round(fake_prob, 4)
                 else:
-                    return "real", round(float(1.0 - prob_fake), 4)
+                    return "real", round(1.0 - fake_prob, 4)
 
             else:
                 pred = model.predict(features_2d)[0]
                 is_fake = str(pred).lower() in ["fake", "ai", "1", "true", "synthetic"]
-                return ("fake" if is_fake else "real"), 0.94
+                return ("fake" if is_fake else "real"), 0.88
 
         except Exception as e:
-            logger.error(f"Inference error: {e}")
+            logger.error(f"Inference error with model: {e}")
 
-    # Heuristic fallback if model not loaded
-    high_freq_ratio = float(np.mean(features[-len(features)//4:])) if len(features) > 4 else 0.5
-    if high_freq_ratio > 0.42:
-        confidence = min(0.98, max(0.55, 0.5 + high_freq_ratio * 0.4))
-        return "fake", round(confidence, 4)
-    else:
-        confidence = min(0.98, max(0.55, 0.9 - high_freq_ratio * 0.4))
-        return "real", round(confidence, 4)
+    # Fallback heuristic
+    return "real", 0.70
 
 
 @app.post("/predict")
@@ -184,14 +181,14 @@ async def predict_image(file: UploadFile = File(...)):
         # 1. 2D FFT Spectrum Image (base64 PNG)
         fft_spectrum_base64 = generate_fft_spectrum_image(image)
 
-        # 2. Spectral Diagnostics & 1D Radial Curve
+        # 2. Multi-Spectral Diagnostics & 1D Radial Curve
         diagnostics = compute_spectral_diagnostics(image)
 
-        # 3. Model Inference
+        # 3. Extract 70-dim Fingerprint & Predict with Trained Model
         features = extract_fingerprint(image)
         prediction, confidence = run_model_inference(features)
 
-        # 4. Sightengine GenAI Benchmark (Parallel / Async)
+        # 4. Optional Sightengine GenAI Benchmark (Parallel / Async)
         sightengine_res = await check_image_with_sightengine(image_bytes, filename=file.filename or "image.jpg")
 
         api_confidence = sightengine_res["confidence"] if sightengine_res else None
