@@ -1,5 +1,5 @@
 import React from 'react';
-import { Cpu, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Cpu, Sparkles, AlertTriangle, ShieldCheck, HelpCircle } from 'lucide-react';
 
 export default function ApiComparison({ result }) {
   if (!result) return null;
@@ -74,8 +74,8 @@ export default function ApiComparison({ result }) {
           </div>
 
           <div className="mt-4 pt-3 border-t-2 border-black/10 dark:border-white/20 flex items-center justify-between text-xs font-mono font-bold">
-            <span className="text-slate-700 dark:text-slate-300">Execution:</span>
-            <span className="text-[#059669] dark:text-[#00F5A0] font-black">0ms Network Egress (Local)</span>
+            <span className="text-slate-700 dark:text-slate-300">Analysis Layer:</span>
+            <span className="text-[#059669] dark:text-[#00F5A0] font-black">Micro-Spectral Fourier Physics</span>
           </div>
         </div>
 
@@ -124,13 +124,32 @@ export default function ApiComparison({ result }) {
           </div>
 
           <div className="mt-4 pt-3 border-t-2 border-black/10 dark:border-white/20 flex items-center justify-between text-xs font-mono font-bold">
-            <span className="text-slate-700 dark:text-slate-300">Model Engine:</span>
-            <span className="text-[#B45309] dark:text-[#FFE600] font-black">
-              google/diffusiongemma-26b-a4b-it
-            </span>
+            <span className="text-slate-700 dark:text-slate-300">Analysis Layer:</span>
+            <span className="text-[#B45309] dark:text-[#FFE600] font-black">Semantic Visual Plausibility</span>
           </div>
         </div>
       </div>
+
+      {/* Divergence Explainer Accordion/Banner */}
+      {hasNvidia && !isNvidiaAgreement && (
+        <div className="mt-4 p-4 rounded-xl border-2 border-black dark:border-[#FFE600] bg-[#FFFBEB] dark:bg-[#1A1708] shadow-[4px_4px_0px_#000000]">
+          <div className="flex items-start gap-3">
+            <div className="p-1.5 rounded bg-[#FFE600] text-black border border-black font-black">
+              <AlertTriangle className="w-4 h-4 stroke-[3]" />
+            </div>
+            <div>
+              <span className="text-xs font-mono font-black text-black dark:text-[#FFE600] uppercase block mb-1">
+                Forensic Analysis of Divergence:
+              </span>
+              <p className="text-xs text-slate-900 dark:text-slate-100 font-mono leading-relaxed font-bold">
+                {ourModelVerdict === 'fake'
+                  ? 'Your local 2D Fourier model detected synthetic upsampling grid harmonics or power-law slope anomalies invisible to the human eye, while NIM evaluated semantic and visual plausibility.'
+                  : 'NIM flagged visual or compositional irregularities, while your local Fourier model verified natural optical sensor noise roll-off in the frequency spectrum.'}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
