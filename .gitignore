@@ -26,6 +26,12 @@ wheels/
 .env
 .env.local
 
+# Datasets & Archives
+data-set/
+*.zip
+*.tar.gz
+*.7z
+
 # Node & Frontend
 node_modules/
 npm-debug.log*
