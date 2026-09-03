@@ -235,10 +235,10 @@ export default function App() {
       <footer className="border-t-2 border-black dark:border-white bg-white dark:bg-black py-4 text-center text-xs text-black dark:text-white font-mono font-black z-10 transition-colors">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <div className="flex items-center gap-3">
-            <span className="font-black tracking-wide">THE EYES 2.0 • BUILT BY XEESHAN</span>
+            <span className="font-black tracking-wide">THE EYES 2.0 • BUILT BY ZEESHAN SARFRAZ</span>
             <button
               onClick={() => setCurrentView('about')}
-              className="text-[#0284C7] dark:text-[#00F0FF] underline underline-offset-2 hover:text-black dark:hover:text-white transition-colors"
+              className="text-[#0284C7] dark:text-[#00F0FF] underline underline-offset-4 decoration-2 hover:text-black dark:hover:text-white transition-colors cursor-pointer font-black"
             >
               [ABOUT PROJECT]
             </button>
@@ -247,10 +247,10 @@ export default function App() {
             href="https://github.com/xeeshan-zs/The-Eyes"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[#B45309] dark:text-[#FFE600] flex items-center gap-1 hover:underline"
+            className="px-3 py-1 rounded bg-[#FFE600] text-black border-2 border-black font-mono font-black flex items-center gap-1.5 shadow-[2px_2px_0px_#000000] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all cursor-pointer"
           >
             <Github className="w-3.5 h-3.5" />
-            <span>github.com/xeeshan-zs/The-Eyes</span>
+            <span>github.com/xeeshan-zs/The-Eyes ↗</span>
           </a>
         </div>
       </footer>

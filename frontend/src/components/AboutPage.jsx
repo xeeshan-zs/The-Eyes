@@ -69,11 +69,11 @@ export default function AboutPage({ onBackToDetector }) {
               ⚡
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-2xl font-black font-mono text-black dark:text-white">
-                  Xeeshan
+              <div className="flex items-center gap-2.5">
+                <h2 className="text-2xl sm:text-3xl font-black font-mono text-black dark:text-white">
+                  Zeeshan Sarfraz
                 </h2>
-                <span className="text-[11px] font-mono font-black px-2 py-0.5 rounded bg-[#00F0FF] text-black border border-black shadow-[1px_1px_0px_#000000]">
+                <span className="text-[11px] font-mono font-black px-2.5 py-0.5 rounded bg-[#00F0FF] text-black border border-black shadow-[1px_1px_0px_#000000]">
                   CREATOR &amp; ML RESEARCHER
                 </span>
               </div>
@@ -83,12 +83,13 @@ export default function AboutPage({ onBackToDetector }) {
             </div>
           </div>
 
+          {/* High-Affordance Interactive Links */}
           <div className="flex flex-wrap items-center gap-3 font-mono text-xs font-black">
             <a
               href="https://github.com/xeeshan-zs"
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-brutal-yellow px-4 py-2 rounded-lg flex items-center gap-2 shadow-[2px_2px_0px_#000000]"
+              className="btn-brutal-yellow px-4 py-2.5 rounded-lg flex items-center gap-2 border-2 border-black shadow-[3px_3px_0px_#000000] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all cursor-pointer"
             >
               <Github className="w-4 h-4 stroke-[2.5]" />
               <span>GITHUB PROFILE</span>
@@ -99,17 +100,18 @@ export default function AboutPage({ onBackToDetector }) {
               href="https://github.com/xeeshan-zs/The-Eyes"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2 rounded-lg bg-black text-white dark:bg-white dark:text-black border-2 border-black font-black flex items-center gap-2 shadow-[2px_2px_0px_#000000] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all"
+              className="px-4 py-2.5 rounded-lg bg-[#00F0FF] text-black border-2 border-black font-black flex items-center gap-2 shadow-[3px_3px_0px_#000000] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all cursor-pointer"
             >
-              <Code2 className="w-4 h-4" />
-              <span>THE EYES REPO</span>
+              <Code2 className="w-4 h-4 stroke-[2.5]" />
+              <span>OPEN REPOSITORY</span>
+              <ExternalLink className="w-3.5 h-3.5 stroke-[3]" />
             </a>
           </div>
         </div>
 
         {/* Hardware & Training Pipeline Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
-          <div className="p-4 rounded-lg bg-[#F8F9FA] dark:bg-black border-2 border-black dark:border-white shadow-[3px_3px_0px_#000000]">
+          <div className="p-4.5 rounded-lg bg-[#F8F9FA] dark:bg-black border-2 border-black dark:border-white shadow-[3px_3px_0px_#000000]">
             <div className="flex items-center gap-2 text-xs font-mono font-black text-[#B45309] dark:text-[#FFE600] mb-1">
               <Database className="w-4 h-4 stroke-[3]" />
               50 GB TRAINING DATASET
@@ -119,7 +121,7 @@ export default function AboutPage({ onBackToDetector }) {
             </p>
           </div>
 
-          <div className="p-4 rounded-lg bg-[#F8F9FA] dark:bg-black border-2 border-black dark:border-white shadow-[3px_3px_0px_#000000]">
+          <div className="p-4.5 rounded-lg bg-[#F8F9FA] dark:bg-black border-2 border-black dark:border-white shadow-[3px_3px_0px_#000000]">
             <div className="flex items-center gap-2 text-xs font-mono font-black text-[#047857] dark:text-[#00F5A0] mb-1">
               <Cpu className="w-4 h-4 stroke-[3]" />
               RTX 3090 GPU PIPELINE
@@ -129,7 +131,7 @@ export default function AboutPage({ onBackToDetector }) {
             </p>
           </div>
 
-          <div className="p-4 rounded-lg bg-[#F8F9FA] dark:bg-black border-2 border-black dark:border-white shadow-[3px_3px_0px_#000000]">
+          <div className="p-4.5 rounded-lg bg-[#F8F9FA] dark:bg-black border-2 border-black dark:border-white shadow-[3px_3px_0px_#000000]">
             <div className="flex items-center gap-2 text-xs font-mono font-black text-[#0369A1] dark:text-[#00F0FF] mb-1">
               <Sparkles className="w-4 h-4 stroke-[3]" />
               DIFFUSIONGEMMA 26B
