@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layers, Sparkles, Cpu, Bot, CheckCircle2, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { Cpu, Sparkles, AlertTriangle, ShieldCheck, CheckCircle2 } from 'lucide-react';
 
 export default function ApiComparison({ result }) {
   if (!result) return null;
@@ -12,7 +12,7 @@ export default function ApiComparison({ result }) {
   const hasNvidia = nvidia && nvidia.available;
   const nvidiaVerdict = nvidia?.prediction?.toLowerCase();
   const nvidiaConfidence = hasNvidia ? Math.round((nvidia.confidence || 0.85) * 100) : null;
-  const nvidiaExplanation = nvidia?.explanation || 'Multi-modal latent feature inspection completed.';
+  const nvidiaExplanation = nvidia?.explanation || 'Multi-modal vision analysis completed.';
 
   const isNvidiaAgreement = hasNvidia && ourModelVerdict === nvidiaVerdict;
 
@@ -29,13 +29,17 @@ export default function ApiComparison({ result }) {
           </span>
         </div>
 
-        {hasNvidia && (
-          <span className={`text-xs font-mono px-3.5 py-1 rounded border-2 border-black font-black shadow-[2px_2px_0px_#FFFFFF] ${
+        {hasNvidia ? (
+          <span className={`text-xs font-mono px-3.5 py-1.5 rounded-lg border-2 border-black font-black shadow-[2px_2px_0px_#FFFFFF] ${
             isNvidiaAgreement
               ? 'bg-[#00F5A0] text-black'
               : 'bg-[#FFE600] text-black'
           }`}>
             {isNvidiaAgreement ? '✓ DUAL MODEL CONSENSUS MATCH' : '⚡ DIVERGENT MODEL HYPOTHESIS'}
+          </span>
+        ) : (
+          <span className="text-xs font-mono px-3 py-1 rounded bg-[#181824] border-2 border-white text-white font-bold">
+            CLOUD MODEL STANDBY
           </span>
         )}
       </div>
@@ -50,7 +54,7 @@ export default function ApiComparison({ result }) {
                 <Cpu className="w-4 h-4 stroke-[3]" />
                 LOCAL 2D FOURIER MODEL
               </span>
-              <span className="text-[10px] font-black px-2 py-0.5 rounded bg-[#00F0FF] text-black border border-black shadow-[1px_1px_0px_#FFFFFF]">
+              <span className="text-[10px] font-black px-2.5 py-0.5 rounded bg-[#00F0FF] text-black border border-black shadow-[1px_1px_0px_#FFFFFF]">
                 On-Device
               </span>
             </div>
@@ -70,8 +74,8 @@ export default function ApiComparison({ result }) {
           </div>
 
           <div className="mt-4 pt-3 border-t-2 border-white/20 flex items-center justify-between text-xs font-mono font-bold">
-            <span className="text-slate-300">Execution Egress:</span>
-            <span className="text-[#00F5A0] font-black">0ms (100% Local GPU/CPU)</span>
+            <span className="text-slate-300">Execution:</span>
+            <span className="text-[#00F5A0] font-black">0ms Network Egress (Local)</span>
           </div>
         </div>
 
@@ -83,7 +87,7 @@ export default function ApiComparison({ result }) {
                 <Sparkles className="w-4 h-4 text-[#FFE600]" />
                 NVIDIA DIFFUSIONGEMMA 26B
               </span>
-              <span className="text-[10px] font-black px-2 py-0.5 rounded bg-[#FFE600] text-black border border-black shadow-[1px_1px_0px_#FFFFFF]">
+              <span className="text-[10px] font-black px-2.5 py-0.5 rounded bg-[#FFE600] text-black border border-black shadow-[1px_1px_0px_#FFFFFF]">
                 NVIDIA NIM
               </span>
             </div>
@@ -98,20 +102,23 @@ export default function ApiComparison({ result }) {
                   </span>
                   <span className="text-xs font-mono text-white font-black">({nvidiaConfidence}% Certainty)</span>
                 </div>
-                <div className="p-2.5 rounded bg-[#181824] border border-white/40 mt-2">
-                  <span className="text-[10px] font-mono text-[#FFE600] font-black uppercase block mb-1">
-                    AI Visual Reasoning:
+                <div className="p-3 rounded-lg bg-[#14141E] border-2 border-white/30 mt-2">
+                  <span className="text-[10px] font-mono text-[#FFE600] font-black uppercase tracking-wider block mb-1">
+                    AI Visual Forensics Reasoning:
                   </span>
-                  <p className="text-xs text-white font-mono leading-relaxed font-medium">
+                  <p className="text-xs text-white font-mono leading-relaxed font-bold">
                     "{nvidiaExplanation}"
                   </p>
                 </div>
               </>
             ) : (
-              <div className="py-2">
-                <span className="text-xs text-white font-mono font-bold">
-                  NVIDIA NIM Vision Forensics processing...
+              <div className="py-3">
+                <span className="text-xs font-mono font-bold text-[#FFE600] block mb-1">
+                  NVIDIA NIM Key Not Detected
                 </span>
+                <p className="text-xs text-slate-300 font-mono">
+                  Set <code className="text-white bg-[#181824] px-1 py-0.5 rounded">NVIDIA_API_KEY</code> in <code className="text-[#FFE600]">backend/.env</code> to enable real-time visual reasoning.
+                </p>
               </div>
             )}
           </div>
@@ -119,7 +126,7 @@ export default function ApiComparison({ result }) {
           <div className="mt-4 pt-3 border-t-2 border-white/20 flex items-center justify-between text-xs font-mono font-bold">
             <span className="text-slate-300">Model Engine:</span>
             <span className="text-[#FFE600] font-black">
-              Google DiffusionGemma 26B-IT
+              google/diffusiongemma-26b-a4b-it
             </span>
           </div>
         </div>

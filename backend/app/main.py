@@ -186,8 +186,8 @@ async def predict_image(file: UploadFile = File(...)):
         features = extract_fingerprint(image)
         prediction, confidence = run_model_inference(features)
 
-        # 4. NVIDIA DiffusionGemma 26B Multi-Modal Vision Inspection
-        nvidia_vision_res = check_image_with_nvidia_vision(image_bytes)
+        # 4. NVIDIA DiffusionGemma 26B Multi-Modal Vision Inspection (Async)
+        nvidia_vision_res = await check_image_with_nvidia_vision(image_bytes)
 
         # 5. Optional Sightengine GenAI Benchmark
         sightengine_res = await check_image_with_sightengine(image_bytes, filename=file.filename or "image.jpg")
