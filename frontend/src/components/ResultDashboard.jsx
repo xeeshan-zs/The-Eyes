@@ -40,15 +40,15 @@ export default function ResultDashboard({ result, originalImagePreview, onReset 
       {/* 3. Studio Multi-Lens Container */}
       <div className="glass-brutal rounded-xl overflow-hidden shadow-[8px_8px_0px_#000000]">
         {/* Toolbar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 bg-black border-b-2 border-white">
+        <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 bg-white dark:bg-black border-b-2 border-black dark:border-white">
           {/* Mode Switcher Tabs */}
           <div className="flex items-center gap-2.5">
             <button
               onClick={() => setActiveTab('dual')}
               className={`px-4 py-2 rounded-lg text-xs font-mono font-black border-2 transition-all flex items-center gap-2 ${
                 activeTab === 'dual'
-                  ? 'bg-[#FFE600] text-black border-black shadow-[3px_3px_0px_#FFFFFF] translate-x-[-1px] translate-y-[-1px]'
-                  : 'bg-[#181824] text-white border-white hover:bg-[#FFE600] hover:text-black hover:border-black shadow-[2px_2px_0px_#000000]'
+                  ? 'bg-[#FFE600] text-black border-black shadow-[3px_3px_0px_#000000] dark:shadow-[3px_3px_0px_#FFFFFF] translate-x-[-1px] translate-y-[-1px]'
+                  : 'bg-white dark:bg-[#181824] text-black dark:text-white border-black dark:border-white hover:bg-[#FFE600] hover:text-black hover:border-black shadow-[2px_2px_0px_#000000]'
               }`}
             >
               <Eye className="w-4 h-4 stroke-[3]" />
@@ -59,8 +59,8 @@ export default function ResultDashboard({ result, originalImagePreview, onReset 
               onClick={() => setActiveTab('slider')}
               className={`px-4 py-2 rounded-lg text-xs font-mono font-black border-2 transition-all flex items-center gap-2 ${
                 activeTab === 'slider'
-                  ? 'bg-[#FFE600] text-black border-black shadow-[3px_3px_0px_#FFFFFF] translate-x-[-1px] translate-y-[-1px]'
-                  : 'bg-[#181824] text-white border-white hover:bg-[#FFE600] hover:text-black hover:border-black shadow-[2px_2px_0px_#000000]'
+                  ? 'bg-[#FFE600] text-black border-black shadow-[3px_3px_0px_#000000] dark:shadow-[3px_3px_0px_#FFFFFF] translate-x-[-1px] translate-y-[-1px]'
+                  : 'bg-white dark:bg-[#181824] text-black dark:text-white border-black dark:border-white hover:bg-[#FFE600] hover:text-black hover:border-black shadow-[2px_2px_0px_#000000]'
               }`}
             >
               <Sliders className="w-4 h-4 stroke-[3]" />
@@ -71,8 +71,8 @@ export default function ResultDashboard({ result, originalImagePreview, onReset 
               onClick={() => setActiveTab('chart')}
               className={`px-4 py-2 rounded-lg text-xs font-mono font-black border-2 transition-all flex items-center gap-2 ${
                 activeTab === 'chart'
-                  ? 'bg-[#FFE600] text-black border-black shadow-[3px_3px_0px_#FFFFFF] translate-x-[-1px] translate-y-[-1px]'
-                  : 'bg-[#181824] text-white border-white hover:bg-[#FFE600] hover:text-black hover:border-black shadow-[2px_2px_0px_#000000]'
+                  ? 'bg-[#FFE600] text-black border-black shadow-[3px_3px_0px_#000000] dark:shadow-[3px_3px_0px_#FFFFFF] translate-x-[-1px] translate-y-[-1px]'
+                  : 'bg-white dark:bg-[#181824] text-black dark:text-white border-black dark:border-white hover:bg-[#FFE600] hover:text-black hover:border-black shadow-[2px_2px_0px_#000000]'
               }`}
             >
               <LineChart className="w-4 h-4 stroke-[3]" />
@@ -84,25 +84,25 @@ export default function ResultDashboard({ result, originalImagePreview, onReset 
           <div className="flex items-center gap-2.5">
             <button
               onClick={handleCopyJson}
-              className="px-3.5 py-2 rounded-lg bg-[#181824] text-white border-2 border-white hover:bg-white hover:text-black text-xs font-mono font-black flex items-center gap-1.5 shadow-[2px_2px_0px_#000000] transition-all"
+              className="px-3.5 py-2 rounded-lg bg-white dark:bg-[#181824] text-black dark:text-white border-2 border-black dark:border-white hover:bg-[#FFE600] hover:text-black hover:border-black text-xs font-mono font-black flex items-center gap-1.5 shadow-[2px_2px_0px_#000000] transition-all"
               title="Copy JSON Payload"
             >
-              {copied ? <Check className="w-4 h-4 text-[#00F5A0] stroke-[3]" /> : <Copy className="w-4 h-4 text-white" />}
+              {copied ? <Check className="w-4 h-4 text-[#059669] stroke-[3]" /> : <Copy className="w-4 h-4" />}
               <span>{copied ? 'COPIED' : 'JSON'}</span>
             </button>
 
             <button
               onClick={handleDownloadSpectrum}
-              className="px-3.5 py-2 rounded-lg bg-[#181824] text-white border-2 border-white hover:bg-white hover:text-black text-xs font-mono font-black flex items-center gap-1.5 shadow-[2px_2px_0px_#000000] transition-all"
+              className="px-3.5 py-2 rounded-lg bg-white dark:bg-[#181824] text-black dark:text-white border-2 border-black dark:border-white hover:bg-[#FFE600] hover:text-black hover:border-black text-xs font-mono font-black flex items-center gap-1.5 shadow-[2px_2px_0px_#000000] transition-all"
               title="Download FFT PNG"
             >
-              <Download className="w-4 h-4 text-white" />
+              <Download className="w-4 h-4" />
               <span>EXPORT FFT</span>
             </button>
 
             <button
               onClick={onReset}
-              className="px-4 py-2 rounded-lg bg-[#FFE600] text-black border-2 border-black text-xs font-mono font-black flex items-center gap-1.5 shadow-[3px_3px_0px_#FFFFFF] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all"
+              className="px-4 py-2 rounded-lg bg-[#FFE600] text-black border-2 border-black text-xs font-mono font-black flex items-center gap-1.5 shadow-[3px_3px_0px_#000000] dark:shadow-[3px_3px_0px_#FFFFFF] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all"
             >
               <ArrowRightLeft className="w-4 h-4 stroke-[3]" />
               <span>NEW IMAGE</span>
@@ -123,22 +123,22 @@ export default function ResultDashboard({ result, originalImagePreview, onReset 
           {activeTab === 'dual' && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Left: Input Image */}
-              <div className="glass-brutal-card rounded-xl p-5 flex flex-col justify-between border-2 border-white shadow-[6px_6px_0px_#000000]">
-                <div className="flex items-center justify-between pb-3.5 mb-3.5 border-b-2 border-white/30">
+              <div className="glass-brutal-card rounded-xl p-5 flex flex-col justify-between border-2 border-black dark:border-white shadow-[6px_6px_0px_#000000] bg-white dark:bg-[#14141E]">
+                <div className="flex items-center justify-between pb-3.5 mb-3.5 border-b-2 border-black/10 dark:border-white/20">
                   <div className="flex items-center gap-2">
-                    <span className="px-3 py-1 rounded bg-[#00F5A0] text-black font-mono font-black text-xs border-2 border-black shadow-[2px_2px_0px_#FFFFFF]">
+                    <span className="px-3 py-1 rounded bg-[#00F5A0] text-black font-mono font-black text-xs border-2 border-black shadow-[2px_2px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF]">
                       SPATIAL
                     </span>
-                    <span className="text-xs font-mono font-black text-white uppercase tracking-wide">
+                    <span className="text-xs font-mono font-black text-black dark:text-white uppercase tracking-wide">
                       Pixel Domain (RGB)
                     </span>
                   </div>
-                  <span className="text-xs font-mono font-black text-white truncate max-w-[200px] bg-black px-2 py-0.5 rounded border border-white/50">
+                  <span className="text-xs font-mono font-black text-black dark:text-white truncate max-w-[200px] bg-slate-100 dark:bg-black px-2.5 py-0.5 rounded border border-black dark:border-white/50">
                     {result.filename || 'image.png'}
                   </span>
                 </div>
 
-                <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-black border-2 border-white flex items-center justify-center">
+                <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-black border-2 border-black dark:border-white flex items-center justify-center">
                   <img
                     src={originalImagePreview}
                     alt="Input"
@@ -149,32 +149,32 @@ export default function ResultDashboard({ result, originalImagePreview, onReset 
                   </div>
                 </div>
 
-                <p className="mt-4 text-xs text-white font-mono leading-relaxed font-bold">
+                <p className="mt-4 text-xs text-slate-800 dark:text-white font-mono leading-relaxed font-bold">
                   Natural human visual domain. High-frequency neural upsampling and latent noise are often imperceptible to the naked eye.
                 </p>
               </div>
 
               {/* Right: FFT Spectrum */}
-              <div className="glass-brutal-card rounded-xl p-5 flex flex-col justify-between border-2 border-white shadow-[6px_6px_0px_#000000]">
-                <div className="flex items-center justify-between pb-3.5 mb-3.5 border-b-2 border-white/30">
+              <div className="glass-brutal-card rounded-xl p-5 flex flex-col justify-between border-2 border-black dark:border-white shadow-[6px_6px_0px_#000000] bg-white dark:bg-[#14141E]">
+                <div className="flex items-center justify-between pb-3.5 mb-3.5 border-b-2 border-black/10 dark:border-white/20">
                   <div className="flex items-center gap-2">
-                    <span className="px-3 py-1 rounded bg-[#00F0FF] text-black font-mono font-black text-xs border-2 border-black shadow-[2px_2px_0px_#FFFFFF]">
+                    <span className="px-3 py-1 rounded bg-[#00F0FF] text-black font-mono font-black text-xs border-2 border-black shadow-[2px_2px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF]">
                       SPECTRAL
                     </span>
-                    <span className="text-xs font-mono font-black text-white uppercase tracking-wide">
+                    <span className="text-xs font-mono font-black text-black dark:text-white uppercase tracking-wide">
                       2D FFT Magnitude Spectrum
                     </span>
                   </div>
                   <button
                     onClick={() => setShowReticle(!showReticle)}
-                    className="text-xs font-mono font-black text-[#FFE600] bg-black px-2.5 py-1 rounded border border-white hover:bg-[#FFE600] hover:text-black transition-colors flex items-center gap-1.5"
+                    className="text-xs font-mono font-black text-black dark:text-[#FFE600] bg-slate-100 dark:bg-black px-2.5 py-1 rounded border-2 border-black dark:border-white hover:bg-[#FFE600] hover:text-black transition-colors flex items-center gap-1.5 shadow-[1px_1px_0px_#000000]"
                   >
                     <Crosshair className="w-4 h-4 stroke-[3]" />
                     <span>{showReticle ? 'RETICLE: ON' : 'RETICLE: OFF'}</span>
                   </button>
                 </div>
 
-                <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-black border-2 border-white flex items-center justify-center">
+                <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-black border-2 border-black dark:border-white flex items-center justify-center">
                   <img
                     src={result.fft_spectrum_image}
                     alt="FFT Spectrum"
@@ -197,7 +197,7 @@ export default function ResultDashboard({ result, originalImagePreview, onReset 
                   </div>
                 </div>
 
-                <p className="mt-4 text-xs text-white font-mono leading-relaxed font-bold">
+                <p className="mt-4 text-xs text-slate-800 dark:text-white font-mono leading-relaxed font-bold">
                   Centered zero frequency (DC). Latent diffusion &amp; GAN models manifest elevated energy shelves along outer radii and periodic harmonic cross-spikes.
                 </p>
               </div>

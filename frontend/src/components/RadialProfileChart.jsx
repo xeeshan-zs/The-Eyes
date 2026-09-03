@@ -29,12 +29,12 @@ export default function RadialProfileChart({ diagnostics, isFake }) {
   return (
     <div className="glass-brutal rounded-xl p-5 flex flex-col justify-between shadow-[8px_8px_0px_#000000]">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 mb-4 border-b-2 border-white/30">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 mb-4 border-b-2 border-black/20 dark:border-white/30">
         <div className="flex items-center gap-2.5">
-          <span className="px-3 py-1 rounded bg-[#00F0FF] text-black font-mono font-black text-xs border-2 border-black shadow-[2px_2px_0px_#FFFFFF]">
+          <span className="px-3 py-1 rounded bg-[#00F0FF] text-black font-mono font-black text-xs border-2 border-black shadow-[2px_2px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF]">
             POWER SPECTRUM
           </span>
-          <span className="text-xs font-mono font-black text-white uppercase tracking-wide">
+          <span className="text-xs font-mono font-black text-black dark:text-white uppercase tracking-wide">
             1D Azimuthal Harmonic Decay log|F(r)| vs Natural 1/f² Baseline
           </span>
         </div>
@@ -42,18 +42,18 @@ export default function RadialProfileChart({ diagnostics, isFake }) {
         {/* Legend */}
         <div className="flex items-center gap-4 text-xs font-mono font-black">
           <div className="flex items-center gap-1.5">
-            <span className={`w-3.5 h-3.5 rounded border-2 border-black shadow-[1px_1px_0px_#FFFFFF] ${isFake ? 'bg-[#FF2E63]' : 'bg-[#00F5A0]'}`} />
-            <span className="text-white">Sample</span>
+            <span className={`w-3.5 h-3.5 rounded border-2 border-black shadow-[1px_1px_0px_#000000] dark:shadow-[1px_1px_0px_#FFFFFF] ${isFake ? 'bg-[#FF2E63]' : 'bg-[#00F5A0]'}`} />
+            <span className="text-black dark:text-white">Sample</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3.5 h-1.5 bg-white border border-black" />
-            <span className="text-slate-200">1/f² Optical Ref</span>
+            <span className="w-3.5 h-1.5 bg-black dark:bg-white border border-black" />
+            <span className="text-slate-700 dark:text-slate-200">1/f² Optical Ref</span>
           </div>
         </div>
       </div>
 
       {/* SVG Container */}
-      <div className="relative w-full overflow-hidden bg-black p-2 rounded-lg border-2 border-white">
+      <div className="relative w-full overflow-hidden bg-[#0A0D14] dark:bg-black p-2 rounded-lg border-2 border-black dark:border-white shadow-[4px_4px_0px_#000000]">
         <svg
           viewBox={`0 0 ${width} ${height}`}
           className="w-full h-auto overflow-visible select-none"
@@ -209,9 +209,9 @@ export default function RadialProfileChart({ diagnostics, isFake }) {
       </div>
 
       {/* Footer */}
-      <div className="mt-3 pt-3 border-t-2 border-white/20 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
-        <div className="flex items-center gap-1.5 text-white font-bold">
-          <Info className="w-4 h-4 text-[#FFE600] flex-shrink-0" />
+      <div className="mt-3.5 pt-3 border-t-2 border-black/10 dark:border-white/20 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+        <div className="flex items-center gap-1.5 text-slate-900 dark:text-white font-bold">
+          <Info className="w-4 h-4 text-[#B45309] dark:text-[#FFE600] flex-shrink-0" />
           <span>
             {isFake
               ? 'Flattened slope indicates latent diffusion VAE upsampling noise floor.'
@@ -219,7 +219,7 @@ export default function RadialProfileChart({ diagnostics, isFake }) {
           </span>
         </div>
         {hoverIndex !== null && (
-          <div className="bg-[#FFE600] text-black font-black px-2.5 py-1 rounded border-2 border-black shadow-[2px_2px_0px_#FFFFFF]">
+          <div className="bg-[#FFE600] text-black font-black px-2.5 py-1 rounded border-2 border-black shadow-[2px_2px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF]">
             BIN #{hoverIndex}: {(profile[hoverIndex] * 100).toFixed(1)}% Energy
           </div>
         )}

@@ -15,9 +15,9 @@ export default function App() {
   const [result, setResult] = useState(null);
   const [backendHealth, setBackendHealth] = useState(null);
 
-  // Theme Management (Default to Dark, toggleable to Light)
+  // Theme Management (Light theme default)
   const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('the_eyes_theme') || 'dark';
+    return localStorage.getItem('the_eyes_theme') || 'light';
   });
 
   useEffect(() => {
