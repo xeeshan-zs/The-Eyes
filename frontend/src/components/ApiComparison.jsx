@@ -1,11 +1,12 @@
 import React from 'react';
-import { Cpu, Sparkles, AlertTriangle, ShieldCheck, HelpCircle } from 'lucide-react';
+import { Cpu, Sparkles, AlertTriangle, ShieldCheck, Layers, ArrowRight } from 'lucide-react';
 
 export default function ApiComparison({ result }) {
   if (!result) return null;
 
-  const ourModelVerdict = result.prediction?.toLowerCase();
-  const ourConfidence = Math.round((result.confidence || 0) * 100);
+  const localModel = result.local_model;
+  const ourModelVerdict = localModel?.prediction?.toLowerCase() || result.prediction?.toLowerCase();
+  const ourConfidence = Math.round((localModel?.confidence || result.confidence || 0) * 100);
 
   // NVIDIA DiffusionGemma 26B Vision
   const nvidia = result.nvidia_vision;
@@ -15,6 +16,7 @@ export default function ApiComparison({ result }) {
   const nvidiaExplanation = nvidia?.explanation || 'Multi-modal vision analysis completed.';
 
   const isNvidiaAgreement = hasNvidia && ourModelVerdict === nvidiaVerdict;
+  const ensemble = result.ensemble;
 
   return (
     <div className="glass-brutal rounded-xl p-6 shadow-[8px_8px_0px_#000000]">
@@ -52,10 +54,10 @@ export default function ApiComparison({ result }) {
             <div className="flex items-center justify-between text-xs font-mono text-black dark:text-white mb-2.5">
               <span className="text-[#0284C7] dark:text-[#00F0FF] font-black flex items-center gap-1.5">
                 <Cpu className="w-4 h-4 stroke-[3]" />
-                LOCAL 2D FOURIER MODEL
+                LOCAL 2D FOURIER MODEL (WEIGHT: 50%)
               </span>
               <span className="text-[10px] font-black px-2.5 py-0.5 rounded bg-[#00F0FF] text-black border border-black shadow-[1px_1px_0px_#000000] dark:shadow-[1px_1px_0px_#FFFFFF]">
-                On-Device
+                Physics Layer
               </span>
             </div>
 
@@ -74,8 +76,8 @@ export default function ApiComparison({ result }) {
           </div>
 
           <div className="mt-4 pt-3 border-t-2 border-black/10 dark:border-white/20 flex items-center justify-between text-xs font-mono font-bold">
-            <span className="text-slate-700 dark:text-slate-300">Analysis Layer:</span>
-            <span className="text-[#059669] dark:text-[#00F5A0] font-black">Micro-Spectral Fourier Physics</span>
+            <span className="text-slate-700 dark:text-slate-300">Signal Layer:</span>
+            <span className="text-[#059669] dark:text-[#00F5A0] font-black">Sub-Pixel Spectral Harmonics</span>
           </div>
         </div>
 
@@ -85,10 +87,10 @@ export default function ApiComparison({ result }) {
             <div className="flex items-center justify-between text-xs font-mono text-black dark:text-white mb-2.5">
               <span className="text-[#B45309] dark:text-[#FFE600] font-black flex items-center gap-1.5">
                 <Sparkles className="w-4 h-4 text-[#FFE600] fill-[#FFE600]" />
-                NVIDIA DIFFUSIONGEMMA 26B
+                NVIDIA DIFFUSIONGEMMA 26B (WEIGHT: 50%)
               </span>
               <span className="text-[10px] font-black px-2.5 py-0.5 rounded bg-[#FFE600] text-black border border-black shadow-[1px_1px_0px_#000000] dark:shadow-[1px_1px_0px_#FFFFFF]">
-                NVIDIA NIM
+                Vision Layer
               </span>
             </div>
 
@@ -124,17 +126,38 @@ export default function ApiComparison({ result }) {
           </div>
 
           <div className="mt-4 pt-3 border-t-2 border-black/10 dark:border-white/20 flex items-center justify-between text-xs font-mono font-bold">
-            <span className="text-slate-700 dark:text-slate-300">Analysis Layer:</span>
-            <span className="text-[#B45309] dark:text-[#FFE600] font-black">Semantic Visual Plausibility</span>
+            <span className="text-slate-700 dark:text-slate-300">Signal Layer:</span>
+            <span className="text-[#B45309] dark:text-[#FFE600] font-black">
+              Semantic Scene Plausibility
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Divergence Explainer Accordion/Banner */}
+      {/* Ensemble Fusion Bar */}
+      {ensemble && (
+        <div className="mt-4 p-4 rounded-xl border-2 border-black dark:border-white bg-[#FFE600] text-black shadow-[4px_4px_0px_#000000]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 font-mono">
+            <div className="flex items-center gap-2">
+              <Layers className="w-5 h-5 stroke-[2.5]" />
+              <span className="text-xs font-black uppercase">
+                Dual-Layer Ensemble Average Equation:
+              </span>
+            </div>
+            <div className="text-xs font-black bg-black text-[#FFE600] px-3 py-1 rounded border border-black flex items-center gap-2">
+              <span>0.50 × Physics P(Fake) + 0.50 × NIM P(Fake)</span>
+              <ArrowRight className="w-3.5 h-3.5 stroke-[3]" />
+              <span className="text-white">Final Score: {Math.round((result.confidence || 0) * 100)}% {result.prediction?.toUpperCase()}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Divergence Explainer */}
       {hasNvidia && !isNvidiaAgreement && (
-        <div className="mt-4 p-4 rounded-xl border-2 border-black dark:border-[#FFE600] bg-[#FFFBEB] dark:bg-[#1A1708] shadow-[4px_4px_0px_#000000]">
+        <div className="mt-3 p-4 rounded-xl border-2 border-black dark:border-[#FFE600] bg-[#FFFBEB] dark:bg-[#1A1708] shadow-[4px_4px_0px_#000000]">
           <div className="flex items-start gap-3">
-            <div className="p-1.5 rounded bg-[#FFE600] text-black border border-black font-black">
+            <div className="p-1.5 rounded bg-[#FFE600] text-black border border-black font-black flex-shrink-0">
               <AlertTriangle className="w-4 h-4 stroke-[3]" />
             </div>
             <div>

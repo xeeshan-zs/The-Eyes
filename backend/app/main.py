@@ -3,7 +3,8 @@
 Endpoints:
 - POST /predict: Accepts an image file, extracts multi-spectral 40-dim FFT fingerprint + model inference,
                  generates 2D FFT spectrum visualization and spectral diagnostics,
-                 and calls NVIDIA DiffusionGemma 26B Vision Forensics & Sightengine APIs.
+                 calls NVIDIA DiffusionGemma 26B Vision Forensics,
+                 and computes a Dual-Layer Weighted Ensemble Average verdict.
 - GET /health: Health check and model readiness info.
 """
 
@@ -12,6 +13,7 @@ import io
 import time
 import logging
 import warnings
+from pathlib import Path
 from contextlib import asynccontextmanager
 from typing import Optional, Dict, Any
 
@@ -22,6 +24,17 @@ import numpy as np
 import joblib
 from dotenv import load_dotenv
 
+# Load environment variables from all possible locations
+_env_paths = [
+    Path(__file__).parent.parent / ".env",
+    Path(__file__).parent.parent.parent / ".env",
+    Path(".env"),
+    Path("backend/.env"),
+]
+for p in _env_paths:
+    if p.exists():
+        load_dotenv(p)
+
 from .feature_extractor import (
     generate_fft_spectrum_image,
     extract_fingerprint,
@@ -31,8 +44,6 @@ from .sightengine_service import check_image_with_sightengine
 from .nvidia_service import check_image_with_nvidia_vision
 
 warnings.filterwarnings("ignore", category=UserWarning, module="sklearn")
-
-load_dotenv()
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("ai_detector.backend")
@@ -91,7 +102,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="AI vs Real Image Detector API",
     description="2D FFT Frequency Fingerprint Analysis and AI Image Detection",
-    version="2.3.0",
+    version="2.4.0",
     lifespan=lifespan,
 )
 
@@ -111,7 +122,7 @@ def health_check():
         "model_loaded": MODEL_STATE["model"] is not None,
         "model_file": MODEL_STATE["model_name"],
         "classes": MODEL_STATE["classes"],
-        "nvidia_vision_active": True,
+        "nvidia_vision_active": bool(os.getenv("NVIDIA_API_KEY")),
         "sightengine_configured": bool(os.getenv("SIGHTENGINE_API_USER") and os.getenv("SIGHTENGINE_API_SECRET")),
     }
 
@@ -126,13 +137,13 @@ def run_model_inference(features: np.ndarray) -> tuple[str, float]:
             if hasattr(model, "predict_proba"):
                 probas = model.predict_proba(features_2d)[0]
                 classes = MODEL_STATE.get("classes") or getattr(model, "classes_", [0, 1])
-                
+
                 fake_idx = 1
                 for idx, c in enumerate(classes):
                     if str(c).lower() in ["fake", "ai", "1", "synthetic", "generated"]:
                         fake_idx = idx
                         break
-                
+
                 fake_prob = float(probas[fake_idx])
                 if fake_prob >= 0.50:
                     return "fake", round(fake_prob, 4)
@@ -156,6 +167,47 @@ def run_model_inference(features: np.ndarray) -> tuple[str, float]:
             logger.error(f"Inference error with model: {e}")
 
     return "real", 0.70
+
+
+def compute_ensemble_fusion(
+    fourier_pred: str,
+    fourier_conf: float,
+    nvidia_res: Optional[Dict[str, Any]]
+) -> tuple[str, float, Dict[str, Any]]:
+    """Calculates a dual-layer weighted average combining Fourier physics and NVIDIA vision."""
+    # Convert Fourier verdict to P(Fake)
+    p_fake_fourier = fourier_conf if fourier_pred == "fake" else (1.0 - fourier_conf)
+
+    if nvidia_res and nvidia_res.get("available"):
+        nim_pred = str(nvidia_res.get("prediction", "real")).lower()
+        nim_conf = float(nvidia_res.get("confidence", 0.85))
+        p_fake_nim = nim_conf if nim_pred == "fake" else (1.0 - nim_conf)
+
+        # 50/50 Dual Layer Ensemble Average
+        p_fake_fused = 0.50 * p_fake_fourier + 0.50 * p_fake_nim
+        mode = "Dual-Layer Ensemble (Fourier Physics + NVIDIA Vision)"
+    else:
+        p_fake_nim = None
+        p_fake_fused = p_fake_fourier
+        mode = "Single-Layer (Fourier Physics)"
+
+    if p_fake_fused >= 0.50:
+        final_pred = "fake"
+        final_conf = round(p_fake_fused, 4)
+    else:
+        final_pred = "real"
+        final_conf = round(1.0 - p_fake_fused, 4)
+
+    ensemble_meta = {
+        "mode": mode,
+        "fourier_p_fake": round(p_fake_fourier, 4),
+        "nim_p_fake": round(p_fake_nim, 4) if p_fake_nim is not None else None,
+        "fused_p_fake": round(p_fake_fused, 4),
+        "fourier_weight": 0.50 if p_fake_nim is not None else 1.0,
+        "nim_weight": 0.50 if p_fake_nim is not None else 0.0,
+    }
+
+    return final_pred, final_conf, ensemble_meta
 
 
 @app.post("/predict")
@@ -182,14 +234,19 @@ async def predict_image(file: UploadFile = File(...)):
         # 2. Multi-Spectral Diagnostics & 1D Radial Curve
         diagnostics = compute_spectral_diagnostics(image)
 
-        # 3. Extract 40-dim Fingerprint & Predict with Trained Model
+        # 3. Extract 40-dim Fingerprint & Predict with Local Physics Model
         features = extract_fingerprint(image)
-        prediction, confidence = run_model_inference(features)
+        local_prediction, local_confidence = run_model_inference(features)
 
         # 4. NVIDIA DiffusionGemma 26B Multi-Modal Vision Inspection (Async)
         nvidia_vision_res = await check_image_with_nvidia_vision(image_bytes)
 
-        # 5. Optional Sightengine GenAI Benchmark
+        # 5. Dual-Layer Ensemble Average (Physics + Vision Fusion)
+        ensemble_pred, ensemble_conf, ensemble_meta = compute_ensemble_fusion(
+            local_prediction, local_confidence, nvidia_vision_res
+        )
+
+        # 6. Optional Sightengine GenAI Benchmark
         sightengine_res = await check_image_with_sightengine(image_bytes, filename=file.filename or "image.jpg")
 
         api_confidence = sightengine_res["confidence"] if sightengine_res else None
@@ -198,11 +255,16 @@ async def predict_image(file: UploadFile = File(...)):
         elapsed_ms = round((time.time() - start_time) * 1000, 2)
 
         return {
-            "prediction": prediction,
-            "confidence": confidence,
+            "prediction": ensemble_pred,
+            "confidence": ensemble_conf,
+            "ensemble": ensemble_meta,
+            "local_model": {
+                "prediction": local_prediction,
+                "confidence": local_confidence,
+            },
+            "nvidia_vision": nvidia_vision_res,
             "fft_spectrum_image": fft_spectrum_base64,
             "diagnostics": diagnostics,
-            "nvidia_vision": nvidia_vision_res,
             "api_confidence": api_confidence,
             "api_prediction": api_prediction,
             "api_available": sightengine_res is not None,

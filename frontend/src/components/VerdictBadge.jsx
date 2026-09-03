@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, AlertOctagon } from 'lucide-react';
+import { ShieldCheck, AlertOctagon, Layers, Sparkles, Cpu } from 'lucide-react';
 
 export default function VerdictBadge({ result }) {
   if (!result) return null;
@@ -9,6 +9,10 @@ export default function VerdictBadge({ result }) {
   const diagnostics = result.diagnostics || {};
   const alpha = diagnostics.spectral_slope_alpha || 1.8;
   const hfRatio = diagnostics.high_freq_ratio !== undefined ? Math.round(diagnostics.high_freq_ratio * 100) : 45;
+
+  const ensemble = result.ensemble;
+  const localModel = result.local_model;
+  const nvidia = result.nvidia_vision;
 
   return (
     <div className={`relative overflow-hidden rounded-xl border-3 p-6 sm:p-7 backdrop-blur-2xl transition-all ${
@@ -22,19 +26,19 @@ export default function VerdictBadge({ result }) {
           <span className={`px-3.5 py-1.5 rounded-lg border-2 border-black font-mono font-black text-xs uppercase shadow-[2px_2px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF] ${
             isFake ? 'bg-[#FF2E63] text-white' : 'bg-[#00F5A0] text-black'
           }`}>
-            {isFake ? '⚠ SYNTHETIC ARTIFACTS ISOLATED' : '✓ AUTHENTIC CAMERA EXPOSURE'}
+            {isFake ? '⚠ ENSEMBLE: SYNTHETIC ARTIFACTS' : '✓ ENSEMBLE: AUTHENTIC EXPOSURE'}
           </span>
           <span className="text-xs font-mono font-black text-black dark:text-white">
-            // 2D FOURIER SPECTRAL INFERENCE
+            // FUSED DUAL-LAYER WEIGHTED AVERAGE
           </span>
         </div>
 
         <div className="flex items-center gap-2 font-mono text-xs font-bold">
-          <span className="px-3 py-1 rounded bg-white dark:bg-black border-2 border-black dark:border-white text-black dark:text-white font-black">
-            THRESHOLD: 50%
+          <span className="px-3 py-1 rounded bg-[#FFE600] text-black border-2 border-black font-black shadow-[2px_2px_0px_#000000]">
+            PHYSICS + VISION ENSEMBLE
           </span>
-          <span className="px-3 py-1 rounded bg-[#FFE600] text-black border-2 border-black font-black">
-            LATENCY: {result.processing_time_ms || 0}ms
+          <span className="px-3 py-1 rounded bg-white dark:bg-black border-2 border-black dark:border-white text-black dark:text-white font-black">
+            {result.processing_time_ms || 0}ms
           </span>
         </div>
       </div>
@@ -54,6 +58,13 @@ export default function VerdictBadge({ result }) {
           </div>
 
           <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-xs font-mono font-black uppercase text-[#B45309] dark:text-[#FFE600] tracking-wider flex items-center gap-1.5">
+                <Layers className="w-3.5 h-3.5" />
+                Combined Weighted Decision
+              </span>
+            </div>
+
             <h2 className={`text-4xl sm:text-5xl lg:text-6xl font-black font-mono tracking-tight ${
               isFake ? 'text-[#E11D48] dark:text-[#FF2E63]' : 'text-[#059669] dark:text-[#00F5A0]'
             }`}>
@@ -62,29 +73,35 @@ export default function VerdictBadge({ result }) {
 
             <p className="text-xs sm:text-sm text-slate-900 dark:text-white font-mono mt-2.5 max-w-2xl leading-relaxed font-bold">
               {isFake
-                ? 'Deconvolution grid harmonics, abnormal slope decay (low alpha), and VAE latent noise shelves isolated in frequency domain.'
-                : 'Continuous 1/f² power-law decay obeying physical camera sensor Poisson-Gaussian exposure statistics.'}
+                ? 'Weighted consensus confirms generative synthesis. Frequency slope anomalies and/or neural visual artifacts detected across inspection layers.'
+                : 'Weighted consensus confirms authentic photographic capture. Obeys natural Poisson-Gaussian sensor physics and scene coherence.'}
             </p>
 
-            {/* Micro Tags */}
+            {/* Individual Layer Telemetry Chips */}
             <div className="flex flex-wrap items-center gap-2 mt-4 text-xs font-mono font-black">
-              <span className="px-3 py-1 rounded bg-white dark:bg-[#181824] border-2 border-black dark:border-white text-black dark:text-white shadow-[2px_2px_0px_#000000]">
-                SLOPE: α = {alpha}
-              </span>
-              <span className="px-3 py-1 rounded bg-white dark:bg-[#181824] border-2 border-black dark:border-white text-black dark:text-white shadow-[2px_2px_0px_#000000]">
-                HF NOISE SHELF: {hfRatio}%
-              </span>
+              {localModel && (
+                <span className="px-3 py-1 rounded bg-white dark:bg-[#181824] border-2 border-black dark:border-white text-black dark:text-white shadow-[2px_2px_0px_#000000] flex items-center gap-1.5">
+                  <Cpu className="w-3.5 h-3.5 text-[#0284C7] dark:text-[#00F0FF]" />
+                  Fourier Physics: {localModel.prediction?.toUpperCase()} ({Math.round(localModel.confidence * 100)}%)
+                </span>
+              )}
+              {nvidia && nvidia.available && (
+                <span className="px-3 py-1 rounded bg-white dark:bg-[#181824] border-2 border-black dark:border-white text-black dark:text-white shadow-[2px_2px_0px_#000000] flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-[#B45309] dark:text-[#FFE600]" />
+                  NVIDIA Vision: {nvidia.prediction?.toUpperCase()} ({Math.round(nvidia.confidence * 100)}%)
+                </span>
+              )}
               <span className="px-3 py-1 rounded bg-[#FFE600] text-black border-2 border-black shadow-[2px_2px_0px_#000000]">
-                ENTROPY: {Math.round((diagnostics.spectral_entropy || 0.74) * 100)}%
+                SLOPE: α = {alpha}
               </span>
             </div>
           </div>
         </div>
 
         {/* Right Certainty Box */}
-        <div className="bg-white dark:bg-black p-5 rounded-xl border-2 border-black dark:border-white shadow-[5px_5px_0px_#000000] dark:shadow-[5px_5px_0px_#FFFFFF] flex flex-col justify-between self-start lg:self-center min-w-[230px]">
+        <div className="bg-white dark:bg-black p-5 rounded-xl border-2 border-black dark:border-white shadow-[5px_5px_0px_#000000] dark:shadow-[5px_5px_0px_#FFFFFF] flex flex-col justify-between self-start lg:self-center min-w-[240px]">
           <span className="text-xs font-mono font-black text-black dark:text-white uppercase tracking-widest mb-1">
-            CERTAINTY SCORE
+            ENSEMBLE CONFIDENCE
           </span>
 
           <div className="flex items-baseline gap-2 mb-2">
@@ -93,7 +110,7 @@ export default function VerdictBadge({ result }) {
             }`}>
               {confidencePercent}%
             </span>
-            <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">CONFIDENCE</span>
+            <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">WEIGHTED</span>
           </div>
 
           {/* Hard Segmented Bar */}
