@@ -8,7 +8,6 @@ function createSampleCanvasImage(type) {
   const ctx = canvas.getContext('2d');
 
   if (type === 'real_nature') {
-    // Natural continuous gradient with multi-scale optical textures
     const grad = ctx.createRadialGradient(192, 192, 10, 192, 192, 220);
     grad.addColorStop(0, '#5C7E6C');
     grad.addColorStop(0.4, '#2F4858');
@@ -16,7 +15,6 @@ function createSampleCanvasImage(type) {
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, 384, 384);
 
-    // Natural organic wave curves
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
     ctx.lineWidth = 1.5;
     for (let i = 0; i < 25; i++) {
@@ -25,7 +23,6 @@ function createSampleCanvasImage(type) {
       ctx.stroke();
     }
   } else if (type === 'real_dslr') {
-    // Real portrait studio exposure
     const grad = ctx.createLinearGradient(0, 0, 384, 384);
     grad.addColorStop(0, '#DE9B72');
     grad.addColorStop(0.5, '#723B44');
@@ -38,11 +35,9 @@ function createSampleCanvasImage(type) {
     ctx.arc(160, 160, 95, 0, Math.PI * 2);
     ctx.fill();
   } else if (type === 'ai_dalle3') {
-    // DALL-E 3 / ChatGPT latent diffusion lattice pattern
     ctx.fillStyle = '#0B132B';
     ctx.fillRect(0, 0, 384, 384);
 
-    // Periodic high-frequency deconvolution grid artifacts
     for (let x = 0; x < 384; x += 12) {
       for (let y = 0; y < 384; y += 12) {
         const val = ((x ^ y) % 20) * 9;
@@ -51,12 +46,11 @@ function createSampleCanvasImage(type) {
       }
     }
     const grad = ctx.createRadialGradient(192, 192, 10, 192, 192, 150);
-    grad.addColorStop(0, 'rgba(244, 63, 94, 0.7)');
+    grad.addColorStop(0, 'rgba(255, 46, 99, 0.7)');
     grad.addColorStop(1, 'rgba(0, 240, 255, 0.1)');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, 384, 384);
   } else if (type === 'ai_gemini') {
-    // Gemini Imagen 3 VAE latent grid pattern
     ctx.fillStyle = '#111827';
     ctx.fillRect(0, 0, 384, 384);
 
@@ -69,12 +63,11 @@ function createSampleCanvasImage(type) {
       ctx.stroke();
     }
     const grad = ctx.createRadialGradient(192, 192, 10, 192, 192, 130);
-    grad.addColorStop(0, 'rgba(139, 92, 246, 0.8)');
-    grad.addColorStop(1, 'rgba(244, 63, 94, 0.15)');
+    grad.addColorStop(0, 'rgba(168, 85, 247, 0.8)');
+    grad.addColorStop(1, 'rgba(255, 46, 99, 0.15)');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, 384, 384);
   } else if (type === 'ai_midjourney') {
-    // Midjourney v6 high-contrast synth render
     ctx.fillStyle = '#0F172A';
     ctx.fillRect(0, 0, 384, 384);
 
@@ -102,40 +95,40 @@ export default function SamplePresets({ onSelectSample, disabled }) {
       id: 'real_dslr',
       label: 'DSLR RAW Studio',
       provider: 'Canon EOS R5',
-      tag: 'AUTHENTIC',
-      color: 'emerald',
+      tag: 'REAL',
+      isReal: true,
       icon: Camera,
     },
     {
       id: 'real_nature',
       label: 'Natural Landscape',
-      provider: 'Optical Sensor',
-      tag: 'AUTHENTIC',
-      color: 'emerald',
+      provider: 'Optical Exposure',
+      tag: 'REAL',
+      isReal: true,
       icon: ImageIcon,
     },
     {
       id: 'ai_dalle3',
       label: 'ChatGPT DALL-E 3',
       provider: 'OpenAI LDM',
-      tag: 'SYNTHETIC',
-      color: 'rose',
+      tag: 'AI GEN',
+      isReal: false,
       icon: Bot,
     },
     {
       id: 'ai_gemini',
       label: 'Gemini Imagen 3',
       provider: 'Google DeepMind',
-      tag: 'SYNTHETIC',
-      color: 'rose',
+      tag: 'AI GEN',
+      isReal: false,
       icon: Sparkles,
     },
     {
       id: 'ai_midjourney',
       label: 'Midjourney v6',
       provider: 'Diffusion Latent',
-      tag: 'SYNTHETIC',
-      color: 'rose',
+      tag: 'AI GEN',
+      isReal: false,
       icon: Zap,
     },
   ];
@@ -147,47 +140,44 @@ export default function SamplePresets({ onSelectSample, disabled }) {
   };
 
   return (
-    <div className="glass-panel rounded-2xl p-4.5 shadow-xl">
-      <div className="flex items-center justify-between mb-3">
+    <div className="glass-brutal rounded-xl p-5 shadow-brutal">
+      <div className="flex items-center justify-between mb-3.5">
         <div className="flex items-center gap-2">
-          <Layers className="w-4 h-4 text-cyan-400" />
-          <span className="text-xs font-mono font-bold tracking-wider text-slate-200 uppercase">
-            1-Click Benchmark Presets
+          <span className="px-2 py-0.5 rounded bg-brutal-yellow text-black font-mono font-black text-xs border border-black shadow-brutal-sm">
+            PRESETS
+          </span>
+          <span className="text-xs font-mono font-bold text-white uppercase">
+            1-Click Benchmark Test Suite
           </span>
         </div>
-        <span className="text-[10px] font-mono text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/30">
-          INSTANT TEST SUITE
+        <span className="text-[10px] font-mono font-bold text-slate-400">
+          SELECT SAMPLE TO RUN
         </span>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
         {PRESETS.map((preset) => {
           const Icon = preset.icon;
-          const isReal = preset.color === 'emerald';
           return (
             <button
               key={preset.id}
               onClick={() => handleClick(preset.id)}
               disabled={disabled}
-              className={`p-3 rounded-xl border text-left transition-all duration-200 group flex flex-col justify-between ${
-                isReal
-                  ? 'bg-space-950/60 hover:bg-emerald-950/20 border-white/[0.08] hover:border-emerald-500/40 hover:shadow-glow-emerald'
-                  : 'bg-space-950/60 hover:bg-rose-950/20 border-white/[0.08] hover:border-rose-500/40 hover:shadow-glow-rose'
-              } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:scale-[1.02]'}`}
+              className={`p-3.5 rounded-lg border-2 border-black bg-brutal-surface text-left card-brutal-hover flex flex-col justify-between ${
+                disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+              }`}
             >
               <div className="flex items-center justify-between mb-2">
-                <Icon className={`w-4 h-4 ${isReal ? 'text-emerald-400' : 'text-rose-400'}`} />
-                <span className={`text-[9px] font-mono font-bold px-1.5 py-0.2 rounded border ${
-                  isReal
-                    ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
-                    : 'bg-rose-500/10 border-rose-500/30 text-rose-400'
+                <Icon className={`w-4 h-4 ${preset.isReal ? 'text-brutal-green' : 'text-brutal-pink'} stroke-[2.5]`} />
+                <span className={`text-[9px] font-mono font-black px-1.5 py-0.5 rounded border border-black shadow-brutal-sm ${
+                  preset.isReal ? 'bg-brutal-green text-black' : 'bg-brutal-pink text-white'
                 }`}>
                   {preset.tag}
                 </span>
               </div>
 
               <div>
-                <span className="text-xs font-bold text-white group-hover:text-cyan-300 block truncate">
+                <span className="text-xs font-bold text-white block truncate">
                   {preset.label}
                 </span>
                 <span className="text-[10px] font-mono text-slate-400 block truncate mt-0.5">

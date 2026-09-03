@@ -4,75 +4,72 @@
 
 @layer base {
   body {
-    background-color: #030712;
-    color: #F3F4F6;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #0A0A0E;
+    color: #F8FAFC;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     overflow-x: hidden;
   }
 }
 
-/* Glassmorphism Classes */
-.glass-panel {
-  background: rgba(11, 17, 32, 0.7);
+/* Minimalist Neo-Brutalism + Glassmorphism Fusion */
+.glass-brutal {
+  background: rgba(18, 18, 24, 0.75);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 2px solid #272736;
+  box-shadow: 4px 4px 0px 0px #000000;
 }
 
-.glass-panel-hover {
-  transition: all 0.25s ease-out;
-}
-.glass-panel-hover:hover {
-  background: rgba(17, 25, 44, 0.85);
-  border-color: rgba(0, 240, 255, 0.3);
-  box-shadow: 0 0 25px -5px rgba(0, 240, 255, 0.15);
-}
-
-.glass-card {
-  background: rgba(15, 23, 42, 0.6);
+.glass-brutal-card {
+  background: rgba(24, 24, 34, 0.65);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border: 2px solid #272736;
+  box-shadow: 3px 3px 0px 0px #000000;
 }
 
-/* Technical Reticle Grid Background */
-.bg-tech-grid {
-  background-size: 32px 32px;
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+/* Neo-Brutalist Interactive Button States */
+.btn-brutal {
+  border: 2px solid #000000;
+  box-shadow: 4px 4px 0px 0px #000000;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-brutal:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px 0px #000000;
+}
+.btn-brutal:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px 0px #000000;
 }
 
-/* Radar Scan Line */
-@keyframes radarSweep {
-  0% {
-    top: 0%;
-    opacity: 0.9;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    top: 100%;
-    opacity: 0.9;
-  }
+/* Neo-Brutalist Card Hover */
+.card-brutal-hover {
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card-brutal-hover:hover {
+  transform: translate(-2px, -2px);
+  border-color: #FFE600;
+  box-shadow: 6px 6px 0px 0px #FFE600;
 }
 
-.animate-radar {
-  animation: radarSweep 2s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+/* Geometric Dot Matrix Grid */
+.bg-brutal-grid {
+  background-size: 24px 24px;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.08) 1.5px, transparent 1.5px);
 }
 
-/* Sleek Scrollbars */
+/* Custom Scrollbars */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #030712;
+  background: #0A0A0E;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1E293B;
-  border-radius: 9999px;
+  background: #272736;
+  border: 1px solid #000000;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #FFE600;
 }

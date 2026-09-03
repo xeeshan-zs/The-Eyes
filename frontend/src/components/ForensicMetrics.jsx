@@ -1,11 +1,10 @@
 import React from 'react';
-import { Activity, Sparkles, Gauge, Radio, HardDrive, Timer } from 'lucide-react';
+import { Activity, Gauge, Radio, Timer } from 'lucide-react';
 
 export default function ForensicMetrics({ result }) {
   if (!result) return null;
 
   const diagnostics = result.diagnostics || {};
-  const dims = diagnostics.dimensions || [512, 512];
   const alpha = diagnostics.spectral_slope_alpha !== undefined ? diagnostics.spectral_slope_alpha : 1.8;
   const entropy = diagnostics.spectral_entropy !== undefined ? Math.round(diagnostics.spectral_entropy * 100) : 74;
   const hfRatio = diagnostics.high_freq_ratio !== undefined ? Math.round(diagnostics.high_freq_ratio * 100) : 48;
@@ -16,35 +15,35 @@ export default function ForensicMetrics({ result }) {
 
   const METRICS = [
     {
-      label: 'SPECTRAL SLOPE (α DECAY)',
+      label: 'SPECTRAL SLOPE (α)',
       value: `α = ${alpha}`,
-      badge: isAlphaAbnormal ? 'FLATTENED' : 'NOMINAL 1/f²',
-      subtext: isAlphaAbnormal ? 'Diffusion noise flattening' : 'Continuous optical decay',
-      status: isAlphaAbnormal ? 'warning' : 'ok',
+      badge: isAlphaAbnormal ? 'FLAT SLOPE' : 'NOMINAL 1/f²',
+      color: isAlphaAbnormal ? 'bg-brutal-pink text-white' : 'bg-brutal-green text-black',
+      desc: isAlphaAbnormal ? 'Diffusion noise flattening' : 'Continuous optical decay',
       icon: Activity,
     },
     {
-      label: 'HF NOISE FLOOR ENERGY',
+      label: 'HF NOISE FLOOR',
       value: `${hfRatio}%`,
       badge: isHfAbnormal ? 'ELEVATED' : 'NATURAL',
-      subtext: isHfAbnormal ? 'Outer frequency shelf' : 'Sensor grain roll-off',
-      status: isHfAbnormal ? 'warning' : 'ok',
+      color: isHfAbnormal ? 'bg-brutal-pink text-white' : 'bg-brutal-green text-black',
+      desc: isHfAbnormal ? 'Outer frequency shelf' : 'Sensor grain roll-off',
       icon: Gauge,
     },
     {
       label: 'SPECTRAL ENTROPY (H)',
       value: `${entropy}%`,
-      badge: 'AZIMUTHAL',
-      subtext: 'Frequency energy dispersion',
-      status: 'neutral',
+      badge: 'DISPERSION',
+      color: 'bg-brutal-yellow text-black',
+      desc: 'Azimuthal harmonic entropy',
       icon: Radio,
     },
     {
       label: 'PIPELINE LATENCY',
       value: `${latency}ms`,
       badge: '0ms EGRESS',
-      subtext: 'Local 2D FFT + Inference',
-      status: 'ok',
+      color: 'bg-brutal-cyan text-black',
+      desc: 'Local FFT + classifier execution',
       icon: Timer,
     },
   ];
@@ -56,13 +55,13 @@ export default function ForensicMetrics({ result }) {
         return (
           <div
             key={idx}
-            className="glass-panel glass-panel-hover rounded-xl p-4 flex flex-col justify-between"
+            className="glass-brutal-card rounded-xl p-4 flex flex-col justify-between hover:translate-x-[-1px] hover:translate-y-[-1px] transition-transform"
           >
-            <div className="flex items-center justify-between text-slate-400 mb-2">
-              <span className="text-[10px] font-mono tracking-wider uppercase text-slate-400">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[10px] font-mono font-black tracking-wider uppercase text-slate-400">
                 {metric.label}
               </span>
-              <Icon className="w-4 h-4 text-cyan-400" />
+              <Icon className="w-4 h-4 text-slate-300 stroke-[2.5]" />
             </div>
 
             <div>
@@ -70,16 +69,14 @@ export default function ForensicMetrics({ result }) {
                 <span className="text-2xl font-black font-mono text-white tracking-tight">
                   {metric.value}
                 </span>
-                <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border ${
-                  metric.status === 'warning'
-                    ? 'bg-rose-500/10 border-rose-500/30 text-rose-400'
-                    : 'bg-cyan-500/10 border-cyan-500/30 text-cyan-300'
-                }`}>
+              </div>
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <span className={`text-[9px] font-mono font-black px-1.5 py-0.5 rounded border border-black shadow-brutal-sm ${metric.color}`}>
                   {metric.badge}
                 </span>
               </div>
               <p className="text-[11px] font-mono text-slate-400 truncate">
-                {metric.subtext}
+                {metric.desc}
               </p>
             </div>
           </div>

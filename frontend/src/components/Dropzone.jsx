@@ -1,5 +1,5 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
-import { UploadCloud, Image as ImageIcon, Sparkles, Terminal, HardDrive, Cpu } from 'lucide-react';
+import { UploadCloud, Sparkles } from 'lucide-react';
 
 export default function Dropzone({ onFileSelected, loading, currentPreview }) {
   const [isDragOver, setIsDragOver] = useState(false);
@@ -56,10 +56,10 @@ export default function Dropzone({ onFileSelected, loading, currentPreview }) {
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={() => !loading && fileInputRef.current?.click()}
-        className={`relative group cursor-pointer rounded-2xl border-2 border-dashed transition-all duration-300 overflow-hidden ${
+        className={`relative group cursor-pointer rounded-xl border-3 border-dashed transition-all duration-200 overflow-hidden ${
           isDragOver
-            ? 'border-cyan-400 bg-cyan-950/30 shadow-glow-cyan scale-[1.008]'
-            : 'border-white/[0.12] bg-space-950/60 hover:border-cyan-500/50 hover:bg-space-900/80 shadow-glass'
+            ? 'border-brutal-yellow bg-brutal-surface shadow-brutal-yellow translate-x-[-2px] translate-y-[-2px]'
+            : 'border-brutal-border bg-brutal-surface/80 hover:border-brutal-yellow hover:bg-brutal-surface shadow-brutal'
         }`}
       >
         <input
@@ -70,49 +70,42 @@ export default function Dropzone({ onFileSelected, loading, currentPreview }) {
           className="hidden"
         />
 
-        {/* Loading Radar Scanner Animation */}
+        {/* Loading Overlay */}
         {loading && (
-          <div className="absolute inset-0 z-30 pointer-events-none bg-space-950/85 backdrop-blur-md flex flex-col items-center justify-center">
-            <div className="w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent animate-radar absolute left-0 shadow-[0_0_15px_#00F0FF]" />
-            <div className="flex flex-col items-center gap-3">
-              <div className="w-12 h-12 rounded-full border-2 border-cyan-500/20 border-t-cyan-400 animate-spin flex items-center justify-center shadow-glow-cyan">
-                <Sparkles className="w-5 h-5 text-cyan-400 animate-pulse" />
-              </div>
-              <div className="text-center">
-                <span className="text-sm font-mono font-bold tracking-wider text-white block">
-                  RUNNING 2D FOURIER SPECTRAL ANALYSIS...
-                </span>
-                <span className="text-xs font-mono text-slate-400 mt-1 block">
-                  Extracting Multi-Spectral Harmonics &amp; Model Inference
-                </span>
-              </div>
+          <div className="absolute inset-0 z-30 pointer-events-none bg-black/90 backdrop-blur-md flex flex-col items-center justify-center">
+            <div className="w-12 h-12 rounded-lg bg-brutal-yellow border-2 border-black shadow-brutal flex items-center justify-center animate-bounce mb-3">
+              <Sparkles className="w-6 h-6 text-black stroke-[2.5]" />
             </div>
+            <span className="text-sm font-mono font-black tracking-wider text-white">
+              EXTRACTING 2D FOURIER HARMONICS...
+            </span>
+            <span className="text-xs font-mono text-slate-400 mt-1">
+              Evaluating Multi-Spectral Classifier Pipeline
+            </span>
           </div>
         )}
 
         <div className="p-10 sm:p-12 flex flex-col items-center justify-center text-center">
-          <div className="w-16 h-16 mb-4 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 group-hover:scale-110 group-hover:shadow-glow-cyan transition-all duration-300">
-            <UploadCloud className="w-8 h-8" />
+          <div className="w-16 h-16 mb-4 rounded-xl bg-brutal-yellow border-2 border-black shadow-brutal flex items-center justify-center text-black group-hover:translate-x-[-2px] group-hover:translate-y-[-2px] transition-transform">
+            <UploadCloud className="w-8 h-8 stroke-[2.5]" />
           </div>
 
-          <h3 className="text-lg font-bold text-white mb-1.5 font-mono">
-            Drop image file here, or <span className="text-cyan-400 underline underline-offset-4">browse</span>
+          <h3 className="text-xl font-black text-white mb-2 font-mono">
+            DROP IMAGE HERE OR <span className="text-brutal-yellow underline underline-offset-4 decoration-2">BROWSE DISK</span>
           </h3>
-          <p className="text-xs text-slate-400 max-w-md mb-4">
-            Supports PNG, JPEG, WEBP. Paste anywhere with <kbd className="px-2 py-0.5 rounded bg-space-850 border border-white/[0.1] text-cyan-300 font-mono text-[11px] font-bold">Ctrl+V</kbd>
+          <p className="text-xs text-slate-400 font-mono max-w-md mb-4">
+            Supports PNG, JPEG, WEBP. Paste from clipboard anywhere with <kbd className="px-2 py-0.5 rounded bg-black border border-brutal-border text-brutal-yellow font-bold">CTRL+V</kbd>
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-3 text-[11px] font-mono text-slate-400">
-            <span className="px-2.5 py-1 rounded-md bg-white/[0.04] border border-white/[0.08]">
-              2D FFT Centered Matrix
+          <div className="flex flex-wrap items-center justify-center gap-2 text-xs font-mono font-bold text-slate-300">
+            <span className="px-2 py-0.5 rounded bg-black border border-brutal-border">
+              2D FFT Spectrum
             </span>
-            <span>•</span>
-            <span className="px-2.5 py-1 rounded-md bg-white/[0.04] border border-white/[0.08]">
+            <span className="px-2 py-0.5 rounded bg-black border border-brutal-border">
               Multi-Spectral Features
             </span>
-            <span>•</span>
-            <span className="px-2.5 py-1 rounded-md bg-white/[0.04] border border-white/[0.08]">
-              Local Privacy (0ms Cloud)
+            <span className="px-2 py-0.5 rounded bg-black border border-brutal-border text-brutal-green">
+              0ms Cloud Egress
             </span>
           </div>
         </div>

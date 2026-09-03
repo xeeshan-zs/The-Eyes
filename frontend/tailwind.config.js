@@ -8,55 +8,37 @@ export default {
   theme: {
     extend: {
       colors: {
-        space: {
-          950: '#030712',
-          900: '#070C18',
-          850: '#0B1120',
-          800: '#11192C',
-          700: '#1E293B',
-          600: '#334155',
-        },
-        cyber: {
+        brutal: {
+          bg: '#0A0A0E',
+          surface: '#121218',
+          card: '#181822',
+          border: '#272736',
+          white: '#FFFFFF',
+          yellow: '#FFE600',
+          green: '#00F5A0',
+          pink: '#FF2E63',
           cyan: '#00F0FF',
-          blue: '#3B82F6',
-          purple: '#8B5CF6',
-          emerald: '#10B981',
-          mint: '#00F5A0',
-          rose: '#F43F5E',
-          crimson: '#FF2E63',
-          amber: '#F59E0B',
+          purple: '#A855F7',
+          orange: '#FF8A00',
         }
       },
-      backgroundImage: {
-        'grid-pattern': "radial-gradient(circle, rgba(255, 255, 255, 0.08) 1px, transparent 1px)",
-        'radial-glow': "radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.12) 0%, transparent 60%)",
-      },
       boxShadow: {
-        'glow-cyan': '0 0 30px -5px rgba(0, 240, 255, 0.35)',
-        'glow-emerald': '0 0 30px -5px rgba(16, 185, 129, 0.35)',
-        'glow-rose': '0 0 30px -5px rgba(244, 63, 94, 0.35)',
-        'glow-purple': '0 0 30px -5px rgba(139, 92, 246, 0.35)',
-        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+        'brutal-sm': '3px 3px 0px 0px #000000',
+        'brutal': '5px 5px 0px 0px #000000',
+        'brutal-lg': '7px 7px 0px 0px #000000',
+        'brutal-yellow': '5px 5px 0px 0px #FFE600',
+        'brutal-green': '5px 5px 0px 0px #00F5A0',
+        'brutal-pink': '5px 5px 0px 0px #FF2E63',
+        'brutal-cyan': '5px 5px 0px 0px #00F0FF',
+        'brutal-white': '5px 5px 0px 0px #FFFFFF',
+        'brutal-border': '4px 4px 0px 0px rgba(255, 255, 255, 0.15)',
+      },
+      borderWidth: {
+        '3': '3px',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
-      },
-      animation: {
-        'pulse-glow': 'pulseGlow 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'scan': 'scanLine 2s ease-in-out infinite alternate',
-        'spin-slow': 'spin 12s linear infinite',
-      },
-      keyframes: {
-        pulseGlow: {
-          '0%, 100%': { opacity: '0.4' },
-          '50%': { opacity: '0.8' },
-        },
-        scanLine: {
-          '0%': { top: '0%', opacity: '0.6' },
-          '50%': { opacity: '1' },
-          '100%': { top: '100%', opacity: '0.6' },
-        }
+        mono: ['JetBrains Mono', 'Fira Code', 'Courier New', 'monospace'],
       }
     },
   },

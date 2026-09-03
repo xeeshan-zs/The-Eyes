@@ -80,27 +80,25 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-space-950 text-slate-100 flex flex-col relative selection:bg-cyan-500/30 selection:text-cyan-200">
-      {/* Background Tech Ambient Grid & Radial Glows */}
-      <div className="fixed inset-0 bg-tech-grid opacity-25 pointer-events-none" />
-      <div className="fixed -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-gradient-to-b from-cyan-500/10 via-purple-500/5 to-transparent rounded-full blur-3xl pointer-events-none" />
-      <div className="fixed -bottom-40 right-10 w-[500px] h-[400px] bg-gradient-to-t from-blue-500/10 to-transparent rounded-full blur-3xl pointer-events-none" />
+    <div className="min-h-screen bg-brutal-bg text-slate-100 flex flex-col relative selection:bg-brutal-yellow selection:text-black">
+      {/* Background Dot Matrix */}
+      <div className="fixed inset-0 bg-brutal-grid opacity-30 pointer-events-none" />
 
-      {/* Futuristic Command Header */}
+      {/* Header */}
       <Header backendHealth={backendHealth} onReset={handleReset} hasResult={!!result} />
 
-      {/* Main Studio Container */}
+      {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-7 z-10">
-        {/* Error Notification Alert */}
+        {/* Error Alert */}
         {error && (
-          <div className="mb-6 p-4 rounded-xl bg-rose-950/50 border border-rose-500/40 text-rose-300 flex items-start justify-between gap-3 text-xs font-mono backdrop-blur-md shadow-glow-rose">
+          <div className="mb-6 p-4 rounded-lg bg-brutal-pink text-white border-2 border-black flex items-start justify-between gap-3 text-xs font-mono font-bold shadow-brutal">
             <div className="flex items-center gap-2.5">
-              <AlertCircle className="w-5 h-5 text-rose-400 flex-shrink-0" />
+              <AlertCircle className="w-5 h-5 flex-shrink-0 stroke-[2.5]" />
               <span>{error}</span>
             </div>
             <button
               onClick={() => setError(null)}
-              className="text-rose-400 hover:text-white underline cursor-pointer font-bold"
+              className="bg-black text-white px-2 py-0.5 rounded border border-white hover:bg-white hover:text-black transition-colors"
             >
               DISMISS
             </button>
@@ -108,60 +106,61 @@ export default function App() {
         )}
 
         {!result ? (
-          <div className="max-w-4xl mx-auto space-y-6 pt-2 sm:pt-4">
-            {/* Mission Hero Card */}
-            <div className="glass-panel rounded-2xl p-7 sm:p-8 relative overflow-hidden shadow-2xl">
-              <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
-              
+          <div className="max-w-4xl mx-auto space-y-6 pt-2">
+            {/* Mission Hero Banner */}
+            <div className="glass-brutal rounded-xl p-7 sm:p-8 relative overflow-hidden shadow-brutal">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="text-[10px] font-mono font-bold tracking-widest uppercase bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 px-2.5 py-0.5 rounded-full shadow-glow-cyan">
-                      FORENSIC SPECTRAL STUDIO
+                    <span className="px-2.5 py-1 rounded bg-brutal-yellow text-black font-mono font-black text-xs border border-black shadow-brutal-sm">
+                      AI IMAGE FORENSICS
                     </span>
-                    <span className="text-[10px] font-mono text-slate-400">
+                    <span className="text-xs font-mono font-bold text-slate-400">
                       RFC 2D-FFT SPECIFICATION
                     </span>
                   </div>
 
-                  <h2 className="text-3xl sm:text-4xl font-black font-mono tracking-tight text-white leading-tight">
-                    Frequency Domain <span className="text-cyan-400">AI Detector</span>
-                  </h2>
+                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black font-mono tracking-tight text-white leading-tight">
+                    Frequency Domain <span className="text-brutal-yellow underline underline-offset-4 decoration-4">AI Detector</span>
+                  </h1>
 
-                  <p className="text-xs sm:text-sm text-slate-300 mt-2 max-w-xl leading-relaxed">
+                  <p className="text-xs sm:text-sm text-slate-300 font-mono mt-3 max-w-xl leading-relaxed">
                     Computes 2D Fourier log-magnitude harmonic decay ($\log(1+|F(u,v)|)$) to detect generative latent diffusion VAE upsampling artifacts across Midjourney, ChatGPT (DALL-E 3), Gemini (Imagen 3), and SDXL.
                   </p>
                 </div>
 
-                <div className="hidden md:flex flex-col items-end text-right font-mono text-xs text-slate-400 border-l border-white/[0.1] pl-6 space-y-1">
-                  <span className="text-white font-bold flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                <div className="hidden md:flex flex-col items-end text-right font-mono text-xs text-slate-400 border-l-2 border-brutal-border pl-6 space-y-1.5">
+                  <span className="px-2 py-1 rounded bg-black border border-brutal-border text-white font-bold">
                     Multi-Spectral Pipeline
                   </span>
-                  <span>40-Dim FFT Harmonics</span>
-                  <span className="text-cyan-400 font-bold">0ms Cloud Latency</span>
+                  <span className="px-2 py-1 rounded bg-black border border-brutal-border text-slate-300">
+                    40-Dim FFT Harmonics
+                  </span>
+                  <span className="px-2 py-1 rounded bg-brutal-green text-black font-black border border-black shadow-brutal-sm">
+                    0ms Cloud Latency
+                  </span>
                 </div>
               </div>
             </div>
 
-            {/* Drag & Drop Upload Zone */}
+            {/* Dropzone */}
             <Dropzone
               onFileSelected={handleFileSelected}
               loading={loading}
               currentPreview={imagePreview}
             />
 
-            {/* 1-Click Instant Benchmark Presets */}
+            {/* Benchmark Presets */}
             <SamplePresets
               onSelectSample={handleFileSelected}
               disabled={loading}
             />
 
-            {/* Architecture Explainer Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
-              <div className="glass-panel glass-panel-hover rounded-xl p-4">
-                <div className="text-[10px] font-mono text-cyan-400 uppercase tracking-wider mb-1.5 font-bold flex items-center gap-1.5">
-                  <Radio className="w-3.5 h-3.5" />
+            {/* Explainer 3-Column Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+              <div className="glass-brutal-card rounded-lg p-4">
+                <div className="text-xs font-mono font-black text-brutal-cyan uppercase mb-1 flex items-center gap-1.5">
+                  <Radio className="w-4 h-4 stroke-[2.5]" />
                   01. 2D Fourier Matrix
                 </div>
                 <p className="text-xs text-slate-300 font-mono leading-relaxed">
@@ -169,9 +168,9 @@ export default function App() {
                 </p>
               </div>
 
-              <div className="glass-panel glass-panel-hover rounded-xl p-4">
-                <div className="text-[10px] font-mono text-emerald-400 uppercase tracking-wider mb-1.5 font-bold flex items-center gap-1.5">
-                  <Shield className="w-3.5 h-3.5" />
+              <div className="glass-brutal-card rounded-lg p-4">
+                <div className="text-xs font-mono font-black text-brutal-green uppercase mb-1 flex items-center gap-1.5">
+                  <Shield className="w-4 h-4 stroke-[2.5]" />
                   02. Azimuthal Decay
                 </div>
                 <p className="text-xs text-slate-300 font-mono leading-relaxed">
@@ -179,9 +178,9 @@ export default function App() {
                 </p>
               </div>
 
-              <div className="glass-panel glass-panel-hover rounded-xl p-4">
-                <div className="text-[10px] font-mono text-purple-400 uppercase tracking-wider mb-1.5 font-bold flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5" />
+              <div className="glass-brutal-card rounded-lg p-4">
+                <div className="text-xs font-mono font-black text-brutal-purple uppercase mb-1 flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4 stroke-[2.5]" />
                   03. Cloud Consensus
                 </div>
                 <p className="text-xs text-slate-300 font-mono leading-relaxed">
@@ -199,11 +198,11 @@ export default function App() {
         )}
       </main>
 
-      {/* Cyber Footer */}
-      <footer className="border-t border-white/[0.08] bg-space-950/90 py-4 text-center text-xs text-slate-500 font-mono z-10">
+      {/* Footer */}
+      <footer className="border-t-2 border-brutal-border bg-black/90 py-4 text-center text-xs text-slate-400 font-mono z-10">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>THE EYES STUDIO • FORENSIC 2D FFT AI CLASSIFIER</span>
-          <span className="text-slate-400">FastAPI • Scikit-Learn • React • Vite • Tailwind</span>
+          <span className="font-bold text-white">THE EYES 2.0 • MINIMALIST NEO-BRUTALISM + GLASSMORPHISM</span>
+          <span>FastAPI • Scikit-Learn • React • Vite • Tailwind CSS</span>
         </div>
       </footer>
     </div>
