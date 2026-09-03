@@ -80,9 +80,9 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-brutal-bg text-white flex flex-col relative selection:bg-brutal-yellow selection:text-black">
+    <div className="min-h-screen bg-[#050508] text-white flex flex-col relative selection:bg-[#FFE600] selection:text-black">
       {/* Background Dot Matrix */}
-      <div className="fixed inset-0 bg-brutal-grid opacity-35 pointer-events-none" />
+      <div className="fixed inset-0 bg-brutal-grid opacity-30 pointer-events-none" />
 
       {/* Header */}
       <Header backendHealth={backendHealth} onReset={handleReset} hasResult={!!result} />
@@ -91,7 +91,7 @@ export default function App() {
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-7 z-10">
         {/* Error Alert */}
         {error && (
-          <div className="mb-6 p-4 rounded-xl bg-brutal-pink text-white border-2 border-white flex items-start justify-between gap-3 text-xs font-mono font-black shadow-[4px_4px_0px_#FFFFFF]">
+          <div className="mb-6 p-4 rounded-xl bg-[#FF2E63] text-white border-2 border-white flex items-start justify-between gap-3 text-xs font-mono font-black shadow-[4px_4px_0px_#FFFFFF]">
             <div className="flex items-center gap-2.5">
               <AlertCircle className="w-5 h-5 flex-shrink-0 stroke-[3]" />
               <span>{error}</span>
@@ -112,31 +112,31 @@ export default function App() {
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="px-3 py-1 rounded bg-brutal-yellow text-black font-mono font-black text-xs border-2 border-black shadow-[2px_2px_0px_#FFFFFF]">
+                    <span className="px-3 py-1 rounded bg-[#FFE600] text-black font-mono font-black text-xs border-2 border-black shadow-[2px_2px_0px_#FFFFFF]">
                       AI IMAGE FORENSICS
                     </span>
-                    <span className="text-xs font-mono font-bold text-white">
+                    <span className="px-3 py-1 rounded bg-[#181824] text-white font-mono font-black text-xs border-2 border-white shadow-[2px_2px_0px_#000000]">
                       RFC 2D-FFT SPECIFICATION
                     </span>
                   </div>
 
                   <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black font-mono tracking-tight text-white leading-tight">
-                    Frequency Domain <span className="text-brutal-yellow underline underline-offset-4 decoration-4">AI Detector</span>
+                    Frequency Domain <span className="text-[#FFE600] underline underline-offset-4 decoration-4">AI Detector</span>
                   </h1>
 
-                  <p className="text-xs sm:text-sm text-slate-100 font-mono mt-3 max-w-xl leading-relaxed font-medium">
-                    Computes 2D Fourier log-magnitude harmonic decay ($\log(1+|F(u,v)|)$) to detect generative latent diffusion VAE upsampling artifacts across Midjourney, ChatGPT (DALL-E 3), Gemini (Imagen 3), and SDXL.
+                  <p className="text-xs sm:text-sm text-slate-100 font-mono mt-3 max-w-xl leading-relaxed font-bold">
+                    Computes 2D Fourier log-magnitude harmonic decay to isolate generative latent diffusion VAE upsampling artifacts across Midjourney, ChatGPT (DALL-E 3), Gemini (Imagen 3), and SDXL.
                   </p>
                 </div>
 
                 <div className="hidden md:flex flex-col items-end text-right font-mono text-xs text-white border-l-2 border-white/40 pl-6 space-y-2">
-                  <span className="px-2.5 py-1 rounded bg-black border-2 border-white font-black shadow-brutal-sm">
+                  <span className="px-3 py-1.5 rounded bg-[#181824] border-2 border-white text-white font-black shadow-brutal-sm">
                     Multi-Spectral Pipeline
                   </span>
-                  <span className="px-2.5 py-1 rounded bg-black border-2 border-white text-slate-200 font-bold shadow-brutal-sm">
+                  <span className="px-3 py-1.5 rounded bg-[#181824] border-2 border-white text-white font-black shadow-brutal-sm">
                     40-Dim FFT Harmonics
                   </span>
-                  <span className="px-2.5 py-1 rounded bg-brutal-green text-black font-black border-2 border-black shadow-[2px_2px_0px_#FFFFFF]">
+                  <span className="px-3 py-1.5 rounded bg-[#00F5A0] text-black font-black border-2 border-black shadow-[2px_2px_0px_#FFFFFF]">
                     0ms Cloud Latency
                   </span>
                 </div>
@@ -158,32 +158,32 @@ export default function App() {
 
             {/* Explainer 3-Column Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-              <div className="glass-brutal-card rounded-xl p-4">
-                <div className="text-xs font-mono font-black text-brutal-cyan uppercase mb-1.5 flex items-center gap-1.5">
+              <div className="glass-brutal-card rounded-xl p-4.5 border-2 border-[#00F0FF] bg-[#0A141A]">
+                <div className="text-xs font-mono font-black text-[#00F0FF] uppercase mb-1.5 flex items-center gap-1.5">
                   <Radio className="w-4 h-4 stroke-[3]" />
                   01. 2D Fourier Matrix
                 </div>
-                <p className="text-xs text-slate-200 font-mono leading-relaxed font-medium">
+                <p className="text-xs text-white font-mono leading-relaxed font-bold">
                   Translates spatial RGB pixels into continuous 2D frequency harmonics.
                 </p>
               </div>
 
-              <div className="glass-brutal-card rounded-xl p-4">
-                <div className="text-xs font-mono font-black text-brutal-green uppercase mb-1.5 flex items-center gap-1.5">
+              <div className="glass-brutal-card rounded-xl p-4.5 border-2 border-[#00F5A0] bg-[#0A1A14]">
+                <div className="text-xs font-mono font-black text-[#00F5A0] uppercase mb-1.5 flex items-center gap-1.5">
                   <Shield className="w-4 h-4 stroke-[3]" />
                   02. Azimuthal Decay
                 </div>
-                <p className="text-xs text-slate-200 font-mono leading-relaxed font-medium">
+                <p className="text-xs text-white font-mono leading-relaxed font-bold">
                   Isolates abnormal high-frequency shelves characteristic of neural latent decoders.
                 </p>
               </div>
 
-              <div className="glass-brutal-card rounded-xl p-4">
-                <div className="text-xs font-mono font-black text-brutal-purple uppercase mb-1.5 flex items-center gap-1.5">
+              <div className="glass-brutal-card rounded-xl p-4.5 border-2 border-[#B066FF] bg-[#140A1A]">
+                <div className="text-xs font-mono font-black text-[#B066FF] uppercase mb-1.5 flex items-center gap-1.5">
                   <Sparkles className="w-4 h-4 stroke-[3]" />
                   03. Cloud Consensus
                 </div>
-                <p className="text-xs text-slate-200 font-mono leading-relaxed font-medium">
+                <p className="text-xs text-white font-mono leading-relaxed font-bold">
                   Side-by-side consensus validation with Sightengine GenAI enterprise endpoint.
                 </p>
               </div>
@@ -199,10 +199,10 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t-2 border-white bg-black py-4 text-center text-xs text-slate-300 font-mono font-bold z-10">
+      <footer className="border-t-2 border-white bg-black py-4 text-center text-xs text-white font-mono font-black z-10">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <span className="text-white font-black tracking-wide">THE EYES 2.0 • HIGH-CONTRAST NEO-BRUTALISM + GLASSMORPHISM</span>
-          <span>FastAPI • Scikit-Learn • React • Vite • Tailwind CSS</span>
+          <span className="text-[#FFE600]">FastAPI • Scikit-Learn • React • Vite • Tailwind CSS</span>
         </div>
       </footer>
     </div>
