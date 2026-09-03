@@ -49,29 +49,33 @@ export default function ForensicMetrics({ result }) {
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {METRICS.map((metric, idx) => {
         const Icon = metric.icon;
         return (
           <div
             key={idx}
-            className="glass-brutal-card rounded-xl p-4.5 flex flex-col justify-between border-2 border-black dark:border-white shadow-[4px_4px_0px_#000000] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all bg-white dark:bg-[#14141E]"
+            className="glass-brutal-card rounded-xl p-5 sm:p-6 flex flex-col justify-between border-2 border-black dark:border-white shadow-[4px_4px_0px_#000000] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all bg-white dark:bg-[#14141E] min-h-[170px]"
           >
-            <div className="flex items-center justify-between mb-2.5">
+            {/* Top Label & Icon */}
+            <div className="flex items-center justify-between pb-2 border-b border-black/10 dark:border-white/10 mb-3">
               <span className="text-xs font-mono font-black tracking-wider uppercase text-black dark:text-white">
                 {metric.label}
               </span>
               <Icon className="w-5 h-5 text-black dark:text-white stroke-[2.5]" />
             </div>
 
-            <div>
-              <div className="flex items-baseline gap-2 mb-2">
-                <span className="text-3xl sm:text-4xl font-black font-mono text-black dark:text-white tracking-tight">
-                  {metric.value}
-                </span>
-              </div>
-              <div className="flex items-center gap-1.5 mb-2">
-                <span className={`text-[11px] font-mono font-black px-2.5 py-1 rounded border-2 border-black shadow-[2px_2px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF] ${metric.badgeBg}`}>
+            {/* Metric Value */}
+            <div className="my-1">
+              <span className="text-3xl sm:text-4xl font-black font-mono text-black dark:text-white tracking-tight block">
+                {metric.value}
+              </span>
+            </div>
+
+            {/* Status Pill & Subtitle */}
+            <div className="pt-2">
+              <div className="mb-2">
+                <span className={`inline-block text-[11px] font-mono font-black px-2.5 py-1 rounded border-2 border-black shadow-[2px_2px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF] ${metric.badgeBg}`}>
                   {metric.badge}
                 </span>
               </div>

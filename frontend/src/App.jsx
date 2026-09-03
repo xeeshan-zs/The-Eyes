@@ -132,7 +132,7 @@ export default function App() {
         {!result ? (
           <div className="max-w-4xl mx-auto space-y-6 pt-2">
             {/* Mission Hero Banner */}
-            <div className="glass-brutal rounded-xl p-7 sm:p-8 relative overflow-hidden shadow-[8px_8px_0px_#000000]">
+            <div className="glass-brutal rounded-xl p-6 sm:p-8 relative overflow-hidden shadow-[8px_8px_0px_#000000]">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                   <div className="flex items-center gap-2 mb-3">
@@ -181,9 +181,9 @@ export default function App() {
             />
 
             {/* Explainer 3-Column Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-              <div className="glass-brutal-card rounded-xl p-4.5 border-2 border-black dark:border-[#00F0FF] bg-[#F0F9FF] dark:bg-[#0A141A]">
-                <div className="text-xs font-mono font-black text-[#0369A1] dark:text-[#00F0FF] uppercase mb-1.5 flex items-center gap-1.5">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="glass-brutal-card rounded-xl p-5 sm:p-6 border-2 border-black dark:border-[#00F0FF] bg-[#F0F9FF] dark:bg-[#0A141A] flex flex-col justify-between min-h-[140px]">
+                <div className="text-xs font-mono font-black text-[#0369A1] dark:text-[#00F0FF] uppercase mb-2.5 flex items-center gap-2">
                   <Radio className="w-4 h-4 stroke-[3]" />
                   01. 2D Fourier Matrix
                 </div>
@@ -192,8 +192,8 @@ export default function App() {
                 </p>
               </div>
 
-              <div className="glass-brutal-card rounded-xl p-4.5 border-2 border-black dark:border-[#00F5A0] bg-[#ECFDF5] dark:bg-[#0A1A14]">
-                <div className="text-xs font-mono font-black text-[#047857] dark:text-[#00F5A0] uppercase mb-1.5 flex items-center gap-1.5">
+              <div className="glass-brutal-card rounded-xl p-5 sm:p-6 border-2 border-black dark:border-[#00F5A0] bg-[#ECFDF5] dark:bg-[#0A1A14] flex flex-col justify-between min-h-[140px]">
+                <div className="text-xs font-mono font-black text-[#047857] dark:text-[#00F5A0] uppercase mb-2.5 flex items-center gap-2">
                   <Shield className="w-4 h-4 stroke-[3]" />
                   02. Azimuthal Decay
                 </div>
@@ -202,8 +202,8 @@ export default function App() {
                 </p>
               </div>
 
-              <div className="glass-brutal-card rounded-xl p-4.5 border-2 border-black dark:border-[#B066FF] bg-[#FAF5FF] dark:bg-[#140A1A]">
-                <div className="text-xs font-mono font-black text-[#6D28D9] dark:text-[#B066FF] uppercase mb-1.5 flex items-center gap-1.5">
+              <div className="glass-brutal-card rounded-xl p-5 sm:p-6 border-2 border-black dark:border-[#B066FF] bg-[#FAF5FF] dark:bg-[#140A1A] flex flex-col justify-between min-h-[140px]">
+                <div className="text-xs font-mono font-black text-[#6D28D9] dark:text-[#B066FF] uppercase mb-2.5 flex items-center gap-2">
                   <Sparkles className="w-4 h-4 stroke-[3]" />
                   03. Cloud Consensus
                 </div>
