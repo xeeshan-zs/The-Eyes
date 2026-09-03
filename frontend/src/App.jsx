@@ -3,11 +3,13 @@ import Header from './components/Header';
 import Dropzone from './components/Dropzone';
 import SamplePresets from './components/SamplePresets';
 import ResultDashboard from './components/ResultDashboard';
+import AboutPage from './components/AboutPage';
 import { AlertCircle, Radio, Sparkles, Shield } from 'lucide-react';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 export default function App() {
+  const [currentView, setCurrentView] = useState('detector'); // 'detector' | 'about'
   const [file, setFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -80,6 +82,7 @@ export default function App() {
 
       const data = await response.json();
       setResult(data);
+      setCurrentView('detector');
     } catch (err) {
       console.error('Inference error:', err);
       setError(
@@ -95,6 +98,7 @@ export default function App() {
     setImagePreview(null);
     setResult(null);
     setError(null);
+    setCurrentView('detector');
   };
 
   return (
@@ -109,6 +113,8 @@ export default function App() {
         hasResult={!!result}
         theme={theme}
         onToggleTheme={toggleTheme}
+        currentView={currentView}
+        onNavigate={setCurrentView}
       />
 
       {/* Main Container */}
@@ -129,7 +135,10 @@ export default function App() {
           </div>
         )}
 
-        {!result ? (
+        {/* View Routing */}
+        {currentView === 'about' ? (
+          <AboutPage onBackToDetector={() => setCurrentView('detector')} />
+        ) : !result ? (
           <div className="max-w-4xl mx-auto space-y-6 pt-2">
             {/* Mission Hero Banner */}
             <div className="glass-brutal rounded-xl p-6 sm:p-8 relative overflow-hidden shadow-[8px_8px_0px_#000000]">
@@ -225,8 +234,24 @@ export default function App() {
       {/* Footer */}
       <footer className="border-t-2 border-black dark:border-white bg-white dark:bg-black py-4 text-center text-xs text-black dark:text-white font-mono font-black z-10 transition-colors">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span className="font-black tracking-wide">THE EYES 2.0 • HIGH-CONTRAST NEO-BRUTALISM + GLASSMORPHISM</span>
-          <span className="text-[#B45309] dark:text-[#FFE600]">FastAPI • Scikit-Learn • React • Vite • Tailwind CSS</span>
+          <div className="flex items-center gap-3">
+            <span className="font-black tracking-wide">THE EYES 2.0 • BUILT BY XEESHAN</span>
+            <button
+              onClick={() => setCurrentView('about')}
+              className="text-[#0284C7] dark:text-[#00F0FF] underline underline-offset-2 hover:text-black dark:hover:text-white transition-colors"
+            >
+              [ABOUT PROJECT]
+            </button>
+          </div>
+          <a
+            href="https://github.com/xeeshan-zs/The-Eyes"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#B45309] dark:text-[#FFE600] flex items-center gap-1 hover:underline"
+          >
+            <Github className="w-3.5 h-3.5" />
+            <span>github.com/xeeshan-zs/The-Eyes</span>
+          </a>
         </div>
       </footer>
     </div>
