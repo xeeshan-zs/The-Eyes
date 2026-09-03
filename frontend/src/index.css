@@ -4,58 +4,76 @@
 
 @layer base {
   body {
-    background-color: #0A0A0E;
-    color: #F8FAFC;
+    background-color: #050508;
+    color: #FFFFFF;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     overflow-x: hidden;
   }
 }
 
-/* Minimalist Neo-Brutalism + Glassmorphism Fusion */
+/* High-Contrast Neo-Brutalist + Frosted Glass Fusion */
 .glass-brutal {
-  background: rgba(18, 18, 24, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 2px solid #272736;
-  box-shadow: 4px 4px 0px 0px #000000;
+  background: rgba(14, 14, 20, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 2px solid #FFFFFF;
+  box-shadow: 6px 6px 0px 0px #000000;
 }
 
 .glass-brutal-card {
-  background: rgba(24, 24, 34, 0.65);
-  backdrop-filter: blur(12px);
-  border: 2px solid #272736;
-  box-shadow: 3px 3px 0px 0px #000000;
-}
-
-/* Neo-Brutalist Interactive Button States */
-.btn-brutal {
-  border: 2px solid #000000;
+  background: rgba(20, 20, 30, 0.85);
+  backdrop-filter: blur(16px);
+  border: 2px solid rgba(255, 255, 255, 0.25);
   box-shadow: 4px 4px 0px 0px #000000;
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.btn-brutal:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px 0px #000000;
-}
-.btn-brutal:active {
-  transform: translate(2px, 2px);
-  box-shadow: 1px 1px 0px 0px #000000;
 }
 
-/* Neo-Brutalist Card Hover */
-.card-brutal-hover {
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.card-brutal-hover:hover {
-  transform: translate(-2px, -2px);
+.glass-brutal-card:hover {
   border-color: #FFE600;
+  box-shadow: 4px 4px 0px 0px #FFE600;
+}
+
+/* Tactile Neo-Brutalist Interactive Buttons */
+.btn-brutal-yellow {
+  background-color: #FFE600;
+  color: #000000;
+  font-weight: 900;
+  border: 2px solid #000000;
+  box-shadow: 4px 4px 0px 0px #FFFFFF;
+  transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-brutal-yellow:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px 0px #FFFFFF;
+}
+.btn-brutal-yellow:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px 0px #FFFFFF;
+}
+
+.btn-brutal-dark {
+  background-color: #14141E;
+  color: #FFFFFF;
+  font-weight: 700;
+  border: 2px solid #FFFFFF;
+  box-shadow: 4px 4px 0px 0px #000000;
+  transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-brutal-dark:hover {
+  background-color: #20202E;
+  border-color: #FFE600;
+  color: #FFE600;
+  transform: translate(-2px, -2px);
   box-shadow: 6px 6px 0px 0px #FFE600;
 }
+.btn-brutal-dark:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px 0px #FFE600;
+}
 
-/* Geometric Dot Matrix Grid */
+/* Geometric High-Contrast Grid */
 .bg-brutal-grid {
-  background-size: 24px 24px;
-  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.08) 1.5px, transparent 1.5px);
+  background-size: 28px 28px;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.12) 1.5px, transparent 1.5px);
 }
 
 /* Custom Scrollbars */
@@ -64,12 +82,12 @@
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0A0A0E;
+  background: #050508;
 }
 ::-webkit-scrollbar-thumb {
-  background: #272736;
+  background: #FFE600;
   border: 1px solid #000000;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #FFE600;
+  background: #00F5A0;
 }

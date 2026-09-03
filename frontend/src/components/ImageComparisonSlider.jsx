@@ -46,21 +46,21 @@ export default function ImageComparisonSlider({ originalImage, fftImage, filenam
   }, []);
 
   return (
-    <div className="glass-brutal rounded-xl p-5 flex flex-col shadow-brutal">
+    <div className="glass-brutal rounded-xl p-5 flex flex-col shadow-[6px_6px_0px_#000000]">
       {/* Header */}
-      <div className="flex items-center justify-between pb-3.5 mb-4 border-b-2 border-brutal-border">
+      <div className="flex items-center justify-between pb-3.5 mb-4 border-b-2 border-white/20">
         <div className="flex items-center gap-2">
-          <span className="px-2 py-0.5 rounded bg-brutal-yellow text-black font-mono font-black text-xs border border-black shadow-brutal-sm">
+          <span className="px-2.5 py-0.5 rounded bg-brutal-yellow text-black font-mono font-black text-xs border border-black shadow-[2px_2px_0px_#FFFFFF]">
             SPLIT LENS
           </span>
-          <span className="text-xs font-mono font-bold text-white uppercase">
+          <span className="text-xs font-mono font-black text-white uppercase tracking-wide">
             Spatial Pixel Domain ↔ 2D FFT Harmonics
           </span>
         </div>
 
         {/* Live Coordinate Badge */}
-        <div className="flex items-center gap-1.5 font-mono text-xs bg-black px-2.5 py-1 rounded border-2 border-brutal-border text-slate-200">
-          <Crosshair className="w-3.5 h-3.5 text-brutal-cyan stroke-[2.5]" />
+        <div className="flex items-center gap-1.5 font-mono text-xs font-bold bg-black px-3 py-1 rounded border-2 border-white text-white shadow-brutal-sm">
+          <Crosshair className="w-4 h-4 text-brutal-yellow stroke-[3]" />
           <span>FREQ: u={coords.u >= 0 ? `+${coords.u}` : coords.u}, v={coords.v >= 0 ? `+${coords.v}` : coords.v}</span>
         </div>
       </div>
@@ -72,7 +72,7 @@ export default function ImageComparisonSlider({ originalImage, fftImage, filenam
         onTouchStart={() => setIsDragging(true)}
         onMouseMove={handleMouseMove}
         onTouchMove={handleTouchMove}
-        className="relative aspect-[16/10] sm:aspect-[16/9] w-full rounded-lg overflow-hidden bg-black border-2 border-black cursor-ew-resize select-none shadow-brutal"
+        className="relative aspect-[16/10] sm:aspect-[16/9] w-full rounded-lg overflow-hidden bg-black border-2 border-white cursor-ew-resize select-none shadow-brutal"
       >
         {/* Under Layer: FFT Spectrum */}
         <div className="absolute inset-0 flex items-center justify-center bg-black">
@@ -81,7 +81,7 @@ export default function ImageComparisonSlider({ originalImage, fftImage, filenam
             alt="2D FFT Spectrum"
             className="w-full h-full object-contain pointer-events-none"
           />
-          <div className="absolute top-3 right-3 bg-black/90 backdrop-blur-md px-2.5 py-1 rounded border-2 border-black text-[10px] font-mono font-bold text-brutal-cyan shadow-brutal-sm">
+          <div className="absolute top-3 right-3 bg-black/95 backdrop-blur-md px-3 py-1.5 rounded border-2 border-white text-xs font-mono font-black text-brutal-cyan shadow-brutal-sm">
             2D FFT log(1+|F(u,v)|)
           </div>
         </div>
@@ -98,26 +98,26 @@ export default function ImageComparisonSlider({ originalImage, fftImage, filenam
               className="w-full h-full object-contain pointer-events-none"
             />
           </div>
-          <div className="absolute top-3 left-3 bg-black/90 backdrop-blur-md px-2.5 py-1 rounded border-2 border-black text-[10px] font-mono font-bold text-brutal-green shadow-brutal-sm">
+          <div className="absolute top-3 left-3 bg-black/95 backdrop-blur-md px-3 py-1.5 rounded border-2 border-white text-xs font-mono font-black text-brutal-green shadow-brutal-sm">
             Spatial Domain (RGB)
           </div>
         </div>
 
-        {/* Neo-Brutalist Divider Beam & Handle */}
+        {/* Divider Beam & Handle */}
         <div
-          className="absolute top-0 bottom-0 w-[3px] bg-brutal-yellow shadow-[0_0_10px_#FFE600] z-20 pointer-events-none"
+          className="absolute top-0 bottom-0 w-[3px] bg-brutal-yellow shadow-[0_0_15px_#FFE600] z-20 pointer-events-none"
           style={{ left: `${sliderPosition}%` }}
         >
-          <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 rounded bg-brutal-yellow border-2 border-black shadow-brutal-sm flex items-center justify-center text-black font-mono font-black text-xs">
+          <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-9 h-9 rounded-md bg-brutal-yellow border-2 border-black shadow-[3px_3px_0px_#FFFFFF] flex items-center justify-center text-black font-mono font-black text-sm">
             ↔
           </div>
         </div>
       </div>
 
       {/* Footer Instructions */}
-      <div className="mt-3 pt-3 border-t-2 border-brutal-border flex items-center justify-between text-xs font-mono text-slate-400">
+      <div className="mt-3 pt-3 border-t-2 border-white/20 flex items-center justify-between text-xs font-mono text-slate-300">
         <span>Click &amp; drag horizontally across canvas</span>
-        <span className="font-bold text-slate-200">Position: {Math.round(sliderPosition)}%</span>
+        <span className="font-black text-brutal-yellow">Position: {Math.round(sliderPosition)}%</span>
       </div>
     </div>
   );

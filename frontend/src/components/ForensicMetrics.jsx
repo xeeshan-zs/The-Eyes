@@ -55,27 +55,27 @@ export default function ForensicMetrics({ result }) {
         return (
           <div
             key={idx}
-            className="glass-brutal-card rounded-xl p-4 flex flex-col justify-between hover:translate-x-[-1px] hover:translate-y-[-1px] transition-transform"
+            className="glass-brutal-card rounded-xl p-4 flex flex-col justify-between hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
           >
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-mono font-black tracking-wider uppercase text-slate-400">
+              <span className="text-xs font-mono font-black tracking-wider uppercase text-slate-200">
                 {metric.label}
               </span>
-              <Icon className="w-4 h-4 text-slate-300 stroke-[2.5]" />
+              <Icon className="w-4 h-4 text-white stroke-[2.5]" />
             </div>
 
             <div>
-              <div className="flex items-baseline gap-2 mb-1">
-                <span className="text-2xl font-black font-mono text-white tracking-tight">
+              <div className="flex items-baseline gap-2 mb-1.5">
+                <span className="text-3xl font-black font-mono text-white tracking-tight">
                   {metric.value}
                 </span>
               </div>
               <div className="flex items-center gap-1.5 mb-1.5">
-                <span className={`text-[9px] font-mono font-black px-1.5 py-0.5 rounded border border-black shadow-brutal-sm ${metric.color}`}>
+                <span className={`text-[10px] font-mono font-black px-2 py-0.5 rounded border border-black shadow-[2px_2px_0px_#FFFFFF] ${metric.color}`}>
                   {metric.badge}
                 </span>
               </div>
-              <p className="text-[11px] font-mono text-slate-400 truncate">
+              <p className="text-xs font-mono text-slate-300 font-medium truncate">
                 {metric.desc}
               </p>
             </div>

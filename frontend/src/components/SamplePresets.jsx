@@ -15,7 +15,7 @@ function createSampleCanvasImage(type) {
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, 384, 384);
 
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.18)';
     ctx.lineWidth = 1.5;
     for (let i = 0; i < 25; i++) {
       ctx.beginPath();
@@ -30,7 +30,7 @@ function createSampleCanvasImage(type) {
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, 384, 384);
 
-    ctx.fillStyle = 'rgba(255, 235, 210, 0.35)';
+    ctx.fillStyle = 'rgba(255, 235, 210, 0.4)';
     ctx.beginPath();
     ctx.arc(160, 160, 95, 0, Math.PI * 2);
     ctx.fill();
@@ -63,8 +63,8 @@ function createSampleCanvasImage(type) {
       ctx.stroke();
     }
     const grad = ctx.createRadialGradient(192, 192, 10, 192, 192, 130);
-    grad.addColorStop(0, 'rgba(168, 85, 247, 0.8)');
-    grad.addColorStop(1, 'rgba(255, 46, 99, 0.15)');
+    grad.addColorStop(0, 'rgba(176, 102, 255, 0.85)');
+    grad.addColorStop(1, 'rgba(255, 46, 99, 0.2)');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, 384, 384);
   } else if (type === 'ai_midjourney') {
@@ -74,7 +74,7 @@ function createSampleCanvasImage(type) {
     for (let x = 0; x < 384; x += 8) {
       for (let y = 0; y < 384; y += 8) {
         if ((x + y) % 16 === 0) {
-          ctx.fillStyle = 'rgba(255, 100, 150, 0.4)';
+          ctx.fillStyle = 'rgba(255, 100, 150, 0.5)';
           ctx.fillRect(x, y, 4, 4);
         }
       }
@@ -140,17 +140,17 @@ export default function SamplePresets({ onSelectSample, disabled }) {
   };
 
   return (
-    <div className="glass-brutal rounded-xl p-5 shadow-brutal">
+    <div className="glass-brutal rounded-xl p-5 shadow-[6px_6px_0px_#000000]">
       <div className="flex items-center justify-between mb-3.5">
         <div className="flex items-center gap-2">
-          <span className="px-2 py-0.5 rounded bg-brutal-yellow text-black font-mono font-black text-xs border border-black shadow-brutal-sm">
-            PRESETS
+          <span className="px-2.5 py-0.5 rounded bg-brutal-yellow text-black font-mono font-black text-xs border border-black shadow-[2px_2px_0px_#FFFFFF]">
+            BENCHMARKS
           </span>
-          <span className="text-xs font-mono font-bold text-white uppercase">
+          <span className="text-xs font-mono font-black text-white uppercase tracking-wide">
             1-Click Benchmark Test Suite
           </span>
         </div>
-        <span className="text-[10px] font-mono font-bold text-slate-400">
+        <span className="text-[11px] font-mono font-bold text-slate-300">
           SELECT SAMPLE TO RUN
         </span>
       </div>
@@ -163,13 +163,13 @@ export default function SamplePresets({ onSelectSample, disabled }) {
               key={preset.id}
               onClick={() => handleClick(preset.id)}
               disabled={disabled}
-              className={`p-3.5 rounded-lg border-2 border-black bg-brutal-surface text-left card-brutal-hover flex flex-col justify-between ${
+              className={`p-3.5 rounded-lg border-2 border-white/60 bg-black text-left card-brutal-hover flex flex-col justify-between ${
                 disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
               }`}
             >
-              <div className="flex items-center justify-between mb-2">
-                <Icon className={`w-4 h-4 ${preset.isReal ? 'text-brutal-green' : 'text-brutal-pink'} stroke-[2.5]`} />
-                <span className={`text-[9px] font-mono font-black px-1.5 py-0.5 rounded border border-black shadow-brutal-sm ${
+              <div className="flex items-center justify-between mb-2.5">
+                <Icon className={`w-4 h-4 ${preset.isReal ? 'text-brutal-green' : 'text-brutal-pink'} stroke-[3]`} />
+                <span className={`text-[10px] font-mono font-black px-2 py-0.5 rounded border border-black shadow-[1.5px_1.5px_0px_#FFFFFF] ${
                   preset.isReal ? 'bg-brutal-green text-black' : 'bg-brutal-pink text-white'
                 }`}>
                   {preset.tag}
@@ -177,10 +177,10 @@ export default function SamplePresets({ onSelectSample, disabled }) {
               </div>
 
               <div>
-                <span className="text-xs font-bold text-white block truncate">
+                <span className="text-xs font-black text-white block truncate">
                   {preset.label}
                 </span>
-                <span className="text-[10px] font-mono text-slate-400 block truncate mt-0.5">
+                <span className="text-[10px] font-mono text-slate-300 font-bold block truncate mt-0.5">
                   {preset.provider}
                 </span>
               </div>

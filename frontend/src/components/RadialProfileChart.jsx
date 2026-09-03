@@ -27,44 +27,44 @@ export default function RadialProfileChart({ diagnostics, isFake }) {
   const naturalPath = `M ${naturalPoints}`;
 
   return (
-    <div className="glass-brutal rounded-xl p-5 flex flex-col justify-between shadow-brutal">
+    <div className="glass-brutal rounded-xl p-5 flex flex-col justify-between shadow-[6px_6px_0px_#000000]">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 mb-4 border-b-2 border-brutal-border">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 mb-4 border-b-2 border-white/20">
         <div className="flex items-center gap-2">
-          <span className="px-2 py-0.5 rounded bg-brutal-cyan text-black font-mono font-black text-xs border border-black shadow-brutal-sm">
+          <span className="px-2.5 py-0.5 rounded bg-brutal-cyan text-black font-mono font-black text-xs border border-black shadow-[2px_2px_0px_#FFFFFF]">
             POWER SPECTRUM
           </span>
-          <span className="text-xs font-mono font-bold text-white uppercase">
+          <span className="text-xs font-mono font-black text-white uppercase tracking-wide">
             1D Azimuthal Harmonic Decay ($\log|F(r)|$) vs Natural ($1/f^\alpha$)
           </span>
         </div>
 
         {/* Legend */}
-        <div className="flex items-center gap-4 text-xs font-mono font-bold">
+        <div className="flex items-center gap-4 text-xs font-mono font-black">
           <div className="flex items-center gap-1.5">
-            <span className={`w-3 h-3 rounded border border-black ${isFake ? 'bg-brutal-pink' : 'bg-brutal-green'}`} />
-            <span className="text-slate-200">Sample</span>
+            <span className={`w-3.5 h-3.5 rounded border-2 border-black shadow-[1px_1px_0px_#FFFFFF] ${isFake ? 'bg-brutal-pink' : 'bg-brutal-green'}`} />
+            <span className="text-white">Sample</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-1 bg-slate-400" />
-            <span className="text-slate-400">1/f² Optical Baseline</span>
+            <span className="w-3.5 h-1.5 bg-white border border-black" />
+            <span className="text-slate-300">1/f² Optical Ref</span>
           </div>
         </div>
       </div>
 
       {/* SVG Container */}
-      <div className="relative w-full overflow-hidden bg-black p-2 rounded-lg border-2 border-black">
+      <div className="relative w-full overflow-hidden bg-black p-2 rounded-lg border-2 border-white">
         <svg
           viewBox={`0 0 ${width} ${height}`}
           className="w-full h-auto overflow-visible select-none"
         >
           <defs>
             <linearGradient id="areaGradientFakeBrutal" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#FF2E63" stopOpacity="0.4" />
+              <stop offset="0%" stopColor="#FF2E63" stopOpacity="0.45" />
               <stop offset="100%" stopColor="#FF2E63" stopOpacity="0.0" />
             </linearGradient>
             <linearGradient id="areaGradientRealBrutal" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#00F5A0" stopOpacity="0.4" />
+              <stop offset="0%" stopColor="#00F5A0" stopOpacity="0.45" />
               <stop offset="100%" stopColor="#00F5A0" stopOpacity="0.0" />
             </linearGradient>
           </defs>
@@ -79,15 +79,15 @@ export default function RadialProfileChart({ diagnostics, isFake }) {
                   y1={y}
                   x2={width - padding.right}
                   y2={y}
-                  stroke="#272736"
-                  strokeWidth="1"
+                  stroke="#334155"
+                  strokeWidth="1.5"
                   strokeDasharray="4 4"
                 />
                 <text
                   x={padding.left - 8}
-                  y={y + 3}
+                  y={y + 3.5}
                   textAnchor="end"
-                  className="fill-slate-500 font-mono text-[9.5px] font-bold"
+                  className="fill-white font-mono text-[10px] font-black"
                 >
                   {(1 - ratio).toFixed(2)}
                 </text>
@@ -106,15 +106,15 @@ export default function RadialProfileChart({ diagnostics, isFake }) {
                   x1={x}
                   y1={padding.top + graphHeight}
                   x2={x}
-                  y2={padding.top + graphHeight + 4}
-                  stroke="#475569"
-                  strokeWidth="1.5"
+                  y2={padding.top + graphHeight + 5}
+                  stroke="#FFFFFF"
+                  strokeWidth="2"
                 />
                 <text
                   x={x}
-                  y={padding.top + graphHeight + 16}
+                  y={padding.top + graphHeight + 18}
                   textAnchor="middle"
-                  className="fill-slate-400 font-mono text-[9.5px] font-bold"
+                  className="fill-white font-mono text-[10px] font-black"
                 >
                   {labels[idx]}
                 </text>
@@ -128,16 +128,16 @@ export default function RadialProfileChart({ diagnostics, isFake }) {
             y={padding.top}
             width={graphWidth * 0.35}
             height={graphHeight}
-            fill={isFake ? 'rgba(255, 46, 99, 0.12)' : 'rgba(0, 245, 160, 0.06)'}
+            fill={isFake ? 'rgba(255, 46, 99, 0.18)' : 'rgba(0, 245, 160, 0.10)'}
             stroke={isFake ? '#FF2E63' : '#00F5A0'}
-            strokeWidth="1"
+            strokeWidth="1.5"
             strokeDasharray="3 3"
           />
           <text
             x={padding.left + graphWidth * 0.82}
             y={padding.top + 14}
             textAnchor="middle"
-            className={`font-mono text-[9.5px] uppercase tracking-wider font-black ${
+            className={`font-mono text-[10px] uppercase tracking-wider font-black ${
               isFake ? 'fill-brutal-pink' : 'fill-brutal-green'
             }`}
           >
@@ -148,8 +148,8 @@ export default function RadialProfileChart({ diagnostics, isFake }) {
           <path
             d={naturalPath}
             fill="none"
-            stroke="#94A3B8"
-            strokeWidth="1.5"
+            stroke="#CBD5E1"
+            strokeWidth="2"
             strokeDasharray="4 4"
           />
 
@@ -164,7 +164,7 @@ export default function RadialProfileChart({ diagnostics, isFake }) {
             d={profilePath}
             fill="none"
             stroke={isFake ? '#FF2E63' : '#00F5A0'}
-            strokeWidth="3"
+            strokeWidth="3.5"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
@@ -178,7 +178,7 @@ export default function RadialProfileChart({ diagnostics, isFake }) {
                 x2={getX(hoverIndex)}
                 y2={padding.top + graphHeight}
                 stroke="#FFE600"
-                strokeWidth="1.5"
+                strokeWidth="2"
                 strokeDasharray="2 2"
               />
               <circle
@@ -186,7 +186,7 @@ export default function RadialProfileChart({ diagnostics, isFake }) {
                 cy={getY(profile[hoverIndex])}
                 r="6"
                 className={isFake ? 'fill-brutal-pink' : 'fill-brutal-green'}
-                stroke="#000000"
+                stroke="#FFFFFF"
                 strokeWidth="2"
               />
             </g>
@@ -209,9 +209,9 @@ export default function RadialProfileChart({ diagnostics, isFake }) {
       </div>
 
       {/* Footer */}
-      <div className="mt-3 pt-3 border-t-2 border-brutal-border flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
-        <div className="flex items-center gap-1.5 text-slate-300">
-          <Info className="w-3.5 h-3.5 text-brutal-yellow" />
+      <div className="mt-3 pt-3 border-t-2 border-white/20 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+        <div className="flex items-center gap-1.5 text-white font-medium">
+          <Info className="w-4 h-4 text-brutal-yellow flex-shrink-0" />
           <span>
             {isFake
               ? 'Flattened slope indicates latent diffusion VAE upsampling noise floor.'
@@ -219,7 +219,7 @@ export default function RadialProfileChart({ diagnostics, isFake }) {
           </span>
         </div>
         {hoverIndex !== null && (
-          <div className="bg-brutal-yellow text-black font-black px-2 py-0.5 rounded border border-black shadow-brutal-sm">
+          <div className="bg-brutal-yellow text-black font-black px-2.5 py-1 rounded border-2 border-black shadow-[2px_2px_0px_#FFFFFF]">
             BIN #{hoverIndex}: {(profile[hoverIndex] * 100).toFixed(1)}% Energy
           </div>
         )}

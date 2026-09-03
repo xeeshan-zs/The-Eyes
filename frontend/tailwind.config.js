@@ -9,29 +9,30 @@ export default {
     extend: {
       colors: {
         brutal: {
-          bg: '#0A0A0E',
-          surface: '#121218',
-          card: '#181822',
-          border: '#272736',
+          bg: '#050508',
+          surface: '#0E0E14',
+          card: '#14141E',
+          border: '#38384A',
+          borderLight: '#FFFFFF',
           white: '#FFFFFF',
           yellow: '#FFE600',
           green: '#00F5A0',
           pink: '#FF2E63',
           cyan: '#00F0FF',
-          purple: '#A855F7',
+          purple: '#B066FF',
           orange: '#FF8A00',
         }
       },
       boxShadow: {
         'brutal-sm': '3px 3px 0px 0px #000000',
         'brutal': '5px 5px 0px 0px #000000',
-        'brutal-lg': '7px 7px 0px 0px #000000',
+        'brutal-lg': '8px 8px 0px 0px #000000',
         'brutal-yellow': '5px 5px 0px 0px #FFE600',
         'brutal-green': '5px 5px 0px 0px #00F5A0',
         'brutal-pink': '5px 5px 0px 0px #FF2E63',
         'brutal-cyan': '5px 5px 0px 0px #00F0FF',
         'brutal-white': '5px 5px 0px 0px #FFFFFF',
-        'brutal-border': '4px 4px 0px 0px rgba(255, 255, 255, 0.15)',
+        'brutal-white-sm': '3px 3px 0px 0px #FFFFFF',
       },
       borderWidth: {
         '3': '3px',
