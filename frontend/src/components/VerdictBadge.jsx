@@ -13,27 +13,27 @@ export default function VerdictBadge({ result }) {
   return (
     <div className={`relative overflow-hidden rounded-xl border-3 p-6 sm:p-7 backdrop-blur-2xl transition-all ${
       isFake
-        ? 'bg-[#180A10] border-[#FF2E63] shadow-[8px_8px_0px_#FF2E63]'
-        : 'bg-[#061A12] border-[#00F5A0] shadow-[8px_8px_0px_#00F5A0]'
+        ? 'bg-[#FFF1F2] dark:bg-[#180A10] border-[#FF2E63] shadow-[8px_8px_0px_#000000] dark:shadow-[8px_8px_0px_#FF2E63]'
+        : 'bg-[#ECFDF5] dark:bg-[#061A12] border-[#00F5A0] dark:border-[#00F5A0] shadow-[8px_8px_0px_#000000] dark:shadow-[8px_8px_0px_#00F5A0]'
     }`}>
       {/* Top Banner Tag */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-4 mb-4 border-b-2 border-white/40">
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-4 mb-4 border-b-2 border-black/20 dark:border-white/30">
         <div className="flex items-center gap-2.5">
-          <span className={`px-3.5 py-1.5 rounded-lg border-2 border-black font-mono font-black text-xs uppercase shadow-[2px_2px_0px_#FFFFFF] ${
+          <span className={`px-3.5 py-1.5 rounded-lg border-2 border-black font-mono font-black text-xs uppercase shadow-[2px_2px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF] ${
             isFake ? 'bg-[#FF2E63] text-white' : 'bg-[#00F5A0] text-black'
           }`}>
             {isFake ? '⚠ SYNTHETIC ARTIFACTS ISOLATED' : '✓ AUTHENTIC CAMERA EXPOSURE'}
           </span>
-          <span className="text-xs font-mono font-black text-white">
+          <span className="text-xs font-mono font-black text-black dark:text-white">
             // 2D FOURIER SPECTRAL INFERENCE
           </span>
         </div>
 
         <div className="flex items-center gap-2 font-mono text-xs font-bold">
-          <span className="px-3 py-1 rounded bg-black border-2 border-white text-white font-black">
+          <span className="px-3 py-1 rounded bg-white dark:bg-black border-2 border-black dark:border-white text-black dark:text-white font-black">
             THRESHOLD: 50%
           </span>
-          <span className="px-3 py-1 rounded bg-black border-2 border-white text-[#FFE600] font-black">
+          <span className="px-3 py-1 rounded bg-[#FFE600] text-black border-2 border-black font-black">
             LATENCY: {result.processing_time_ms || 0}ms
           </span>
         </div>
@@ -43,7 +43,7 @@ export default function VerdictBadge({ result }) {
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         {/* Left Headline */}
         <div className="flex items-start gap-4 sm:gap-5">
-          <div className={`p-4 rounded-xl border-2 border-black shadow-[4px_4px_0px_#FFFFFF] flex-shrink-0 ${
+          <div className={`p-4 rounded-xl border-2 border-black shadow-[4px_4px_0px_#000000] dark:shadow-[4px_4px_0px_#FFFFFF] flex-shrink-0 ${
             isFake ? 'bg-[#FF2E63] text-white' : 'bg-[#00F5A0] text-black'
           }`}>
             {isFake ? (
@@ -55,12 +55,12 @@ export default function VerdictBadge({ result }) {
 
           <div>
             <h2 className={`text-4xl sm:text-5xl lg:text-6xl font-black font-mono tracking-tight ${
-              isFake ? 'text-[#FF2E63]' : 'text-[#00F5A0]'
+              isFake ? 'text-[#E11D48] dark:text-[#FF2E63]' : 'text-[#059669] dark:text-[#00F5A0]'
             }`}>
               {isFake ? 'AI-GENERATED' : 'AUTHENTIC / REAL'}
             </h2>
 
-            <p className="text-xs sm:text-sm text-white font-mono mt-2.5 max-w-2xl leading-relaxed font-bold">
+            <p className="text-xs sm:text-sm text-slate-900 dark:text-white font-mono mt-2.5 max-w-2xl leading-relaxed font-bold">
               {isFake
                 ? 'Deconvolution grid harmonics, abnormal slope decay (low alpha), and VAE latent noise shelves isolated in frequency domain.'
                 : 'Continuous 1/f² power-law decay obeying physical camera sensor Poisson-Gaussian exposure statistics.'}
@@ -68,13 +68,13 @@ export default function VerdictBadge({ result }) {
 
             {/* Micro Tags */}
             <div className="flex flex-wrap items-center gap-2 mt-4 text-xs font-mono font-black">
-              <span className="px-3 py-1 rounded bg-[#181824] border-2 border-white text-white shadow-[2px_2px_0px_#000000]">
+              <span className="px-3 py-1 rounded bg-white dark:bg-[#181824] border-2 border-black dark:border-white text-black dark:text-white shadow-[2px_2px_0px_#000000]">
                 SLOPE: α = {alpha}
               </span>
-              <span className="px-3 py-1 rounded bg-[#181824] border-2 border-white text-white shadow-[2px_2px_0px_#000000]">
+              <span className="px-3 py-1 rounded bg-white dark:bg-[#181824] border-2 border-black dark:border-white text-black dark:text-white shadow-[2px_2px_0px_#000000]">
                 HF NOISE SHELF: {hfRatio}%
               </span>
-              <span className="px-3 py-1 rounded bg-[#181824] border-2 border-white text-[#FFE600] shadow-[2px_2px_0px_#000000]">
+              <span className="px-3 py-1 rounded bg-[#FFE600] text-black border-2 border-black shadow-[2px_2px_0px_#000000]">
                 ENTROPY: {Math.round((diagnostics.spectral_entropy || 0.74) * 100)}%
               </span>
             </div>
@@ -82,22 +82,22 @@ export default function VerdictBadge({ result }) {
         </div>
 
         {/* Right Certainty Box */}
-        <div className="bg-black p-5 rounded-xl border-2 border-white shadow-[5px_5px_0px_#FFFFFF] flex flex-col justify-between self-start lg:self-center min-w-[230px]">
-          <span className="text-xs font-mono font-black text-white uppercase tracking-widest mb-1">
+        <div className="bg-white dark:bg-black p-5 rounded-xl border-2 border-black dark:border-white shadow-[5px_5px_0px_#000000] dark:shadow-[5px_5px_0px_#FFFFFF] flex flex-col justify-between self-start lg:self-center min-w-[230px]">
+          <span className="text-xs font-mono font-black text-black dark:text-white uppercase tracking-widest mb-1">
             CERTAINTY SCORE
           </span>
 
           <div className="flex items-baseline gap-2 mb-2">
             <span className={`text-4xl sm:text-5xl font-black font-mono ${
-              isFake ? 'text-[#FF2E63]' : 'text-[#00F5A0]'
+              isFake ? 'text-[#E11D48] dark:text-[#FF2E63]' : 'text-[#059669] dark:text-[#00F5A0]'
             }`}>
               {confidencePercent}%
             </span>
-            <span className="text-xs font-mono font-bold text-white">CONFIDENCE</span>
+            <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">CONFIDENCE</span>
           </div>
 
           {/* Hard Segmented Bar */}
-          <div className="w-full bg-slate-800 h-3.5 rounded border-2 border-white overflow-hidden flex">
+          <div className="w-full bg-slate-200 dark:bg-slate-800 h-3.5 rounded border-2 border-black dark:border-white overflow-hidden flex">
             <div
               className="bg-[#00F5A0] h-full"
               style={{ width: `${isFake ? 100 - confidencePercent : confidencePercent}%` }}
@@ -111,8 +111,8 @@ export default function VerdictBadge({ result }) {
           </div>
 
           <div className="flex justify-between text-xs font-mono font-black mt-2">
-            <span className="text-[#00F5A0]">Real: {isFake ? 100 - confidencePercent : confidencePercent}%</span>
-            <span className="text-[#FF2E63]">Synth: {isFake ? confidencePercent : 100 - confidencePercent}%</span>
+            <span className="text-[#059669] dark:text-[#00F5A0]">Real: {isFake ? 100 - confidencePercent : confidencePercent}%</span>
+            <span className="text-[#E11D48] dark:text-[#FF2E63]">Synth: {isFake ? confidencePercent : 100 - confidencePercent}%</span>
           </div>
         </div>
       </div>

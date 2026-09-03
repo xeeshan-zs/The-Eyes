@@ -7,7 +7,7 @@ export default function ForensicMetrics({ result }) {
   const diagnostics = result.diagnostics || {};
   const alpha = diagnostics.spectral_slope_alpha !== undefined ? diagnostics.spectral_slope_alpha : 1.8;
   const entropy = diagnostics.spectral_entropy !== undefined ? Math.round(diagnostics.spectral_entropy * 100) : 74;
-  const hfRatio = diagnostics.high_freq_ratio !== undefined ? Math.round(diagnostics.high_freq_ratio * 100) : 48;
+  const hfRatio = diagnostics.high_freq_ratio !== undefined ? Math.round(diagnostics.high_freq_ratio * 100) : 45;
   const latency = result.processing_time_ms || 0;
 
   const isAlphaAbnormal = alpha < 1.60;
@@ -55,27 +55,27 @@ export default function ForensicMetrics({ result }) {
         return (
           <div
             key={idx}
-            className="glass-brutal-card rounded-xl p-4.5 flex flex-col justify-between border-2 border-white shadow-[4px_4px_0px_#000000] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
+            className="glass-brutal-card rounded-xl p-4.5 flex flex-col justify-between border-2 border-black dark:border-white shadow-[4px_4px_0px_#000000] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all bg-white dark:bg-[#14141E]"
           >
             <div className="flex items-center justify-between mb-2.5">
-              <span className="text-xs font-mono font-black tracking-wider uppercase text-white">
+              <span className="text-xs font-mono font-black tracking-wider uppercase text-black dark:text-white">
                 {metric.label}
               </span>
-              <Icon className="w-5 h-5 text-white stroke-[2.5]" />
+              <Icon className="w-5 h-5 text-black dark:text-white stroke-[2.5]" />
             </div>
 
             <div>
               <div className="flex items-baseline gap-2 mb-2">
-                <span className="text-3xl sm:text-4xl font-black font-mono text-white tracking-tight">
+                <span className="text-3xl sm:text-4xl font-black font-mono text-black dark:text-white tracking-tight">
                   {metric.value}
                 </span>
               </div>
               <div className="flex items-center gap-1.5 mb-2">
-                <span className={`text-[11px] font-mono font-black px-2.5 py-1 rounded border-2 border-black shadow-[2px_2px_0px_#FFFFFF] ${metric.badgeBg}`}>
+                <span className={`text-[11px] font-mono font-black px-2.5 py-1 rounded border-2 border-black shadow-[2px_2px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF] ${metric.badgeBg}`}>
                   {metric.badge}
                 </span>
               </div>
-              <p className="text-xs font-mono text-white font-bold truncate">
+              <p className="text-xs font-mono text-slate-800 dark:text-slate-200 font-bold truncate">
                 {metric.desc}
               </p>
             </div>

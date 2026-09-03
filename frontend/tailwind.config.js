@@ -10,10 +10,13 @@ export default {
       colors: {
         brutal: {
           bg: '#050508',
+          bgLight: '#F4F4F0',
           surface: '#0E0E14',
+          surfaceLight: '#FFFFFF',
           card: '#14141E',
+          cardLight: '#FFFFFF',
           border: '#38384A',
-          borderLight: '#FFFFFF',
+          borderLight: '#000000',
           white: '#FFFFFF',
           yellow: '#FFE600',
           green: '#00F5A0',

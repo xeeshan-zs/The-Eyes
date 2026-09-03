@@ -58,8 +58,8 @@ export default function Dropzone({ onFileSelected, loading, currentPreview }) {
         onClick={() => !loading && fileInputRef.current?.click()}
         className={`relative group cursor-pointer rounded-xl border-3 border-dashed transition-all duration-150 overflow-hidden ${
           isDragOver
-            ? 'border-[#FFE600] bg-black shadow-[6px_6px_0px_#FFE600] translate-x-[-2px] translate-y-[-2px]'
-            : 'border-white bg-[#0E0E14] hover:border-[#FFE600] hover:bg-black shadow-[6px_6px_0px_#000000]'
+            ? 'border-black dark:border-[#FFE600] bg-[#FFFBEB] dark:bg-black shadow-[6px_6px_0px_#FFE600] translate-x-[-2px] translate-y-[-2px]'
+            : 'border-black dark:border-white bg-white dark:bg-[#0E0E14] hover:bg-[#FFFBEB] dark:hover:bg-black shadow-[6px_6px_0px_#000000]'
         }`}
       >
         <input
@@ -72,40 +72,40 @@ export default function Dropzone({ onFileSelected, loading, currentPreview }) {
 
         {/* Loading Overlay */}
         {loading && (
-          <div className="absolute inset-0 z-30 pointer-events-none bg-black/95 backdrop-blur-md flex flex-col items-center justify-center">
-            <div className="w-14 h-14 rounded-xl bg-[#FFE600] border-2 border-black shadow-[4px_4px_0px_#FFFFFF] flex items-center justify-center animate-bounce mb-3">
+          <div className="absolute inset-0 z-30 pointer-events-none bg-white/95 dark:bg-black/95 backdrop-blur-md flex flex-col items-center justify-center">
+            <div className="w-14 h-14 rounded-xl bg-[#FFE600] border-2 border-black shadow-[4px_4px_0px_#000000] dark:shadow-[4px_4px_0px_#FFFFFF] flex items-center justify-center animate-bounce mb-3">
               <Sparkles className="w-7 h-7 text-black stroke-[3]" />
             </div>
-            <span className="text-base font-mono font-black tracking-wider text-white">
+            <span className="text-base font-mono font-black tracking-wider text-black dark:text-white">
               EXTRACTING 2D FOURIER HARMONICS...
             </span>
-            <span className="text-xs font-mono font-black text-[#FFE600] mt-1">
+            <span className="text-xs font-mono font-black text-[#059669] dark:text-[#FFE600] mt-1">
               Evaluating Multi-Spectral Classifier Pipeline
             </span>
           </div>
         )}
 
         <div className="p-10 sm:p-12 flex flex-col items-center justify-center text-center">
-          {/* High-Visibility Upload Icon Box */}
-          <div className="w-16 h-16 mb-4 rounded-xl bg-[#FFE600] border-2 border-black shadow-[4px_4px_0px_#FFFFFF] flex items-center justify-center text-black group-hover:translate-x-[-2px] group-hover:translate-y-[-2px] transition-transform">
+          {/* Upload Icon Box */}
+          <div className="w-16 h-16 mb-4 rounded-xl bg-[#FFE600] border-2 border-black shadow-[4px_4px_0px_#000000] dark:shadow-[4px_4px_0px_#FFFFFF] flex items-center justify-center text-black group-hover:translate-x-[-2px] group-hover:translate-y-[-2px] transition-transform">
             <UploadCloud className="w-9 h-9 text-black stroke-[3]" />
           </div>
 
-          <h3 className="text-xl sm:text-2xl font-black text-white mb-2 font-mono tracking-tight">
-            DROP IMAGE FILE HERE OR <span className="text-[#FFE600] underline underline-offset-4 decoration-4">BROWSE DISK</span>
+          <h3 className="text-xl sm:text-2xl font-black text-black dark:text-white mb-2 font-mono tracking-tight">
+            DROP IMAGE FILE HERE OR <span className="underline underline-offset-4 decoration-4 text-black dark:text-[#FFE600]">BROWSE DISK</span>
           </h3>
-          <p className="text-xs sm:text-sm text-slate-100 font-mono max-w-md mb-5 font-bold">
-            Supports PNG, JPEG, WEBP. Paste anywhere with <kbd className="px-2.5 py-0.5 rounded bg-white text-black font-black border-2 border-black shadow-[1px_1px_0px_#FFE600]">CTRL+V</kbd>
+          <p className="text-xs sm:text-sm text-slate-800 dark:text-slate-100 font-mono max-w-md mb-5 font-bold">
+            Supports PNG, JPEG, WEBP. Paste anywhere with <kbd className="px-2.5 py-0.5 rounded bg-black text-white dark:bg-white dark:text-black font-black border-2 border-black shadow-[1px_1px_0px_#FFE600]">CTRL+V</kbd>
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-2.5 text-xs font-mono font-black text-white">
-            <span className="px-3 py-1 rounded bg-[#181824] text-white border-2 border-white shadow-[2px_2px_0px_#000000]">
+          <div className="flex flex-wrap items-center justify-center gap-2.5 text-xs font-mono font-black">
+            <span className="px-3 py-1 rounded bg-slate-100 dark:bg-[#181824] text-black dark:text-white border-2 border-black dark:border-white shadow-[2px_2px_0px_#000000]">
               2D FFT Spectrum
             </span>
-            <span className="px-3 py-1 rounded bg-[#181824] text-white border-2 border-white shadow-[2px_2px_0px_#000000]">
+            <span className="px-3 py-1 rounded bg-slate-100 dark:bg-[#181824] text-black dark:text-white border-2 border-black dark:border-white shadow-[2px_2px_0px_#000000]">
               Multi-Spectral Features
             </span>
-            <span className="px-3 py-1 rounded bg-[#00F5A0] text-black border-2 border-black shadow-[2px_2px_0px_#FFFFFF]">
+            <span className="px-3 py-1 rounded bg-[#00F5A0] text-black border-2 border-black shadow-[2px_2px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF]">
               0ms Cloud Egress
             </span>
           </div>

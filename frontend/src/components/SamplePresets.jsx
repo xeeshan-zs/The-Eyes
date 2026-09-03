@@ -143,14 +143,14 @@ export default function SamplePresets({ onSelectSample, disabled }) {
     <div className="glass-brutal rounded-xl p-5 shadow-[6px_6px_0px_#000000]">
       <div className="flex items-center justify-between mb-3.5">
         <div className="flex items-center gap-2">
-          <span className="px-3 py-1 rounded bg-[#FFE600] text-black font-mono font-black text-xs border-2 border-black shadow-[2px_2px_0px_#FFFFFF]">
+          <span className="px-3 py-1 rounded bg-[#FFE600] text-black font-mono font-black text-xs border-2 border-black shadow-[2px_2px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF]">
             BENCHMARKS
           </span>
-          <span className="text-xs font-mono font-black text-white uppercase tracking-wide">
+          <span className="text-xs font-mono font-black text-black dark:text-white uppercase tracking-wide">
             1-Click Benchmark Test Suite
           </span>
         </div>
-        <span className="text-[11px] font-mono font-black text-[#FFE600]">
+        <span className="text-[11px] font-mono font-black text-black dark:text-[#FFE600]">
           SELECT SAMPLE TO RUN
         </span>
       </div>
@@ -165,13 +165,13 @@ export default function SamplePresets({ onSelectSample, disabled }) {
               disabled={disabled}
               className={`p-3.5 rounded-lg border-2 text-left transition-all ${
                 preset.isReal
-                  ? 'bg-[#0A1610] border-[#00F5A0] shadow-[3px_3px_0px_#000000] hover:shadow-[4px_4px_0px_#00F5A0] hover:translate-x-[-1px] hover:translate-y-[-1px]'
-                  : 'bg-[#180A10] border-[#FF2E63] shadow-[3px_3px_0px_#000000] hover:shadow-[4px_4px_0px_#FF2E63] hover:translate-x-[-1px] hover:translate-y-[-1px]'
+                  ? 'bg-[#ECFDF5] dark:bg-[#0A1610] border-black dark:border-[#00F5A0] shadow-[3px_3px_0px_#000000] hover:translate-x-[-1px] hover:translate-y-[-1px]'
+                  : 'bg-[#FFF1F2] dark:bg-[#180A10] border-black dark:border-[#FF2E63] shadow-[3px_3px_0px_#000000] hover:translate-x-[-1px] hover:translate-y-[-1px]'
               } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
             >
               <div className="flex items-center justify-between mb-2.5">
-                <Icon className={`w-5 h-5 ${preset.isReal ? 'text-[#00F5A0]' : 'text-[#FF2E63]'} stroke-[3]`} />
-                <span className={`text-[10px] font-mono font-black px-2 py-0.5 rounded border border-black shadow-[1px_1px_0px_#FFFFFF] ${
+                <Icon className={`w-5 h-5 ${preset.isReal ? 'text-[#059669] dark:text-[#00F5A0]' : 'text-[#E11D48] dark:text-[#FF2E63]'} stroke-[3]`} />
+                <span className={`text-[10px] font-mono font-black px-2 py-0.5 rounded border border-black shadow-[1px_1px_0px_#000000] dark:shadow-[1px_1px_0px_#FFFFFF] ${
                   preset.isReal ? 'bg-[#00F5A0] text-black' : 'bg-[#FF2E63] text-white'
                 }`}>
                   {preset.tag}
@@ -179,11 +179,11 @@ export default function SamplePresets({ onSelectSample, disabled }) {
               </div>
 
               <div>
-                <span className="text-xs font-black text-white block truncate">
+                <span className="text-xs font-black text-black dark:text-white block truncate">
                   {preset.label}
                 </span>
-                <span className={`text-[10px] font-mono font-black block truncate mt-0.5 ${
-                  preset.isReal ? 'text-[#A7F3D0]' : 'text-[#FECDD3]'
+                <span className={`text-[10px] font-mono font-bold block truncate mt-0.5 ${
+                  preset.isReal ? 'text-[#047857] dark:text-[#A7F3D0]' : 'text-[#BE123C] dark:text-[#FECDD3]'
                 }`}>
                   {preset.provider}
                 </span>
