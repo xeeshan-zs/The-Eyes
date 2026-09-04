@@ -4,7 +4,8 @@ import Dropzone from './components/Dropzone';
 import SamplePresets from './components/SamplePresets';
 import ResultDashboard from './components/ResultDashboard';
 import AboutPage from './components/AboutPage';
-import { AlertCircle, Radio, Sparkles, Shield, Github } from 'lucide-react';
+import { directNimClientAnalysis } from './services/nimClientFallback';
+import { AlertCircle, Radio, Sparkles, Shield, Github, Zap } from 'lucide-react';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
@@ -66,28 +67,44 @@ export default function App() {
     setImagePreview(previewUrl);
 
     setLoading(true);
+
+    // 1. Attempt Backend Inference
     try {
       const formData = new FormData();
       formData.append('file', selectedFile);
 
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 6000); // 6s timeout for sleeping server
+
       const response = await fetch(`${API_BASE_URL}/predict`, {
         method: 'POST',
         body: formData,
+        signal: controller.signal,
       });
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.detail || `HTTP ${response.status}: Analysis failed.`);
+        throw new Error(errData.detail || `HTTP ${response.status}: Server analysis failed.`);
       }
 
       const data = await response.json();
       setResult(data);
       setCurrentView('detector');
-    } catch (err) {
-      console.error('Inference error:', err);
-      setError(
-        err.message || 'Unable to connect to backend server. Verify FastAPI is active on port 8000.'
-      );
+    } catch (backendErr) {
+      console.warn('Backend offline / unreachable. Triggering Direct-to-NVIDIA NIM Browser Engine:', backendErr);
+
+      // 2. Seamless Direct-to-NVIDIA NIM Browser Fallback
+      try {
+        const directNimData = await directNimClientAnalysis(selectedFile, previewUrl);
+        setResult(directNimData);
+        setCurrentView('detector');
+      } catch (nimErr) {
+        console.error('Direct NIM fallback error:', nimErr);
+        setError(
+          `Backend server is offline, and direct browser inference failed: ${nimErr.message}`
+        );
+      }
     } finally {
       setLoading(false);
     }
@@ -170,7 +187,7 @@ export default function App() {
                     40-Dim FFT Harmonics
                   </span>
                   <span className="px-3 py-1.5 rounded bg-[#00F5A0] text-black font-black border-2 border-black shadow-[2px_2px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF]">
-                    0ms Cloud Latency
+                    Serverless Direct NIM Fallback
                   </span>
                 </div>
               </div>
