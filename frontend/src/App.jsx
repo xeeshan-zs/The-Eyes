@@ -149,17 +149,17 @@ export default function App() {
       />
 
       {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-7 z-10">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-3.5 sm:py-7 z-10">
         {/* Error Alert */}
         {error && (
-          <div className="mb-6 p-4 rounded-xl bg-[#FF2E63] text-white border-2 border-black flex items-start justify-between gap-3 text-xs font-mono font-black shadow-[4px_4px_0px_#000000]">
-            <div className="flex items-center gap-2.5">
-              <AlertCircle className="w-5 h-5 flex-shrink-0 stroke-[3]" />
-              <span>{error}</span>
+          <div className="mb-4 sm:mb-6 p-3 sm:p-4 rounded-xl bg-[#FF2E63] text-white border-2 border-black flex items-start justify-between gap-2.5 sm:gap-3 text-xs font-mono font-black shadow-[4px_4px_0px_#000000]">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 stroke-[3]" />
+              <span className="leading-snug">{error}</span>
             </div>
             <button
               onClick={() => setError(null)}
-              className="bg-black text-white px-2.5 py-1 rounded border-2 border-white hover:bg-white hover:text-black transition-colors"
+              className="bg-black text-white px-2 py-0.5 sm:px-2.5 sm:py-1 rounded border-2 border-white hover:bg-white hover:text-black transition-colors flex-shrink-0 cursor-pointer text-[10px] sm:text-xs"
             >
               DISMISS
             </button>
@@ -170,25 +170,25 @@ export default function App() {
         {currentView === 'about' ? (
           <AboutPage onBackToDetector={() => setCurrentView('detector')} />
         ) : !result ? (
-          <div className="max-w-4xl mx-auto space-y-6 pt-2">
+          <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6 pt-1 sm:pt-2">
             {/* Mission Hero Banner */}
-            <div className="glass-brutal rounded-xl p-6 sm:p-8 relative overflow-hidden shadow-[8px_8px_0px_#000000]">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="glass-brutal rounded-xl p-4 sm:p-8 relative overflow-hidden shadow-[6px_6px_0px_#000000] sm:shadow-[8px_8px_0px_#000000]">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6">
                 <div>
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="px-3 py-1 rounded bg-[#FFE600] text-black font-mono font-black text-xs border-2 border-black shadow-[2px_2px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF]">
-                      AI IMAGE FORENSICS
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-2 sm:mb-3">
+                    <span className="px-2.5 sm:px-3 py-1 rounded bg-[#FFE600] text-black font-mono font-black text-[11px] sm:text-xs border-2 border-black shadow-[2px_2px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF]">
+                      AI FORENSICS
                     </span>
-                    <span className="px-3 py-1 rounded bg-white dark:bg-[#181824] text-black dark:text-white font-mono font-black text-xs border-2 border-black dark:border-white shadow-[2px_2px_0px_#000000]">
-                      RFC 2D-FFT SPECIFICATION
+                    <span className="px-2.5 sm:px-3 py-1 rounded bg-white dark:bg-[#181824] text-black dark:text-white font-mono font-black text-[11px] sm:text-xs border-2 border-black dark:border-white shadow-[2px_2px_0px_#000000]">
+                      2D-FFT SPEC
                     </span>
                   </div>
 
-                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black font-mono tracking-tight text-black dark:text-white leading-tight">
+                  <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black font-mono tracking-tight text-black dark:text-white leading-tight">
                     Frequency Domain <span className="underline underline-offset-4 decoration-4 text-black dark:text-[#FFE600]">AI Detector</span>
                   </h1>
 
-                  <p className="text-xs sm:text-sm text-slate-800 dark:text-slate-100 font-mono mt-3 max-w-xl leading-relaxed font-bold">
+                  <p className="text-xs sm:text-sm text-slate-800 dark:text-slate-100 font-mono mt-2 sm:mt-3 max-w-xl leading-relaxed font-bold">
                     Computes 2D Fourier log-magnitude harmonic decay to isolate generative latent diffusion VAE upsampling artifacts across Midjourney, ChatGPT (DALL-E 3), Gemini (Imagen 3), and SDXL.
                   </p>
                 </div>

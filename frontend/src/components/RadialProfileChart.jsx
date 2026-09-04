@@ -193,9 +193,9 @@ export default function RadialProfileChart({ diagnostics, isFake }) {
           )}
         </svg>
 
-        {/* Hover Target */}
+        {/* Hover / Touch Target */}
         <div
-          className="absolute inset-0 cursor-crosshair"
+          className="absolute inset-0 cursor-crosshair touch-none"
           onMouseMove={(e) => {
             const rect = e.currentTarget.getBoundingClientRect();
             const relX = (e.clientX - rect.left) / rect.width;
@@ -204,6 +204,23 @@ export default function RadialProfileChart({ diagnostics, isFake }) {
               setHoverIndex(index);
             }
           }}
+          onTouchStart={(e) => {
+            if (e.touches && e.touches[0]) {
+              const rect = e.currentTarget.getBoundingClientRect();
+              const relX = (e.touches[0].clientX - rect.left) / rect.width;
+              const index = Math.round(relX * (numPoints - 1));
+              if (index >= 0 && index < numPoints) setHoverIndex(index);
+            }
+          }}
+          onTouchMove={(e) => {
+            if (e.touches && e.touches[0]) {
+              const rect = e.currentTarget.getBoundingClientRect();
+              const relX = (e.touches[0].clientX - rect.left) / rect.width;
+              const index = Math.round(relX * (numPoints - 1));
+              if (index >= 0 && index < numPoints) setHoverIndex(index);
+            }
+          }}
+          onTouchEnd={() => setHoverIndex(null)}
           onMouseLeave={() => setHoverIndex(null)}
         />
       </div>

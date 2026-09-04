@@ -19,94 +19,94 @@ export default function VerdictBadge({ result }) {
   const isSingleModel = activeEngine !== 'ENSEMBLE';
 
   return (
-    <div className={`relative overflow-hidden rounded-xl border-3 p-6 sm:p-7 backdrop-blur-2xl transition-all ${
+    <div className={`relative overflow-hidden rounded-xl border-3 p-4 sm:p-7 backdrop-blur-2xl transition-all ${
       isFake
-        ? 'bg-[#FFF1F2] dark:bg-[#180A10] border-[#FF2E63] shadow-[8px_8px_0px_#000000] dark:shadow-[8px_8px_0px_#FF2E63]'
-        : 'bg-[#ECFDF5] dark:bg-[#061A12] border-[#00F5A0] dark:border-[#00F5A0] shadow-[8px_8px_0px_#000000] dark:shadow-[8px_8px_0px_#00F5A0]'
+        ? 'bg-[#FFF1F2] dark:bg-[#180A10] border-[#FF2E63] shadow-[6px_6px_0px_#000000] sm:shadow-[8px_8px_0px_#000000] dark:shadow-[6px_6px_0px_#FF2E63]'
+        : 'bg-[#ECFDF5] dark:bg-[#061A12] border-[#00F5A0] dark:border-[#00F5A0] shadow-[6px_6px_0px_#000000] sm:shadow-[8px_8px_0px_#000000] dark:shadow-[6px_6px_0px_#00F5A0]'
     }`}>
       {/* Top Banner Tag */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-4 mb-4 border-b-2 border-black/20 dark:border-white/30">
-        <div className="flex items-center gap-2.5">
-          <span className={`px-3.5 py-1.5 rounded-lg border-2 border-black font-mono font-black text-xs uppercase shadow-[2px_2px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF] ${
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-3 sm:pb-4 mb-3 sm:mb-4 border-b-2 border-black/20 dark:border-white/30">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className={`px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-lg border-2 border-black font-mono font-black text-[11px] sm:text-xs uppercase shadow-[2px_2px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF] ${
             isFake ? 'bg-[#FF2E63] text-white' : 'bg-[#00F5A0] text-black'
           }`}>
-            {isFake ? '⚠ SYNTHETIC ARTIFACTS ISOLATED' : '✓ AUTHENTIC CAMERA EXPOSURE'}
+            {isFake ? '⚠ SYNTHETIC DETECTED' : '✓ AUTHENTIC PHOTO'}
           </span>
 
-          <span className="text-xs font-mono font-black text-black dark:text-white">
-            {activeEngine === 'ENSEMBLE' && '// FUSED DUAL-LAYER WEIGHTED AVERAGE'}
-            {activeEngine === 'FOURIER_ONLY' && '// SINGLE-LAYER: 2D FOURIER PHYSICS ONLY'}
-            {activeEngine === 'NIM_ONLY' && '// SINGLE-LAYER: NVIDIA DIFFUSIONGEMMA 26B ONLY'}
+          <span className="text-[11px] sm:text-xs font-mono font-black text-black dark:text-white">
+            {activeEngine === 'ENSEMBLE' && '// DUAL-LAYER ENSEMBLE'}
+            {activeEngine === 'FOURIER_ONLY' && '// 2D FOURIER PHYSICS'}
+            {activeEngine === 'NIM_ONLY' && '// NVIDIA VISION FORENSICS'}
           </span>
         </div>
 
-        <div className="flex items-center gap-2 font-mono text-xs font-bold">
-          <span className={`px-3 py-1 rounded border-2 border-black font-black shadow-[2px_2px_0px_#000000] ${
+        <div className="flex items-center gap-2 font-mono text-[11px] sm:text-xs font-bold self-start sm:self-auto">
+          <span className={`px-2.5 sm:px-3 py-0.5 sm:py-1 rounded border-2 border-black font-black shadow-[2px_2px_0px_#000000] ${
             activeEngine === 'ENSEMBLE'
               ? 'bg-[#FFE600] text-black'
               : 'bg-[#00F0FF] text-black'
           }`}>
-            {activeEngine === 'ENSEMBLE' ? '⚡ DUAL-MODEL ENSEMBLE' : '🔬 SINGLE MODEL ACTIVE'}
+            {activeEngine === 'ENSEMBLE' ? '⚡ DUAL MODEL' : '🔬 SINGLE MODEL'}
           </span>
-          <span className="px-3 py-1 rounded bg-white dark:bg-black border-2 border-black dark:border-white text-black dark:text-white font-black">
+          <span className="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded bg-white dark:bg-black border-2 border-black dark:border-white text-black dark:text-white font-black">
             {result.processing_time_ms || 0}ms
           </span>
         </div>
       </div>
 
       {/* Main Verdict Content */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 sm:gap-6">
         {/* Left Headline */}
-        <div className="flex items-start gap-4 sm:gap-5">
-          <div className={`p-4 rounded-xl border-2 border-black shadow-[4px_4px_0px_#000000] dark:shadow-[4px_4px_0px_#FFFFFF] flex-shrink-0 ${
+        <div className="flex items-start gap-3 sm:gap-5">
+          <div className={`p-2.5 sm:p-4 rounded-xl border-2 border-black shadow-[3px_3px_0px_#000000] sm:shadow-[4px_4px_0px_#000000] dark:shadow-[3px_3px_0px_#FFFFFF] flex-shrink-0 ${
             isFake ? 'bg-[#FF2E63] text-white' : 'bg-[#00F5A0] text-black'
           }`}>
             {isFake ? (
-              <AlertOctagon className="w-10 h-10 stroke-[3]" />
+              <AlertOctagon className="w-7 h-7 sm:w-10 sm:h-10 stroke-[3]" />
             ) : (
-              <ShieldCheck className="w-10 h-10 stroke-[3]" />
+              <ShieldCheck className="w-7 h-7 sm:w-10 sm:h-10 stroke-[3]" />
             )}
           </div>
 
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-mono font-black uppercase text-[#B45309] dark:text-[#FFE600] tracking-wider flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 mb-1">
+              <span className="text-[11px] sm:text-xs font-mono font-black uppercase text-[#B45309] dark:text-[#FFE600] tracking-wider flex items-center gap-1">
                 <Layers className="w-3.5 h-3.5" />
                 {activeEngine === 'ENSEMBLE'
-                  ? 'Combined Weighted Decision (2 Models)'
-                  : `Single Model Decision: ${ensemble.active_engine_label || 'Active Engine'}`}
+                  ? 'Weighted Average (2 Models)'
+                  : `Single Model: ${ensemble.active_engine_label || 'Active Engine'}`}
               </span>
             </div>
 
-            <h2 className={`text-4xl sm:text-5xl lg:text-6xl font-black font-mono tracking-tight ${
+            <h2 className={`text-2xl xs:text-3xl sm:text-5xl lg:text-6xl font-black font-mono tracking-tight leading-none ${
               isFake ? 'text-[#E11D48] dark:text-[#FF2E63]' : 'text-[#059669] dark:text-[#00F5A0]'
             }`}>
               {isFake ? 'AI-GENERATED' : 'AUTHENTIC / REAL'}
             </h2>
 
-            <p className="text-xs sm:text-sm text-slate-900 dark:text-white font-mono mt-2.5 max-w-2xl leading-relaxed font-bold">
+            <p className="text-xs sm:text-sm text-slate-900 dark:text-white font-mono mt-2 sm:mt-2.5 max-w-2xl leading-relaxed font-bold">
               {isFake
                 ? 'Generative synthesis detected. Frequency slope anomalies and/or neural visual artifacts isolated across active inspection layers.'
                 : 'Authentic photographic capture confirmed. Obeys natural Poisson-Gaussian sensor physics and scene coherence.'}
             </p>
 
             {/* Individual Layer Telemetry Chips */}
-            <div className="flex flex-wrap items-center gap-2 mt-4 text-xs font-mono font-black">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-3 sm:mt-4 text-[11px] sm:text-xs font-mono font-black">
               {localModel && localModel.available && localModel.prediction && (
-                <span className="px-3 py-1 rounded bg-white dark:bg-[#181824] border-2 border-black dark:border-white text-black dark:text-white shadow-[2px_2px_0px_#000000] flex items-center gap-1.5">
+                <span className="px-2.5 sm:px-3 py-1 rounded bg-white dark:bg-[#181824] border-2 border-black dark:border-white text-black dark:text-white shadow-[2px_2px_0px_#000000] flex items-center gap-1">
                   <Cpu className="w-3.5 h-3.5 text-[#0284C7] dark:text-[#00F0FF]" />
-                  Fourier Physics: {localModel.prediction?.toUpperCase()} ({Math.round(localModel.confidence * 100)}%)
+                  Fourier: {localModel.prediction?.toUpperCase()} ({Math.round(localModel.confidence * 100)}%)
                 </span>
               )}
 
               {nvidia && nvidia.available && (
-                <span className="px-3 py-1 rounded bg-white dark:bg-[#181824] border-2 border-black dark:border-white text-black dark:text-white shadow-[2px_2px_0px_#000000] flex items-center gap-1.5">
+                <span className="px-2.5 sm:px-3 py-1 rounded bg-white dark:bg-[#181824] border-2 border-black dark:border-white text-black dark:text-white shadow-[2px_2px_0px_#000000] flex items-center gap-1">
                   <Sparkles className="w-3.5 h-3.5 text-[#B45309] dark:text-[#FFE600]" />
                   NVIDIA Vision: {nvidia.prediction?.toUpperCase()} ({Math.round(nvidia.confidence * 100)}%)
                 </span>
               )}
 
-              <span className="px-3 py-1 rounded bg-[#FFE600] text-black border-2 border-black shadow-[2px_2px_0px_#000000]">
+              <span className="px-2.5 sm:px-3 py-1 rounded bg-[#FFE600] text-black border-2 border-black shadow-[2px_2px_0px_#000000]">
                 SLOPE: α = {alpha}
               </span>
             </div>
@@ -114,24 +114,24 @@ export default function VerdictBadge({ result }) {
         </div>
 
         {/* Right Certainty Box */}
-        <div className="bg-white dark:bg-black p-5 rounded-xl border-2 border-black dark:border-white shadow-[5px_5px_0px_#000000] dark:shadow-[5px_5px_0px_#FFFFFF] flex flex-col justify-between self-start lg:self-center min-w-[240px]">
-          <span className="text-xs font-mono font-black text-black dark:text-white uppercase tracking-widest mb-1">
+        <div className="bg-white dark:bg-black p-4 sm:p-5 rounded-xl border-2 border-black dark:border-white shadow-[4px_4px_0px_#000000] sm:shadow-[5px_5px_0px_#000000] dark:shadow-[4px_4px_0px_#FFFFFF] flex flex-col justify-between w-full lg:w-auto lg:min-w-[240px]">
+          <span className="text-[11px] sm:text-xs font-mono font-black text-black dark:text-white uppercase tracking-widest mb-1">
             {activeEngine === 'ENSEMBLE' ? 'ENSEMBLE CERTAINTY' : 'MODEL CERTAINTY'}
           </span>
 
           <div className="flex items-baseline gap-2 mb-2">
-            <span className={`text-4xl sm:text-5xl font-black font-mono ${
+            <span className={`text-3xl sm:text-5xl font-black font-mono ${
               isFake ? 'text-[#E11D48] dark:text-[#FF2E63]' : 'text-[#059669] dark:text-[#00F5A0]'
             }`}>
               {confidencePercent}%
             </span>
-            <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">
+            <span className="text-[11px] sm:text-xs font-mono font-bold text-slate-700 dark:text-slate-300">
               {activeEngine === 'ENSEMBLE' ? 'WEIGHTED' : 'SINGLE'}
             </span>
           </div>
 
           {/* Hard Segmented Bar */}
-          <div className="w-full bg-slate-200 dark:bg-slate-800 h-3.5 rounded border-2 border-black dark:border-white overflow-hidden flex">
+          <div className="w-full bg-slate-200 dark:bg-slate-800 h-3 sm:h-3.5 rounded border-2 border-black dark:border-white overflow-hidden flex">
             <div
               className="bg-[#00F5A0] h-full"
               style={{ width: `${isFake ? 100 - confidencePercent : confidencePercent}%` }}
@@ -144,7 +144,7 @@ export default function VerdictBadge({ result }) {
             />
           </div>
 
-          <div className="flex justify-between text-xs font-mono font-black mt-2">
+          <div className="flex justify-between text-[11px] sm:text-xs font-mono font-black mt-2">
             <span className="text-[#059669] dark:text-[#00F5A0]">Real: {isFake ? 100 - confidencePercent : confidencePercent}%</span>
             <span className="text-[#E11D48] dark:text-[#FF2E63]">Synth: {isFake ? confidencePercent : 100 - confidencePercent}%</span>
           </div>

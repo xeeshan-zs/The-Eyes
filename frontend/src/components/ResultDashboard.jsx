@@ -38,80 +38,80 @@ export default function ResultDashboard({ result, originalImagePreview, onReset 
       <ForensicMetrics result={result} />
 
       {/* 3. Studio Multi-Lens Container */}
-      <div className="glass-brutal rounded-xl overflow-hidden shadow-[8px_8px_0px_#000000]">
+      <div className="glass-brutal rounded-xl overflow-hidden shadow-[6px_6px_0px_#000000] sm:shadow-[8px_8px_0px_#000000]">
         {/* Toolbar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 bg-white dark:bg-black border-b-2 border-black dark:border-white">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-3.5 sm:px-5 py-3 sm:py-4 bg-white dark:bg-black border-b-2 border-black dark:border-white">
           {/* Mode Switcher Tabs */}
-          <div className="flex items-center gap-2.5">
+          <div className="grid grid-cols-3 gap-1.5 sm:flex sm:items-center sm:gap-2.5 w-full sm:w-auto">
             <button
               onClick={() => setActiveTab('dual')}
-              className={`px-4 py-2 rounded-lg text-xs font-mono font-black border-2 transition-all flex items-center gap-2 ${
+              className={`px-2.5 sm:px-4 py-2 rounded-lg text-xs font-mono font-black border-2 transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer ${
                 activeTab === 'dual'
-                  ? 'bg-[#FFE600] text-black border-black shadow-[3px_3px_0px_#000000] dark:shadow-[3px_3px_0px_#FFFFFF] translate-x-[-1px] translate-y-[-1px]'
-                  : 'bg-white dark:bg-[#181824] text-black dark:text-white border-black dark:border-white hover:bg-[#FFE600] hover:text-black hover:border-black shadow-[2px_2px_0px_#000000]'
+                  ? 'bg-[#FFE600] text-black border-black shadow-[2px_2px_0px_#000000] sm:shadow-[3px_3px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF]'
+                  : 'bg-white dark:bg-[#181824] text-black dark:text-white border-black dark:border-white hover:bg-[#FFE600] hover:text-black'
               }`}
             >
-              <Eye className="w-4 h-4 stroke-[3]" />
-              <span>DUAL GRID</span>
+              <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3]" />
+              <span className="truncate">DUAL GRID</span>
             </button>
 
             <button
               onClick={() => setActiveTab('slider')}
-              className={`px-4 py-2 rounded-lg text-xs font-mono font-black border-2 transition-all flex items-center gap-2 ${
+              className={`px-2.5 sm:px-4 py-2 rounded-lg text-xs font-mono font-black border-2 transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer ${
                 activeTab === 'slider'
-                  ? 'bg-[#FFE600] text-black border-black shadow-[3px_3px_0px_#000000] dark:shadow-[3px_3px_0px_#FFFFFF] translate-x-[-1px] translate-y-[-1px]'
-                  : 'bg-white dark:bg-[#181824] text-black dark:text-white border-black dark:border-white hover:bg-[#FFE600] hover:text-black hover:border-black shadow-[2px_2px_0px_#000000]'
+                  ? 'bg-[#FFE600] text-black border-black shadow-[2px_2px_0px_#000000] sm:shadow-[3px_3px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF]'
+                  : 'bg-white dark:bg-[#181824] text-black dark:text-white border-black dark:border-white hover:bg-[#FFE600] hover:text-black'
               }`}
             >
-              <Sliders className="w-4 h-4 stroke-[3]" />
-              <span>SPLIT LENS</span>
+              <Sliders className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3]" />
+              <span className="truncate">SPLIT</span>
             </button>
 
             <button
               onClick={() => setActiveTab('chart')}
-              className={`px-4 py-2 rounded-lg text-xs font-mono font-black border-2 transition-all flex items-center gap-2 ${
+              className={`px-2.5 sm:px-4 py-2 rounded-lg text-xs font-mono font-black border-2 transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer ${
                 activeTab === 'chart'
-                  ? 'bg-[#FFE600] text-black border-black shadow-[3px_3px_0px_#000000] dark:shadow-[3px_3px_0px_#FFFFFF] translate-x-[-1px] translate-y-[-1px]'
-                  : 'bg-white dark:bg-[#181824] text-black dark:text-white border-black dark:border-white hover:bg-[#FFE600] hover:text-black hover:border-black shadow-[2px_2px_0px_#000000]'
+                  ? 'bg-[#FFE600] text-black border-black shadow-[2px_2px_0px_#000000] sm:shadow-[3px_3px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF]'
+                  : 'bg-white dark:bg-[#181824] text-black dark:text-white border-black dark:border-white hover:bg-[#FFE600] hover:text-black'
               }`}
             >
-              <LineChart className="w-4 h-4 stroke-[3]" />
-              <span>1D DECAY</span>
+              <LineChart className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3]" />
+              <span className="truncate">1D DECAY</span>
             </button>
           </div>
 
           {/* Action Toolbar */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center justify-between sm:justify-end gap-1.5 sm:gap-2.5 w-full sm:w-auto pt-1 sm:pt-0 border-t sm:border-t-0 border-black/10 dark:border-white/10">
             <button
               onClick={handleCopyJson}
-              className="px-3.5 py-2 rounded-lg bg-white dark:bg-[#181824] text-black dark:text-white border-2 border-black dark:border-white hover:bg-[#FFE600] hover:text-black hover:border-black text-xs font-mono font-black flex items-center gap-1.5 shadow-[2px_2px_0px_#000000] transition-all"
+              className="flex-1 sm:flex-initial px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-lg bg-white dark:bg-[#181824] text-black dark:text-white border-2 border-black dark:border-white hover:bg-[#FFE600] hover:text-black hover:border-black text-xs font-mono font-black flex items-center justify-center gap-1 sm:gap-1.5 shadow-[2px_2px_0px_#000000] cursor-pointer"
               title="Copy JSON Payload"
             >
-              {copied ? <Check className="w-4 h-4 text-[#059669] stroke-[3]" /> : <Copy className="w-4 h-4" />}
+              {copied ? <Check className="w-3.5 h-3.5 text-[#059669] stroke-[3]" /> : <Copy className="w-3.5 h-3.5" />}
               <span>{copied ? 'COPIED' : 'JSON'}</span>
             </button>
 
             <button
               onClick={handleDownloadSpectrum}
-              className="px-3.5 py-2 rounded-lg bg-white dark:bg-[#181824] text-black dark:text-white border-2 border-black dark:border-white hover:bg-[#FFE600] hover:text-black hover:border-black text-xs font-mono font-black flex items-center gap-1.5 shadow-[2px_2px_0px_#000000] transition-all"
+              className="flex-1 sm:flex-initial px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-lg bg-white dark:bg-[#181824] text-black dark:text-white border-2 border-black dark:border-white hover:bg-[#FFE600] hover:text-black hover:border-black text-xs font-mono font-black flex items-center justify-center gap-1 sm:gap-1.5 shadow-[2px_2px_0px_#000000] cursor-pointer"
               title="Download FFT PNG"
             >
-              <Download className="w-4 h-4" />
+              <Download className="w-3.5 h-3.5" />
               <span>EXPORT FFT</span>
             </button>
 
             <button
               onClick={onReset}
-              className="px-4 py-2 rounded-lg bg-[#FFE600] text-black border-2 border-black text-xs font-mono font-black flex items-center gap-1.5 shadow-[3px_3px_0px_#000000] dark:shadow-[3px_3px_0px_#FFFFFF] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all"
+              className="flex-1 sm:flex-initial px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-[#FFE600] text-black border-2 border-black text-xs font-mono font-black flex items-center justify-center gap-1 sm:gap-1.5 shadow-[2px_2px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF] cursor-pointer"
             >
-              <ArrowRightLeft className="w-4 h-4 stroke-[3]" />
-              <span>NEW IMAGE</span>
+              <ArrowRightLeft className="w-3.5 h-3.5 stroke-[3]" />
+              <span className="truncate">NEW</span>
             </button>
           </div>
         </div>
 
         {/* Viewport Content */}
-        <div className="p-6">
+        <div className="p-3.5 sm:p-6">
           {activeTab === 'slider' && (
             <ImageComparisonSlider
               originalImage={originalImagePreview}
