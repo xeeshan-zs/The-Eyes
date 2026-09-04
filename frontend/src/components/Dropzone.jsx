@@ -1,7 +1,7 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { UploadCloud, Sparkles } from 'lucide-react';
 
-export default function Dropzone({ onFileSelected, loading, currentPreview }) {
+export default function Dropzone({ onFileSelected, loading, currentPreview, loadingMessage }) {
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef(null);
 
@@ -72,14 +72,15 @@ export default function Dropzone({ onFileSelected, loading, currentPreview }) {
 
         {/* Loading Overlay */}
         {loading && (
-          <div className="absolute inset-0 z-30 pointer-events-none bg-white/95 dark:bg-black/95 backdrop-blur-md flex flex-col items-center justify-center">
+          <div className="absolute inset-0 z-30 pointer-events-none bg-white/95 dark:bg-black/95 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center">
             <div className="w-14 h-14 rounded-xl bg-[#FFE600] border-2 border-black shadow-[4px_4px_0px_#000000] dark:shadow-[4px_4px_0px_#FFFFFF] flex items-center justify-center animate-bounce mb-3">
               <Sparkles className="w-7 h-7 text-black stroke-[3]" />
             </div>
-            <span className="text-base font-mono font-black tracking-wider text-black dark:text-white">
-              EXTRACTING 2D FOURIER HARMONICS...
+            <span className="text-base sm:text-lg font-mono font-black tracking-wider text-black dark:text-white">
+              {loadingMessage || 'EXTRACTING 2D FOURIER HARMONICS...'}
             </span>
-            <span className="text-xs font-mono font-black text-[#059669] dark:text-[#FFE600] mt-1">
+            <span className="text-xs font-mono font-black text-[#059669] dark:text-[#FFE600] mt-2 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-[#00F5A0] animate-ping" />
               Evaluating Multi-Spectral Classifier Pipeline
             </span>
           </div>

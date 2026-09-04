@@ -36,6 +36,8 @@ export default function App() {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
   };
 
+  const [loadingMessage, setLoadingMessage] = useState('Extracting 2D Fourier Harmonics...');
+
   const checkHealth = async () => {
     try {
       const res = await fetch(`${API_BASE_URL}/health`);
@@ -67,6 +69,15 @@ export default function App() {
     setImagePreview(previewUrl);
 
     setLoading(true);
+    setLoadingMessage('Extracting 2D Fourier Harmonics & Neural Features...');
+
+    const msgTimer1 = setTimeout(() => {
+      setLoadingMessage('Waking up Cloud Backend (Render free tier boot takes ~25s)...');
+    }, 3500);
+
+    const msgTimer2 = setTimeout(() => {
+      setLoadingMessage('Evaluating Dual-Layer Ensemble (2D Fourier + NVIDIA DiffusionGemma 26B)...');
+    }, 12000);
 
     // 1. Attempt Backend Inference
     try {
@@ -74,7 +85,7 @@ export default function App() {
       formData.append('file', selectedFile);
 
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 6000); // 6s timeout for sleeping server
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s timeout for sleeping server
 
       const response = await fetch(`${API_BASE_URL}/predict`, {
         method: 'POST',
@@ -93,6 +104,7 @@ export default function App() {
       setCurrentView('detector');
     } catch (backendErr) {
       console.warn('Backend offline / unreachable. Triggering Direct-to-NVIDIA NIM Browser Engine:', backendErr);
+      setLoadingMessage('Backend unreachable. Running Browser-Direct NVIDIA NIM Fallback...');
 
       // 2. Seamless Direct-to-NVIDIA NIM Browser Fallback
       try {
@@ -102,10 +114,12 @@ export default function App() {
       } catch (nimErr) {
         console.error('Direct NIM fallback error:', nimErr);
         setError(
-          `Backend server is offline, and direct browser inference failed: ${nimErr.message}`
+          `Cloud backend is offline, and direct browser inference failed: ${nimErr.message}`
         );
       }
     } finally {
+      clearTimeout(msgTimer1);
+      clearTimeout(msgTimer2);
       setLoading(false);
     }
   };
@@ -197,6 +211,7 @@ export default function App() {
             <Dropzone
               onFileSelected={handleFileSelected}
               loading={loading}
+              loadingMessage={loadingMessage}
               currentPreview={imagePreview}
             />
 
