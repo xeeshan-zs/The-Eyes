@@ -202,8 +202,22 @@ def compute_ensemble_fusion(
         nim_conf = float(nvidia_res.get("confidence", 0.85))
         p_fake_nim = nim_conf if nim_pred == "fake" else (1.0 - nim_conf)
 
-        # 50/50 Dual Layer Ensemble Average
-        p_fake_fused = 0.50 * p_fake_fourier + 0.50 * p_fake_nim
+        # Dynamic Calibration:
+        # If NVIDIA Vision is confident that an image is Real (>= 0.80) because it exhibits
+        # natural lighting, coherent anatomy, and real-world scene physics (even if Fourier
+        # frequency analysis is elevated due to smartphone HDR+ or unsharp masking),
+        # weight NVIDIA Vision heavily (0.75) to prevent computational photography false positives.
+        if nim_pred == "real" and nim_conf >= 0.80:
+            w_nim = 0.70
+            w_fourier = 0.30
+        elif nim_pred == "fake" and nim_conf >= 0.80:
+            w_nim = 0.65
+            w_fourier = 0.35
+        else:
+            w_nim = 0.50
+            w_fourier = 0.50
+
+        p_fake_fused = w_fourier * p_fake_fourier + w_nim * p_fake_nim
 
         if p_fake_fused >= 0.50:
             final_pred = "fake"
@@ -221,8 +235,8 @@ def compute_ensemble_fusion(
             "fourier_p_fake": round(p_fake_fourier, 4),
             "nim_p_fake": round(p_fake_nim, 4),
             "fused_p_fake": round(p_fake_fused, 4),
-            "fourier_weight": 0.50,
-            "nim_weight": 0.50,
+            "fourier_weight": w_fourier,
+            "nim_weight": w_nim,
             "fallback_notice": None,
         }
         return final_pred, final_conf, meta
