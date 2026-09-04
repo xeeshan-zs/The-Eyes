@@ -115,6 +115,21 @@ app.add_middleware(
 )
 
 
+@app.get("/")
+def root_index():
+    return {
+        "status": "online",
+        "service": "The Eyes 2.0 API",
+        "version": "2.5.0",
+        "endpoints": {
+            "predict": "POST /predict",
+            "health": "GET /health",
+            "documentation": "GET /docs"
+        },
+        "model_loaded": MODEL_STATE["model"] is not None,
+    }
+
+
 @app.get("/health")
 def health_check():
     return {
