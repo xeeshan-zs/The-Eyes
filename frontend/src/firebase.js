@@ -3,13 +3,13 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics, isSupported } from "firebase/analytics";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCuZ6IBAotlQIvbgwSHwhJnr-NGfvalhDE",
-  authDomain: "z-eyes.firebaseapp.com",
-  projectId: "z-eyes",
-  storageBucket: "z-eyes.firebasestorage.app",
-  messagingSenderId: "510201307531",
-  appId: "1:510201307531:web:a76cc2bb84f38ee8668f8e",
-  measurementId: "G-LNWT65B3ZV"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "z-eyes.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "z-eyes",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "z-eyes.firebasestorage.app",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "",
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || ""
 };
 
 // Initialize Firebase

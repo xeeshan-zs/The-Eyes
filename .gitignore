@@ -24,7 +24,12 @@ wheels/
 .installed.cfg
 *.egg
 .env
+.env.*
+!.env.example
 .env.local
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
 
 # Datasets & Archives
 data-set/
