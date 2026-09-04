@@ -159,11 +159,18 @@ export async function directNimClientAnalysis(file, previewUrl) {
 
   // 3. Call NVIDIA NIM directly from the browser
   const prompt = (
-    "You are an expert digital forensics analyst. Analyze this image to determine " +
-    "if it is an authentic real-world photograph or an AI-generated/synthetic image " +
-    "(e.g. Midjourney, DALL-E, Stable Diffusion, Imagen).\n" +
-    "Respond strictly in valid JSON with this exact format:\n" +
-    '{"prediction": "fake" | "real", "confidence": 0.85, "explanation": "Brief 1-2 sentence forensic reasoning"}'
+    "You are an elite digital forensics expert. Analyze this image to determine " +
+    "if it is an authentic real-world photograph or a synthetic AI-generated image " +
+    "(e.g. Midjourney, DALL-E 3, Flux, Stable Diffusion, Imagen).\n\n" +
+    "IMPORTANT FORENSIC CALIBRATION:\n" +
+    "1. Real-world smartphone cameras (such as Google Pixel HDR+, Apple iPhone Deep Fusion, Samsung AI ISP) " +
+    "apply computational denoising, multi-frame stacking, edge sharpening, and local tone-mapping. " +
+    "These are AUTHENTIC REAL PHOTOGRAPHS, not AI generated images.\n" +
+    "2. AI images (Midjourney, DALL-E, SDXL) have distinctive generative synthetic markers: unnatural skin micro-textures, " +
+    "anomalous light reflections, incoherent background geometry, warped fine details (hair, teeth, hands, text), " +
+    "and synthetic diffusion blur.\n\n" +
+    "Respond strictly in valid JSON with this exact schema:\n" +
+    '{"prediction": "fake" | "real", "confidence": 0.90, "explanation": "Brief 1-2 sentence forensic reasoning clearly stating evidence"}'
   );
 
   const payload = {
