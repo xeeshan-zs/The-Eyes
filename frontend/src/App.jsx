@@ -4,6 +4,7 @@ import Dropzone from './components/Dropzone';
 import SamplePresets from './components/SamplePresets';
 import ResultDashboard from './components/ResultDashboard';
 import AboutPage from './components/AboutPage';
+import WelcomeModal from './components/WelcomeModal';
 import { directNimClientAnalysis } from './services/nimClientFallback';
 import { AlertCircle, Radio, Sparkles, Shield, Github, Zap } from 'lucide-react';
 
@@ -147,6 +148,9 @@ export default function App() {
         currentView={currentView}
         onNavigate={setCurrentView}
       />
+
+      {/* First-Time Welcome Modal */}
+      <WelcomeModal />
 
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-3.5 sm:py-7 z-10">
