@@ -1,229 +1,137 @@
-"""Fast, robust training script for AI Image Detector.
+"""Fit a candidate on train images and stop on a separate validation split."""
 
-Processes balanced real and fake images from `data-set/archive.zip`,
-extracts 70-dimensional multi-spectral FFT features, and trains
-a high-accuracy ExtraTrees / RandomForest classifier pipeline.
-"""
-
-import os
+import argparse
+import copy
 import io
-import time
+from pathlib import Path
+import tempfile
 import zipfile
-import random
-import numpy as np
-from PIL import Image
+
 import joblib
-from sklearn.pipeline import Pipeline
+import numpy as np
+from sklearn.ensemble import HistGradientBoostingClassifier, VotingClassifier
+from sklearn.frozen import FrozenEstimator
+from sklearn.metrics import accuracy_score, log_loss, roc_auc_score
+from sklearn.neural_network import MLPClassifier
+from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
-from sklearn.ensemble import ExtraTreesClassifier
-from sklearn.metrics import classification_report, accuracy_score, roc_auc_score
+from threadpoolctl import threadpool_limits
+
+from backend.app.image_features import FEATURE_VERSION
+from training.data import ARCHIVE, ROOT, SCENES, SEED, feature_matrix, select_samples
+from training.split_guard import find_exclusions
 
 
-def extract_features_from_img(img: Image.Image) -> np.ndarray:
-    """Extracts 70-dim multi-spectral FFT features from PIL Image."""
-    try:
-        rgb_img = img.convert("RGB").resize((256, 256), Image.Resampling.BILINEAR)
-        rgb_arr = np.asarray(rgb_img, dtype=np.float32)
+def load_split(split, sources, workers):
+    features, labels, weights, domains, edits = [], [], [], [], []
+    for path, train_limit, val_limit, domain_weight in sources:
+        limit = train_limit if split == "train" else val_limit
+        x, y, edited = feature_matrix(path, split, limit, workers)
+        excluded = find_exclusions(path)
+        with zipfile.ZipFile(path) as archive:
+            samples = select_samples(archive, split, limit)
+        keep = np.repeat([s.path not in excluded for s in samples],
+                         [1 + bool(s.augmentation_seed) for s in samples])
+        x, y, edited = x[keep], y[keep], edited[keep]
+        features.append(x)
+        labels.append(y)
+        edits.append(edited)
+        domains.append(np.full(len(y), path.stem))
+        # Give both classes equal weight within each source. A small scene set
+        # should still influence the model alongside a much larger portrait set.
+        w = domain_weight / (2 * np.bincount(y)[y])
+        weights.append(w)
+        print(f"{path.stem} {split}: {len(y):,} views of {np.count_nonzero(~edited):,} originals", flush=True)
+    w = np.concatenate(weights)
+    return (np.concatenate(features), np.concatenate(labels), w / w.mean(),
+            np.concatenate(domains), np.concatenate(edits))
 
-        # 1. Grayscale 2D FFT
-        gray = 0.2989 * rgb_arr[:, :, 0] + 0.5870 * rgb_arr[:, :, 1] + 0.1140 * rgb_arr[:, :, 2]
-        f_gray = np.fft.fft2(gray)
-        fshift_gray = np.fft.fftshift(f_gray)
-        mag_gray = np.abs(fshift_gray)
-        log_mag = np.log1p(mag_gray)
 
-        # 2. 1D Azimuthal Radial Profile (48 bins)
-        cy, cx = 128, 128
-        y, x = np.ogrid[:256, :256]
-        r = np.hypot(x - cx, y - cy)
-        max_r = 128
-        num_bins = 48
-        bins = np.linspace(1, max_r, num_bins + 1)
-        radial_vals = []
-        radii = []
-
-        for i in range(num_bins):
-            mask = (r >= bins[i]) & (r < bins[i + 1])
-            if np.any(mask):
-                val = float(np.mean(log_mag[mask]))
-            else:
-                val = 0.0
-            radial_vals.append(val)
-            radii.append(float((bins[i] + bins[i + 1]) / 2.0))
-
-        rad_arr = np.array(radial_vals, dtype=np.float32)
-        norm_rad = (rad_arr - np.min(rad_arr)) / (np.max(rad_arr) - np.min(rad_arr) + 1e-8)
-
-        # 3. Spectral Alpha Slope
-        radii_arr = np.array(radii)
-        valid = (radii_arr > 3) & (radii_arr < max_r * 0.85)
-        if np.sum(valid) > 5:
-            poly = np.polyfit(np.log(radii_arr[valid]), np.log(rad_arr[valid] + 1e-8), 1)
-            alpha_slope = -float(poly[0])
-        else:
-            alpha_slope = 1.8
-
-        # 4. High/Low Frequency Ratio
-        hf_energy = float(np.mean(norm_rad[int(num_bins * 0.65):]))
-        lf_energy = float(np.mean(norm_rad[:int(num_bins * 0.35)]))
-        hf_ratio = hf_energy / (lf_energy + 1e-8)
-
-        # 5. Multi-channel Chromatic Coherence (VAE Decoder Artifact)
-        ch_mags = []
-        for c in range(3):
-            f_c = np.fft.fft2(rgb_arr[:, :, c])
-            ch_mags.append(np.abs(np.fft.fftshift(f_c)))
-
-        hp_mask = r > (max_r * 0.5)
-        r_hf = ch_mags[0][hp_mask].flatten()
-        g_hf = ch_mags[1][hp_mask].flatten()
-        b_hf = ch_mags[2][hp_mask].flatten()
-
-        rg_corr = float(np.corrcoef(r_hf, g_hf)[0, 1]) if len(r_hf) > 10 else 0.5
-        rb_corr = float(np.corrcoef(r_hf, b_hf)[0, 1]) if len(r_hf) > 10 else 0.5
-        gb_corr = float(np.corrcoef(g_hf, b_hf)[0, 1]) if len(g_hf) > 10 else 0.5
-
-        # 6. Spectral Entropy
-        flat_mag = mag_gray.flatten()
-        prob_dist = flat_mag / (np.sum(flat_mag) + 1e-12)
-        prob_dist = prob_dist[prob_dist > 0]
-        entropy = float(-np.sum(prob_dist * np.log2(prob_dist)))
-
-        # 7. High-Pass Laplacian Residual
-        laplacian = (
-            rgb_arr[:-2, 1:-1, :] + rgb_arr[2:, 1:-1, :] +
-            rgb_arr[1:-1, :-2, :] + rgb_arr[1:-1, 2:, :] -
-            4 * rgb_arr[1:-1, 1:-1, :]
-        )
-        noise_var = float(np.mean(np.var(laplacian, axis=(0, 1))))
-
-        extra_features = [
-            alpha_slope,
-            hf_ratio,
-            rg_corr,
-            rb_corr,
-            gb_corr,
-            (rg_corr + rb_corr + gb_corr) / 3.0,
-            entropy,
-            noise_var,
-            float(np.std(norm_rad)),
-            float(np.mean(norm_rad[int(num_bins * 0.85):])),
-            float(np.max(norm_rad) - np.min(norm_rad)),
-            float(np.percentile(norm_rad, 90)),
-            float(np.percentile(norm_rad, 10)),
-            float(np.mean(norm_rad[10:25])),
-            float(np.std(norm_rad[int(num_bins * 0.65):])),
-            float(np.sum(norm_rad > 0.6)),
-            float(np.median(norm_rad)),
-            float(np.var(ch_mags[0] - ch_mags[1])),
-            float(np.var(ch_mags[0] - ch_mags[2])),
-            float(np.var(ch_mags[1] - ch_mags[2])),
-            float(np.sum(norm_rad[:10])),
-            float(np.sum(norm_rad[-10:])),
-        ]
-
-        feature_vector = np.concatenate([norm_rad, np.array(extra_features, dtype=np.float32)])
-        return np.nan_to_num(feature_vector, nan=0.0, posinf=1.0, neginf=0.0)
-    except Exception:
-        return np.zeros(70, dtype=np.float32)
+def fit_neural_model(x, y, weight, val_x, val_y, val_weight):
+    scaler = StandardScaler().fit(x, sample_weight=weight)
+    x = scaler.transform(x)
+    val_x = scaler.transform(val_x)
+    network = MLPClassifier(hidden_layer_sizes=(160, 64), batch_size=256,
+                            learning_rate_init=0.0006, alpha=0.05,
+                            random_state=np.random.RandomState(SEED))
+    best_loss = float("inf")
+    best_epoch = 0
+    best_network = None
+    for epoch in range(1, 41):
+        network.partial_fit(x, y, classes=[0, 1], sample_weight=weight)
+        loss = log_loss(val_y, network.predict_proba(val_x), sample_weight=val_weight)
+        if loss < best_loss - 0.0003:
+            best_loss, best_epoch = loss, epoch
+            best_network = copy.deepcopy(network)
+        if epoch % 5 == 0:
+            print(f"Neural epoch {epoch}: validation loss {loss:.4f}", flush=True)
+        if epoch - best_epoch >= 6:
+            break
+    print(f"Best neural epoch: {best_epoch}", flush=True)
+    return make_pipeline(scaler, best_network)
 
 
 def main():
-    zip_path = "data-set/archive.zip"
-    if not os.path.exists(zip_path):
-        print(f"Error: {zip_path} not found.", flush=True)
-        return
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--per-group", type=int, default=12000, help="Training originals per local dataset/class")
+    parser.add_argument("--with-public-scenes", action="store_true", help="Include the prepared public-scenes.zip")
+    parser.add_argument("--workers", type=int, default=3)
+    parser.add_argument("--output", type=Path, help="Stage a candidate here instead of updating the application weights")
+    args = parser.parse_args()
+    if min(args.per_group, args.workers) < 1:
+        parser.error("--per-group and --workers must be positive")
+    sources = [(ARCHIVE, args.per_group, 250, 0.7)]
+    if args.with_public_scenes:
+        if not SCENES.is_file():
+            parser.error("Prepare the public scenes with training/prepare_public_data.py first.")
+        sources.append((SCENES, 100_000, 100_000, 0.3))
+    train_x, train_y, train_w, _, _ = load_split("train", sources, args.workers)
+    val_x, val_y, val_w, domains, edited = load_split("validation", sources, args.workers)
 
-    print("Opening dataset archive...", flush=True)
-    z = zipfile.ZipFile(zip_path, "r")
-    all_files = z.namelist()
-
-    train_real_all = [f for f in all_files if "train/real/" in f and f.endswith(".jpg")]
-    train_fake_all = [f for f in all_files if "train/fake/" in f and f.endswith(".jpg")]
-    test_real_all = [f for f in all_files if "test/real/" in f and f.endswith(".jpg")]
-    test_fake_all = [f for f in all_files if "test/fake/" in f and f.endswith(".jpg")]
-
-    random.seed(42)
-    # Balanced 1,500 train (750 real + 750 fake) and 300 test (150 real + 150 fake)
-    TRAIN_N = 800
-    TEST_N = 200
-
-    train_items = (
-        [(f, 0) for f in random.sample(train_real_all, min(TRAIN_N, len(train_real_all)))] +
-        [(f, 1) for f in random.sample(train_fake_all, min(TRAIN_N, len(train_fake_all)))]
+    trees = HistGradientBoostingClassifier(
+        learning_rate=0.08, max_iter=450, max_leaf_nodes=31, min_samples_leaf=30,
+        max_features=0.65, max_bins=127, l2_regularization=4,
+        early_stopping=True, scoring="loss", n_iter_no_change=35,
+        random_state=SEED,
     )
-    test_items = (
-        [(f, 0) for f in random.sample(test_real_all, min(TEST_N, len(test_real_all)))] +
-        [(f, 1) for f in random.sample(test_fake_all, min(TEST_N, len(test_fake_all)))]
-    )
-
-    random.shuffle(train_items)
-    random.shuffle(test_items)
-
-    print(f"Dataset selected: {len(train_items)} train ({TRAIN_N} real, {TRAIN_N} fake), {len(test_items)} test.", flush=True)
-
-    # Sequential in-memory extraction
-    t0 = time.time()
-    X_train, y_train = [], []
-    for idx, (path, label) in enumerate(train_items):
-        try:
-            data = z.read(path)
-            img = Image.open(io.BytesIO(data))
-            feat = extract_features_from_img(img)
-            X_train.append(feat)
-            y_train.append(label)
-        except Exception:
-            pass
-        if (idx + 1) % 200 == 0 or idx == len(train_items) - 1:
-            print(f"Train extraction progress: {idx + 1}/{len(train_items)} ({time.time() - t0:.1f}s)", flush=True)
-
-    X_test, y_test = [], []
-    for idx, (path, label) in enumerate(test_items):
-        try:
-            data = z.read(path)
-            img = Image.open(io.BytesIO(data))
-            feat = extract_features_from_img(img)
-            X_test.append(feat)
-            y_test.append(label)
-        except Exception:
-            pass
-
-    z.close()
-
-    X_train = np.array(X_train, dtype=np.float32)
-    y_train = np.array(y_train, dtype=np.int32)
-    X_test = np.array(X_test, dtype=np.float32)
-    y_test = np.array(y_test, dtype=np.int32)
-
-    print(f"\nExtracted features shape: X_train {X_train.shape}, X_test {X_test.shape}", flush=True)
-    print("Training ExtraTreesClassifier with StandardScaler...", flush=True)
-
-    model = Pipeline([
-        ("scaler", StandardScaler()),
-        ("classifier", ExtraTreesClassifier(
-            n_estimators=200,
-            max_depth=16,
-            min_samples_split=3,
-            random_state=42,
-            n_jobs=-1
-        ))
-    ])
-
-    model.fit(X_train, y_train)
-
-    y_pred = model.predict(X_test)
-    y_proba = model.predict_proba(X_test)[:, 1]
-    acc = accuracy_score(y_test, y_pred)
-    auc = roc_auc_score(y_test, y_proba)
-
-    print("\n" + "=" * 55, flush=True)
-    print(f"VALIDATION ACCURACY: {acc * 100:.2f}% | ROC-AUC: {auc:.4f}", flush=True)
-    print("=" * 55, flush=True)
-    print(classification_report(y_test, y_pred, target_names=["Real", "AI-Generated"]), flush=True)
-
-    joblib.dump(model, "backend/model.pkl")
-    joblib.dump(model, "ai_detector_svm.pkl")
-    print("Saved trained model to backend/model.pkl and ai_detector_svm.pkl!", flush=True)
+    print(f"Fitting {len(train_y):,} examples with {train_x.shape[1]} features...", flush=True)
+    with threadpool_limits(limits=args.workers):
+        trees.fit(train_x, train_y, sample_weight=train_w,
+                  X_val=val_x, y_val=val_y, sample_weight_val=val_w)
+        print(f"Fitted {trees.n_iter_} boosting iterations", flush=True)
+        neural = fit_neural_model(train_x, train_y, train_w, val_x, val_y, val_w)
+        blend = VotingClassifier([("trees", FrozenEstimator(trees)), ("neural", FrozenEstimator(neural))],
+                                 voting="soft").fit(train_x, train_y)
+        # Fix the cutoff at 0.5. Select using validation accuracy across both
+        # sources and their edited views, with log loss as the tie breaker.
+        best = (-1.0, -float("inf"))
+        for name, candidate in (("trees", trees), ("neural", neural), ("average", blend)):
+            s = candidate.predict_proba(val_x)[:, 1]
+            acc = accuracy_score(val_y, s >= 0.5, sample_weight=val_w)
+            loss = log_loss(val_y, s, sample_weight=val_w)
+            print(f"{name}: weighted validation accuracy {acc:.3f}, loss {loss:.4f}", flush=True)
+            if (acc, -loss) > best:
+                best, model, scores = (acc, -loss), candidate, s
+        print(f"Selected {type(model).__name__}", flush=True)
+    model.eyes_feature_version_ = FEATURE_VERSION
+    model.eyes_training_seed_ = SEED
+    for domain in np.unique(domains):
+        for is_edit in (False, True):
+            mask = (domains == domain) & (edited == is_edit)
+            y = val_y[mask]
+            pred = scores[mask] >= 0.5
+            print(f"{domain} validation {'edited' if is_edit else 'original'}: "
+                  f"accuracy {accuracy_score(y, pred):.3f}, AUC {roc_auc_score(y, scores[mask]):.3f}, "
+                  f"real flagged {pred[y == 0].mean():.3f}", flush=True)
+    buffer = io.BytesIO()
+    joblib.dump(model, buffer, compress=3)
+    targets = [args.output] if args.output else [ROOT / "backend/model.pkl", ROOT / "ai_detector_svm.pkl"]
+    for target in targets:
+        target.parent.mkdir(parents=True, exist_ok=True)
+        with tempfile.NamedTemporaryFile(dir=target.parent, delete=False) as out:
+            out.write(buffer.getbuffer())
+        Path(out.name).replace(target)
+        print(f"Saved {target}", flush=True)
 
 
 if __name__ == "__main__":

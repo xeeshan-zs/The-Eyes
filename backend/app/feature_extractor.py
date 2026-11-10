@@ -2,7 +2,7 @@
 
 Provides:
 1. `generate_fft_spectrum_image`: High-res 2D FFT shifted log-magnitude spectrum (base64 PNG).
-2. `extract_fingerprint`: 40-dimensional multi-spectral feature vector matching the trained HistGradientBoosting model.
+2. `extract_fingerprint`: Versioned classifier features for current and legacy weights.
 3. `compute_spectral_diagnostics`: Radial power decay curve and diagnostic telemetry for UI charts.
 """
 
@@ -13,6 +13,18 @@ from PIL import Image
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from .image_features import FEATURE_VERSION, extract_image_features
+
+
+LEGACY_FEATURE_VERSION = "radial-fft-v1"
+
+
+def extract_fingerprint(image: Image.Image, version: str = FEATURE_VERSION) -> np.ndarray:
+    if version == FEATURE_VERSION:
+        return extract_image_features(image)
+    if version == LEGACY_FEATURE_VERSION:
+        return _legacy_fingerprint(image)
+    raise ValueError(f"Unknown image feature version: {version}")
 
 
 def generate_fft_spectrum_image(image: Image.Image, target_size: tuple[int, int] = (512, 512)) -> str:
@@ -49,7 +61,7 @@ def generate_fft_spectrum_image(image: Image.Image, target_size: tuple[int, int]
     return f"data:image/png;base64,{base64_str}"
 
 
-def extract_fingerprint(image: Image.Image) -> np.ndarray:
+def _legacy_fingerprint(image: Image.Image) -> np.ndarray:
     """Extracts 40-dimensional multi-spectral feature vector matching the trained model pipeline."""
     try:
         rgb_img = image.convert("RGB").resize((256, 256), Image.Resampling.BILINEAR)

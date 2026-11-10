@@ -1,13 +1,14 @@
 """FastAPI Backend Server for AI vs Real Image Detector.
 
 Endpoints:
-- POST /predict: Accepts an image file, extracts multi-spectral 40-dim FFT fingerprint + model inference,
+- POST /predict: Accepts an image file, extracts spectral and texture features for local inference,
                  generates 2D FFT spectrum visualization and spectral diagnostics,
                  calls NVIDIA DiffusionGemma 26B Vision Forensics,
                  and computes a Dual-Layer Weighted Ensemble Average verdict with intelligent single-model fallback.
 - GET /health: Health check and model readiness info.
 """
 
+import hashlib
 import os
 import io
 import time
@@ -36,6 +37,8 @@ for p in _env_paths:
         load_dotenv(p)
 
 from .feature_extractor import (
+    FEATURE_VERSION,
+    LEGACY_FEATURE_VERSION,
     generate_fft_spectrum_image,
     extract_fingerprint,
     compute_spectral_diagnostics,
@@ -52,6 +55,8 @@ MODEL_STATE: Dict[str, Any] = {
     "model": None,
     "model_name": None,
     "classes": None,
+    "feature_version": None,
+    "model_sha256": None,
 }
 
 
@@ -69,26 +74,37 @@ def load_detector_model():
         abs_path = os.path.abspath(path)
         if os.path.exists(abs_path):
             try:
-                loaded = joblib.load(abs_path)
-                MODEL_STATE["model"] = loaded
-                MODEL_STATE["model_name"] = os.path.basename(abs_path)
+                with open(abs_path, "rb") as weights:
+                    checksum = hashlib.file_digest(weights, "sha256").hexdigest()
+                    weights.seek(0)
+                    loaded = joblib.load(weights)
+                version = getattr(loaded, "eyes_feature_version_", LEGACY_FEATURE_VERSION)
+                if version not in (FEATURE_VERSION, LEGACY_FEATURE_VERSION):
+                    raise ValueError(f"Unsupported feature version {version!r}")
+                expected = (40 if version == LEGACY_FEATURE_VERSION
+                            else extract_fingerprint(Image.new("RGB", (8, 8)), version).size)
+                if getattr(loaded, "n_features_in_", expected) != expected:
+                    raise ValueError(f"Model input does not match {version} ({expected} features)")
                 classes = getattr(loaded, "classes_", None)
                 if classes is None and hasattr(loaded, "named_steps"):
                     for step in loaded.named_steps.values():
                         if hasattr(step, "classes_"):
                             classes = step.classes_
                             break
-                if classes is not None:
-                    MODEL_STATE["classes"] = [
+                MODEL_STATE.update(
+                    model=loaded, model_name=os.path.basename(abs_path), feature_version=version, model_sha256=checksum,
+                    classes=[
                         int(c) if hasattr(c, "item") and isinstance(c.item(), int) else str(c)
                         for c in classes
-                    ]
+                    ] if classes is not None else None,
+                )
                 logger.info(f"Loaded model: {abs_path} (classes: {MODEL_STATE['classes']})")
                 return
             except Exception as e:
                 logger.warning(f"Could not load {abs_path}: {e}")
 
-    logger.warning("No model.pkl or ai_detector_svm.pkl found. Running in fallback heuristic mode.")
+    MODEL_STATE.update(model=None, model_name=None, classes=None, feature_version=None, model_sha256=None)
+    logger.warning("No compatible local classifier found.")
 
 
 @asynccontextmanager
@@ -136,6 +152,8 @@ def health_check():
         "status": "online",
         "model_loaded": MODEL_STATE["model"] is not None,
         "model_file": MODEL_STATE["model_name"],
+        "feature_version": MODEL_STATE["feature_version"],
+        "model_sha256": MODEL_STATE["model_sha256"],
         "classes": MODEL_STATE["classes"],
         "nvidia_vision_active": bool(os.getenv("NVIDIA_API_KEY")),
         "sightengine_configured": bool(os.getenv("SIGHTENGINE_API_USER") and os.getenv("SIGHTENGINE_API_SECRET")),
@@ -143,7 +161,7 @@ def health_check():
 
 
 def run_model_inference(features: np.ndarray) -> Optional[tuple[str, float]]:
-    """Runs prediction on 40-dim feature vector using the trained pipeline."""
+    """Run prediction on the feature vector expected by the loaded model."""
     model = MODEL_STATE["model"]
     if model is None:
         return None
@@ -321,9 +339,11 @@ async def predict_image(file: UploadFile = File(...)):
         # 2. Multi-Spectral Diagnostics & 1D Radial Curve
         diagnostics = compute_spectral_diagnostics(image)
 
-        # 3. Extract 40-dim Fingerprint & Predict with Local Physics Model
-        features = extract_fingerprint(image)
-        local_result = run_model_inference(features)
+        # 3. Use the same feature recipe that produced these weights.
+        local_result = None
+        if MODEL_STATE["model"] is not None:
+            features = extract_fingerprint(image, MODEL_STATE["feature_version"])
+            local_result = run_model_inference(features)
 
         # 4. NVIDIA DiffusionGemma 26B Multi-Modal Vision Inspection (Async)
         nvidia_vision_res = await check_image_with_nvidia_vision(image_bytes)
@@ -347,6 +367,8 @@ async def predict_image(file: UploadFile = File(...)):
             "ensemble": ensemble_meta,
             "local_model": {
                 "available": local_result is not None,
+                "feature_version": MODEL_STATE["feature_version"],
+                "model_sha256": MODEL_STATE["model_sha256"],
                 "prediction": local_result[0] if local_result else None,
                 "confidence": local_result[1] if local_result else None,
             },

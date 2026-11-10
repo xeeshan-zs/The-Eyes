@@ -173,7 +173,7 @@ export default function AboutPage({ onBackToDetector }) {
           </div>
 
           <div className="mt-4 pt-3 border-t border-black/10 dark:border-white/10 text-[11px] font-mono font-bold text-slate-600 dark:text-slate-400">
-            40-Dimensional Feature Fingerprint • Scikit-Learn Fast Classifier
+            Spectral and texture features • Scikit-learn classifier
           </div>
         </div>
 

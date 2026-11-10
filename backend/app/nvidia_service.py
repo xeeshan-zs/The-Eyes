@@ -75,10 +75,13 @@ def _sync_call_nvidia(image_bytes: bytes) -> Optional[Dict[str, Any]]:
                 }
             ],
             "model": NVIDIA_MODEL,
-            "max_tokens": 350,
+            "max_tokens": 1024,
             "stream": False,
-            "temperature": 0.1,
-            "top_p": 0.95
+            "temperature": 0.5,
+            "top_p": 1,
+            "frequency_penalty": 0,
+            "presence_penalty": 0,
+            "seed": 0,
         }
 
         headers = {

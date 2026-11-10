@@ -202,7 +202,7 @@ export default function App() {
                     Multi-Spectral Pipeline
                   </span>
                   <span className="px-3 py-1.5 rounded bg-white dark:bg-[#181824] border-2 border-black dark:border-white text-black dark:text-white font-bold shadow-brutal-sm">
-                    40-Dim FFT Harmonics
+                    Spectral and Texture Analysis
                   </span>
                   <span className="px-3 py-1.5 rounded bg-[#00F5A0] text-black font-black border-2 border-black shadow-[2px_2px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF]">
                     Serverless Direct NIM Fallback

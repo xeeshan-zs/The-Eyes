@@ -82,7 +82,7 @@ export default function ApiComparison({ result }) {
                 </div>
 
                 <p className="text-xs text-slate-800 dark:text-slate-200 font-mono leading-relaxed font-bold">
-                  Evaluated on 40-dimensional azimuthal harmonic power decay, α slope roll-off, and cross-channel chromatic phase coherence.
+                  The local model scores frequency patterns and variations in pixel texture.
                 </p>
               </>
             ) : (
