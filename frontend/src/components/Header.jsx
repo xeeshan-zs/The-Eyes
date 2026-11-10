@@ -18,8 +18,9 @@ export default function Header({
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 min-h-[3.75rem] py-2 flex items-center justify-between gap-2 sm:gap-4">
           {/* Brand Block */}
           <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-            <div
-              onClick={() => onNavigate('detector')}
+            <a
+              href="/"
+              aria-label="The Eyes home"
               className="cursor-pointer px-2.5 sm:px-3.5 py-1.5 rounded-lg bg-[#FFE600] border-2 border-black shadow-[2px_2px_0px_#000000] sm:shadow-[3px_3px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF] font-mono font-black text-black text-xs sm:text-sm tracking-wider flex items-center gap-1.5 sm:gap-2 hover:translate-x-[-1px] hover:translate-y-[-1px] transition-transform select-none"
             >
               <Eye className="w-4 h-4 stroke-[3]" />
@@ -27,7 +28,7 @@ export default function Header({
               <span className="text-[9px] sm:text-[10px] px-1 sm:px-1.5 py-0.2 bg-black text-[#FFE600] font-black rounded">2.0</span>
               {/* Mobile Online Dot */}
               <span className={`sm:hidden w-2 h-2 rounded-full border border-black ${isOnline ? 'bg-[#00F5A0]' : 'bg-[#FF2E63]'}`} title={isOnline ? 'Backend Online' : 'Detector offline'} />
-            </div>
+            </a>
 
             <span className="hidden lg:inline-block text-xs font-mono text-black dark:text-white font-black border-l-2 border-black/30 dark:border-white/40 pl-3">
               2D FOURIER SPECTRAL FORENSICS
