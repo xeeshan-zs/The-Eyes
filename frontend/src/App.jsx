@@ -98,10 +98,10 @@ export default function App() {
     setImagePreview(previewUrl);
 
     setLoading(true);
-    setLoadingMessage('Analyzing image texture and frequencies...');
+    setLoadingMessage('Checking your image...');
 
     const msgTimer1 = setTimeout(() => {
-      setLoadingMessage('Waiting for the detector...');
+      setLoadingMessage('Still working. The detector may be starting up.');
     }, 3500);
 
     const controller = new AbortController();
@@ -128,7 +128,7 @@ export default function App() {
       setCurrentView('detector');
     } catch (backendErr) {
       if (backendErr instanceof TypeError || backendErr.name === 'AbortError') report('Unreachable');
-      setError(backendErr.name === 'AbortError' ? 'The detector took too long. Please try again.' : backendErr.message);
+      setError(backendErr.name === 'AbortError' ? 'The detector took too long. Try the same image again below.' : backendErr.message);
     } finally {
       clearTimeout(msgTimer1);
       clearTimeout(timeoutId);
@@ -166,14 +166,15 @@ export default function App() {
       <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-3.5 sm:py-7 z-10">
         {/* Error Alert */}
         {error && (
-          <div className="mb-4 sm:mb-6 p-3 sm:p-4 rounded-xl bg-[#FF2E63] text-white border-2 border-black flex items-start justify-between gap-2.5 sm:gap-3 text-xs font-mono font-black shadow-[4px_4px_0px_#000000]">
+          <div role="alert" className="mb-4 sm:mb-6 p-3 sm:p-4 rounded-xl bg-[#FF2E63] text-white border-2 border-black flex items-start justify-between gap-2.5 sm:gap-3 text-xs font-mono font-black shadow-[4px_4px_0px_#000000]">
             <div className="flex items-center gap-2">
               <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 stroke-[3]" />
               <span className="leading-snug">{error}</span>
             </div>
+            {file && <button type="button" onClick={() => handleFileSelected(file)} className="min-h-10 bg-[#FFE600] text-black px-3 rounded border-2 border-black focus-visible:outline focus-visible:outline-3 focus-visible:outline-white">Try again</button>}
             <button
               onClick={() => setError(null)}
-              className="bg-black text-white px-2 py-0.5 sm:px-2.5 sm:py-1 rounded border-2 border-white hover:bg-white hover:text-black transition-colors flex-shrink-0 cursor-pointer text-[10px] sm:text-xs"
+              className="min-h-10 bg-black text-white px-2 sm:px-2.5 rounded border-2 border-white hover:bg-white hover:text-black transition-colors flex-shrink-0 cursor-pointer text-[10px] sm:text-xs"
             >
               DISMISS
             </button>

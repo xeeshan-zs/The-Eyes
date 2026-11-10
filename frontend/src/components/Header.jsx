@@ -13,9 +13,9 @@ export default function Header({
   return (
     <>
       <header className="border-b-2 border-black dark:border-white bg-[#FFFFFF]/95 dark:bg-[#050508]/95 backdrop-blur-xl sticky top-0 z-50 transition-colors">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 min-h-[3.75rem] py-2 flex items-center justify-between gap-2 sm:gap-4">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 min-h-[3.75rem] py-2 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 sm:gap-4">
           {/* Brand Block */}
-          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <a
               href="/"
               aria-label="The Eyes home"
@@ -36,7 +36,7 @@ export default function Header({
           </div>
 
           {/* Center / Right Navigation Controls */}
-          <div className="flex items-center gap-1.5 sm:gap-2.5 text-xs font-mono">
+          <div className="flex items-center gap-1.5 sm:gap-2.5 text-xs font-mono ml-auto">
             {/* Navigation View Toggle */}
             <button
               onClick={() => onNavigate(currentView === 'about' ? 'detector' : 'about')}

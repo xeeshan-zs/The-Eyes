@@ -58,14 +58,14 @@ export default function VerdictBadge({ result }) {
               </span>
             </div>
 
-            <h2 className={`text-2xl xs:text-3xl sm:text-5xl lg:text-6xl font-black font-mono tracking-tight leading-none ${
+            <h2 className={`text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-black font-mono tracking-tight leading-none ${
               isFake ? 'text-[#E11D48] dark:text-[#FF2E63]' : 'text-[#059669] dark:text-[#00F5A0]'
             }`}>
-              {isFake ? 'AI-GENERATED' : 'AUTHENTIC / REAL'}
+              {isFake ? 'Likely AI-generated' : 'Likely a photograph'}
             </h2>
 
             <p className="text-xs sm:text-sm text-slate-900 dark:text-white font-mono mt-2 sm:mt-2.5 max-w-2xl leading-relaxed font-bold">
-              The score reflects the patterns the detector found in this image.
+              This is a model estimate based on image patterns. It cannot prove how the image was made.
             </p>
 
             {/* Individual Layer Telemetry Chips */}
@@ -88,7 +88,7 @@ export default function VerdictBadge({ result }) {
         {/* Right Certainty Box */}
         <div className="bg-white dark:bg-black p-4 sm:p-5 rounded-xl border-2 border-black dark:border-white shadow-[4px_4px_0px_#000000] sm:shadow-[5px_5px_0px_#000000] dark:shadow-[4px_4px_0px_#FFFFFF] flex flex-col justify-between w-full lg:w-auto lg:min-w-[240px]">
           <span className="text-[11px] sm:text-xs font-mono font-black text-black dark:text-white uppercase tracking-widest mb-1">
-            MODEL SCORE
+            MODEL ESTIMATE
           </span>
 
           <div className="flex items-baseline gap-2 mb-2">
@@ -99,6 +99,7 @@ export default function VerdictBadge({ result }) {
             </span>
           </div>
 
+          <p className="mb-2 text-xs text-slate-700 dark:text-slate-200">Score for the result shown above</p>
           {/* Hard Segmented Bar */}
           <div className="w-full bg-slate-200 dark:bg-slate-800 h-3 sm:h-3.5 rounded border-2 border-black dark:border-white overflow-hidden flex">
             <div
@@ -114,8 +115,8 @@ export default function VerdictBadge({ result }) {
           </div>
 
           <div className="flex justify-between text-[11px] sm:text-xs font-mono font-black mt-2">
-            <span className="text-[#059669] dark:text-[#00F5A0]">Real: {isFake ? 100 - confidencePercent : confidencePercent}%</span>
-            <span className="text-[#E11D48] dark:text-[#FF2E63]">Synth: {isFake ? confidencePercent : 100 - confidencePercent}%</span>
+            <span className="text-[#059669] dark:text-[#00F5A0]">Photo: {isFake ? 100 - confidencePercent : confidencePercent}%</span>
+            <span className="text-[#E11D48] dark:text-[#FF2E63]">AI: {isFake ? confidencePercent : 100 - confidencePercent}%</span>
           </div>
         </div>
       </div>

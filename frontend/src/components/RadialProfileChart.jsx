@@ -128,8 +128,8 @@ export default function RadialProfileChart({ diagnostics, isFake }) {
             y={padding.top}
             width={graphWidth * 0.35}
             height={graphHeight}
-            fill={isFake ? 'rgba(255, 46, 99, 0.22)' : 'rgba(0, 245, 160, 0.12)'}
-            stroke={isFake ? '#FF2E63' : '#00F5A0'}
+            fill='rgba(255, 230, 0, 0.08)'
+            stroke='#FFE600'
             strokeWidth="1.5"
             strokeDasharray="3 3"
           />
@@ -137,11 +137,9 @@ export default function RadialProfileChart({ diagnostics, isFake }) {
             x={padding.left + graphWidth * 0.82}
             y={padding.top + 14}
             textAnchor="middle"
-            className={`font-mono text-[10px] uppercase tracking-wider font-black ${
-              isFake ? 'fill-[#FF2E63]' : 'fill-[#00F5A0]'
-            }`}
+            className="font-mono text-[10px] uppercase tracking-wider font-black fill-[#FFE600]"
           >
-            {isFake ? '⚠ Nyquist Noise Shelf' : 'Natural Roll-off'}
+            High frequencies
           </text>
 
           {/* Reference Curve */}
@@ -230,14 +228,12 @@ export default function RadialProfileChart({ diagnostics, isFake }) {
         <div className="flex items-center gap-1.5 text-slate-900 dark:text-white font-bold">
           <Info className="w-4 h-4 text-[#B45309] dark:text-[#FFE600] flex-shrink-0" />
           <span>
-            {isFake
-              ? 'Flattened slope indicates latent diffusion VAE upsampling noise floor.'
-              : 'Continuous exponential decay strictly obeys optical camera exposure.'}
+            The solid line comes from this image. The dashed curve and highlighted high-frequency range are fixed guides. Both images from cameras and AI can vary here.
           </span>
         </div>
         {hoverIndex !== null && (
           <div className="bg-[#FFE600] text-black font-black px-2.5 py-1 rounded border-2 border-black shadow-[2px_2px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF]">
-            BIN #{hoverIndex}: {(profile[hoverIndex] * 100).toFixed(1)}% Energy
+            BIN #{hoverIndex}: {profile[hoverIndex].toFixed(2)} normalized level
           </div>
         )}
       </div>

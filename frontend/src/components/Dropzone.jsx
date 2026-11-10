@@ -74,7 +74,7 @@ export default function Dropzone({ onFileSelected, loading, currentPreview, load
         {/* Loading Overlay */}
         {loading && (
           <div className="absolute inset-0 z-30 pointer-events-none bg-white/95 dark:bg-black/95 backdrop-blur-md flex flex-col items-center justify-center p-4 sm:p-6 text-center">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#FFE600] border-2 border-black shadow-[4px_4px_0px_#000000] dark:shadow-[4px_4px_0px_#FFFFFF] flex items-center justify-center animate-bounce mb-3">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#FFE600] border-2 border-black shadow-[4px_4px_0px_#000000] dark:shadow-[4px_4px_0px_#FFFFFF] flex items-center justify-center mb-3">
               <Sparkles className="w-6 h-6 sm:w-7 sm:h-7 text-black stroke-[3]" />
             </div>
             <span className="text-sm sm:text-lg font-mono font-black tracking-wider text-black dark:text-white max-w-sm">
@@ -82,7 +82,7 @@ export default function Dropzone({ onFileSelected, loading, currentPreview, load
             </span>
             <span className="text-[11px] sm:text-xs font-mono font-black text-[#059669] dark:text-[#FFE600] mt-2 flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-[#00F5A0] animate-ping" />
-              Evaluating Multi-Spectral Classifier Pipeline
+              Please keep this page open
             </span>
           </div>
         )}
@@ -90,7 +90,7 @@ export default function Dropzone({ onFileSelected, loading, currentPreview, load
         <div className="p-6 sm:p-12 flex flex-col items-center justify-center text-center">
           <button type="button" disabled={loading}
             onClick={event => { event.stopPropagation(); fileInputRef.current?.click(); }}
-            className="flex min-h-14 w-full sm:w-auto items-center justify-center gap-3 rounded-lg border-2 border-black bg-[#FFE600] px-8 py-4 text-lg font-black text-black shadow-[4px_4px_0px_#000] focus-visible:outline-blue-600">
+            className="flex min-h-14 w-full sm:w-auto items-center justify-center gap-3 rounded-lg border-2 border-black bg-[#FFE600] px-8 py-4 text-lg font-black text-black shadow-[4px_4px_0px_#000] transition-colors hover:bg-[#FFF066] focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-[#2563EB] disabled:cursor-wait">
             <UploadCloud aria-hidden="true" className="h-6 w-6" /> Upload image
           </button>
           <p className="mt-4 text-sm text-slate-700 dark:text-slate-200">

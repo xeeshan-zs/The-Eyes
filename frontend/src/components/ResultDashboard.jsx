@@ -32,9 +32,9 @@ export default function ResultDashboard({ result, originalImagePreview, onNewIma
     <div className="space-y-6">
       {/* 1. Hero Verdict Badge */}
       <VerdictBadge result={result} />
-      <div className="flex flex-wrap gap-3" aria-label="Image actions">
-        <button type="button" onClick={onNewImage} className="flex-1 sm:flex-none bg-[#FFE600] text-black rounded-lg border-2 border-black px-6 py-3 font-black shadow-[4px_4px_0px_#000] focus-visible:outline-blue-600">New image</button>
-        <button type="button" onClick={onTestAgain} className="flex-1 sm:flex-none bg-white text-black rounded-lg border-2 border-black px-6 py-3 font-bold shadow-[3px_3px_0px_#000] focus-visible:outline-blue-600">Test again</button>
+      <div className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap" aria-label="Image actions">
+        <button type="button" onClick={onNewImage} className="min-h-12 bg-[#FFE600] text-black rounded-lg border-2 border-black px-3 sm:px-6 py-3 font-black shadow-[4px_4px_0px_#000] focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-blue-600">New image</button>
+        <button type="button" onClick={onTestAgain} className="min-h-12 bg-white text-black rounded-lg border-2 border-black px-3 sm:px-6 py-3 font-bold shadow-[3px_3px_0px_#000] focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Test again</button>
       </div>
       {/* 2. Forensic Metrics */}
       <ForensicMetrics result={result} />
@@ -43,11 +43,12 @@ export default function ResultDashboard({ result, originalImagePreview, onNewIma
       <div className="glass-brutal rounded-xl overflow-hidden shadow-[6px_6px_0px_#000000] sm:shadow-[8px_8px_0px_#000000]">
         {/* Toolbar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-3.5 sm:px-5 py-3 sm:py-4 bg-white dark:bg-black border-b-2 border-black dark:border-white">
+          <p className="text-sm font-bold text-slate-800 dark:text-slate-100 sm:hidden">Explore this image</p>
           {/* Mode Switcher Tabs */}
           <div className="grid grid-cols-3 gap-1.5 sm:flex sm:items-center sm:gap-2.5 w-full sm:w-auto">
             <button
               onClick={() => setActiveTab('dual')}
-              className={`px-2.5 sm:px-4 py-2 rounded-lg text-xs font-mono font-black border-2 transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer ${
+              className={`min-h-11 px-2 sm:px-4 py-2 rounded-lg text-xs font-mono font-black border-2 transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer ${
                 activeTab === 'dual'
                   ? 'bg-[#FFE600] text-black border-black shadow-[2px_2px_0px_#000000] sm:shadow-[3px_3px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF]'
                   : 'bg-white dark:bg-[#181824] text-black dark:text-white border-black dark:border-white hover:bg-[#FFE600] hover:text-black'
@@ -59,7 +60,7 @@ export default function ResultDashboard({ result, originalImagePreview, onNewIma
 
             <button
               onClick={() => setActiveTab('slider')}
-              className={`px-2.5 sm:px-4 py-2 rounded-lg text-xs font-mono font-black border-2 transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer ${
+              className={`min-h-11 px-2 sm:px-4 py-2 rounded-lg text-xs font-mono font-black border-2 transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer ${
                 activeTab === 'slider'
                   ? 'bg-[#FFE600] text-black border-black shadow-[2px_2px_0px_#000000] sm:shadow-[3px_3px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF]'
                   : 'bg-white dark:bg-[#181824] text-black dark:text-white border-black dark:border-white hover:bg-[#FFE600] hover:text-black'
@@ -71,7 +72,7 @@ export default function ResultDashboard({ result, originalImagePreview, onNewIma
 
             <button
               onClick={() => setActiveTab('chart')}
-              className={`px-2.5 sm:px-4 py-2 rounded-lg text-xs font-mono font-black border-2 transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer ${
+              className={`min-h-11 px-2 sm:px-4 py-2 rounded-lg text-xs font-mono font-black border-2 transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer ${
                 activeTab === 'chart'
                   ? 'bg-[#FFE600] text-black border-black shadow-[2px_2px_0px_#000000] sm:shadow-[3px_3px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF]'
                   : 'bg-white dark:bg-[#181824] text-black dark:text-white border-black dark:border-white hover:bg-[#FFE600] hover:text-black'
@@ -136,7 +137,7 @@ export default function ResultDashboard({ result, originalImagePreview, onNewIma
                 <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-black border-2 border-black dark:border-white flex items-center justify-center">
                   <img
                     src={originalImagePreview}
-                    alt="Input"
+                    alt="Uploaded image"
                     className="w-full h-full object-contain"
                   />
                   <div className="absolute bottom-3 left-3 bg-black px-3 py-1.5 rounded text-xs font-mono font-black text-[#00F5A0] border-2 border-[#00F5A0] shadow-[3px_3px_0px_#000000]">
@@ -145,7 +146,7 @@ export default function ResultDashboard({ result, originalImagePreview, onNewIma
                 </div>
 
                 <p className="mt-4 text-xs text-slate-800 dark:text-white font-mono leading-relaxed font-bold">
-                  Natural human visual domain. High-frequency neural upsampling and latent noise are often imperceptible to the naked eye.
+                  The uploaded image as you see it. The spectrum beside it visualizes frequency patterns calculated from these pixels.
                 </p>
               </div>
 
@@ -172,7 +173,7 @@ export default function ResultDashboard({ result, originalImagePreview, onNewIma
                 <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-black border-2 border-black dark:border-white flex items-center justify-center">
                   <img
                     src={result.fft_spectrum_image}
-                    alt="FFT Spectrum"
+                    alt="Frequency spectrum calculated from the uploaded image"
                     className="w-full h-full object-contain"
                   />
 
@@ -193,7 +194,7 @@ export default function ResultDashboard({ result, originalImagePreview, onNewIma
                 </div>
 
                 <p className="mt-4 text-xs text-slate-800 dark:text-white font-mono leading-relaxed font-bold">
-                  Centered zero frequency (DC). Latent diffusion &amp; GAN models manifest elevated energy shelves along outer radii and periodic harmonic cross-spikes.
+                  This spectrum is calculated from the uploaded image. The cyan circles and crosshair are fixed guides; toggle them with Reticle.
                 </p>
               </div>
             </div>
