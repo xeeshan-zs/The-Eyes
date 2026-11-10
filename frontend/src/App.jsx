@@ -39,9 +39,14 @@ export default function App() {
   const [status, setStatus] = useState('Starting');
   const revision = React.useRef(0);
   const lastCheck = React.useRef(0);
+  const retryTimer = React.useRef(null);
   const report = React.useCallback(value => {
     revision.current++;
     lastCheck.current = Date.now();
+    clearTimeout(retryTimer.current);
+    if (value === 'Starting' && navigator.onLine) {
+      retryTimer.current = setTimeout(() => window.dispatchEvent(new Event('detector-recheck')), 15000);
+    }
     setStatus(navigator.onLine ? value : 'Offline');
   }, []);
   useEffect(() => {
@@ -55,7 +60,7 @@ export default function App() {
       try {
         const response = await fetch(`${API_BASE_URL}/health`, { cache: 'no-store', signal: controller.signal });
         const ready = response.ok && (await response.json()).model_loaded;
-        if (ticket === revision.current) report(ready ? 'Ready' : 'Starting');
+        if (ticket === revision.current) report(ready ? 'Online' : 'Starting');
       } catch {
         if (ticket === revision.current) report(navigator.onLine ? 'Starting' : 'Offline');
       } finally {
@@ -69,12 +74,15 @@ export default function App() {
     check();
     window.addEventListener('offline', offline);
     window.addEventListener('online', online);
+    window.addEventListener('detector-recheck', check);
     document.addEventListener('visibilitychange', resume);
     return () => {
       revision.current++;
       pending?.abort();
+      clearTimeout(retryTimer.current);
       window.removeEventListener('offline', offline);
       window.removeEventListener('online', online);
+      window.removeEventListener('detector-recheck', check);
       document.removeEventListener('visibilitychange', resume);
     };
   }, [report]);
@@ -115,7 +123,7 @@ export default function App() {
       }
 
       const data = await response.json();
-      report('Ready');
+      report('Online');
       setResult(data);
       setCurrentView('detector');
     } catch (backendErr) {

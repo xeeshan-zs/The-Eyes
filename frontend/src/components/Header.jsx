@@ -30,7 +30,7 @@ export default function Header({
               2D FOURIER SPECTRAL FORENSICS
             </span>
             <span role="status" title={`Detector: ${status}`} className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-mono font-bold">
-              <span aria-hidden="true" className={`h-2 w-2 rounded-full border border-black/40 ${status === 'Ready' ? 'bg-emerald-400' : status === 'Offline' ? 'bg-amber-400' : 'bg-slate-400'}`} />
+              <span aria-hidden="true" className={`h-2 w-2 rounded-full border border-black/40 ${status === 'Online' ? 'bg-emerald-400' : status === 'Offline' ? 'bg-amber-400' : 'bg-slate-400'}`} />
               <span className="sr-only sm:not-sr-only">Detector:</span>{status}
             </span>
           </div>
