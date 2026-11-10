@@ -16,10 +16,6 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
-  const [backendStatus, setBackendStatus] = useState('checking');
-  const predictionVersion = React.useRef(0);
-  const healthFailures = React.useRef(0);
-
   // Theme Management (Light theme default)
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem('the_eyes_theme') || 'light';
@@ -40,55 +36,9 @@ export default function App() {
 
   const [loadingMessage, setLoadingMessage] = useState('Extracting 2D Fourier Harmonics...');
 
+  // Wake the detector while the visitor chooses an image.
   useEffect(() => {
-    let stopped = false;
-    let timer;
-    let controller;
-
-    async function checkHealth() {
-      if (document.hidden || controller) return;
-      const version = predictionVersion.current;
-      controller = new AbortController();
-      const deadline = setTimeout(() => controller.abort(), 30000);
-      try {
-        const response = await fetch(`${API_BASE_URL}/health?t=${Date.now()}`, {
-          cache: 'no-store',
-          signal: controller.signal,
-        });
-        if (!response.ok || (await response.json()).status !== 'online') {
-          throw new Error('Health check unsuccessful');
-        }
-        if (!stopped) {
-          healthFailures.current = 0;
-          setBackendStatus('online');
-        }
-      } catch {
-        if (!stopped && version === predictionVersion.current) {
-          healthFailures.current += 1;
-          if (healthFailures.current >= 2) setBackendStatus('offline');
-        }
-      } finally {
-        clearTimeout(deadline);
-        controller = null;
-        if (!stopped && !document.hidden) {
-          timer = setTimeout(checkHealth, healthFailures.current ? 5000 : 60000);
-        }
-      }
-    }
-
-    function onVisibilityChange() {
-      clearTimeout(timer);
-      if (!document.hidden) checkHealth();
-    }
-
-    document.addEventListener('visibilitychange', onVisibilityChange);
-    checkHealth();
-    return () => {
-      stopped = true;
-      clearTimeout(timer);
-      controller?.abort();
-      document.removeEventListener('visibilitychange', onVisibilityChange);
-    };
+    fetch(`${API_BASE_URL}/health`, { cache: 'no-store' }).catch(() => {});
   }, []);
 
   const handleFileSelected = async (selectedFile) => {
@@ -126,9 +76,6 @@ export default function App() {
       }
 
       const data = await response.json();
-      predictionVersion.current += 1;
-      healthFailures.current = 0;
-      setBackendStatus('online');
       setResult(data);
       setCurrentView('detector');
     } catch (backendErr) {
@@ -151,7 +98,6 @@ export default function App() {
 
       {/* Header */}
       <Header
-        backendStatus={backendStatus}
         onReset={chooseImage}
         hasResult={!!result}
         theme={theme}
@@ -168,7 +114,6 @@ export default function App() {
 
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-3.5 sm:py-7 z-10">
-        <InstallInvite />
         {/* Error Alert */}
         {error && (
           <div className="mb-4 sm:mb-6 p-3 sm:p-4 rounded-xl bg-[#FF2E63] text-white border-2 border-black flex items-start justify-between gap-2.5 sm:gap-3 text-xs font-mono font-black shadow-[4px_4px_0px_#000000]">
@@ -190,38 +135,10 @@ export default function App() {
           <AboutPage onBackToDetector={() => setCurrentView('detector')} />
         ) : !result ? (
           <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6 pt-1 sm:pt-2">
-            {/* Mission Hero Banner */}
-            <div className="glass-brutal rounded-xl p-4 sm:p-8 relative overflow-hidden shadow-[6px_6px_0px_#000000] sm:shadow-[8px_8px_0px_#000000]">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6">
-                <div>
-                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-2 sm:mb-3">
-                    <span className="px-2.5 sm:px-3 py-1 rounded bg-[#FFE600] text-black font-mono font-black text-[11px] sm:text-xs border-2 border-black shadow-[2px_2px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF]">
-                      AI FORENSICS
-                    </span>
-                    <span className="px-2.5 sm:px-3 py-1 rounded bg-white dark:bg-[#181824] text-black dark:text-white font-mono font-black text-[11px] sm:text-xs border-2 border-black dark:border-white shadow-[2px_2px_0px_#000000]">
-                      2D-FFT SPEC
-                    </span>
-                  </div>
-
-                  <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black font-mono tracking-tight text-black dark:text-white leading-tight">
-                    Frequency Domain <span className="underline underline-offset-4 decoration-4 text-black dark:text-[#FFE600]">AI Detector</span>
-                  </h1>
-
-                  <p className="text-xs sm:text-sm text-slate-800 dark:text-slate-100 font-mono mt-2 sm:mt-3 max-w-xl leading-relaxed font-bold">
-                    Computes 2D Fourier log-magnitude harmonic decay to isolate generative latent diffusion VAE upsampling artifacts across Midjourney, ChatGPT (DALL-E 3), Gemini (Imagen 3), and SDXL.
-                  </p>
-                </div>
-
-                <div className="hidden md:flex flex-col items-end text-right font-mono text-xs text-black dark:text-white border-l-2 border-black/30 dark:border-white/40 pl-6 space-y-2">
-                  <span className="px-3 py-1.5 rounded bg-white dark:bg-[#181824] border-2 border-black dark:border-white font-black shadow-brutal-sm text-black dark:text-white">
-                    Multi-Spectral Pipeline
-                  </span>
-                  <span className="px-3 py-1.5 rounded bg-white dark:bg-[#181824] border-2 border-black dark:border-white text-black dark:text-white font-bold shadow-brutal-sm">
-                    Spectral and Texture Analysis
-                  </span>
-                </div>
-              </div>
-            </div>
+            <header className="pt-3 sm:pt-5">
+              <h1 className="text-3xl sm:text-5xl font-black tracking-tight">AI image detector</h1>
+              <p className="mt-2 text-sm sm:text-base">Choose an image to see whether its patterns suggest a photograph or AI generation.</p>
+            </header>
 
             {/* Dropzone */}
             <Dropzone
@@ -232,13 +149,19 @@ export default function App() {
             />
 
             {/* Benchmark Presets */}
+            <details className="rounded-lg border-2 border-black dark:border-white bg-white dark:bg-[#14141E] p-3 sm:p-4">
+              <summary className="cursor-pointer font-bold">Try a sample image</summary>
+              <div className="mt-3">
             <SamplePresets
               onSelectSample={handleFileSelected}
               disabled={loading}
             />
 
+              </div>
+            </details>
+
             {/* Explainer 3-Column Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="hidden sm:grid sm:grid-cols-3 gap-4">
               <div className="glass-brutal-card rounded-xl p-5 sm:p-6 border-2 border-black dark:border-[#00F0FF] bg-[#F0F9FF] dark:bg-[#0A141A] flex flex-col justify-between min-h-[140px]">
                 <div className="text-xs font-mono font-black text-[#0369A1] dark:text-[#00F0FF] uppercase mb-2.5 flex items-center gap-2">
                   <Radio className="w-4 h-4 stroke-[3]" />
@@ -278,6 +201,7 @@ export default function App() {
             onTestAgain={() => handleFileSelected(file)}
           />
         )}
+        <div className="mx-auto mt-6 max-w-4xl"><InstallInvite /></div>
       </main>
 
       {/* Footer */}

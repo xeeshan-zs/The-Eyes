@@ -18,13 +18,13 @@ export default function Dropzone({ onFileSelected, loading, currentPreview, load
   const handleDrop = useCallback((e) => {
     e.preventDefault();
     setIsDragOver(false);
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+    if (!loading && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const file = e.dataTransfer.files[0];
       if (file.type.startsWith('image/')) {
         onFileSelected(file);
       }
     }
-  }, [onFileSelected]);
+  }, [onFileSelected, loading]);
 
   useEffect(() => {
     const handlePaste = (e) => {
@@ -33,14 +33,14 @@ export default function Dropzone({ onFileSelected, loading, currentPreview, load
       for (let i = 0; i < items.length; i++) {
         if (items[i].type.indexOf('image') !== -1) {
           const blob = items[i].getAsFile();
-          if (blob) onFileSelected(blob);
+          if (blob && !loading) onFileSelected(blob);
           break;
         }
       }
     };
     window.addEventListener('paste', handlePaste);
     return () => window.removeEventListener('paste', handlePaste);
-  }, [onFileSelected]);
+  }, [onFileSelected, loading]);
 
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -67,6 +67,7 @@ export default function Dropzone({ onFileSelected, loading, currentPreview, load
           type="file"
           accept="image/*"
           onChange={handleFileChange}
+          onClick={event => event.stopPropagation()}
           className="hidden"
         />
 
@@ -87,29 +88,15 @@ export default function Dropzone({ onFileSelected, loading, currentPreview, load
         )}
 
         <div className="p-6 sm:p-12 flex flex-col items-center justify-center text-center">
-          {/* Upload Icon Box */}
-          <div className="w-13 h-13 sm:w-16 sm:h-16 mb-3 sm:mb-4 rounded-xl bg-[#FFE600] border-2 border-black shadow-[3px_3px_0px_#000000] sm:shadow-[4px_4px_0px_#000000] dark:shadow-[3px_3px_0px_#FFFFFF] flex items-center justify-center text-black group-hover:translate-x-[-2px] group-hover:translate-y-[-2px] transition-transform">
-            <UploadCloud className="w-7 h-7 sm:w-9 sm:h-9 text-black stroke-[3]" />
-          </div>
-
-          <h3 className="text-lg sm:text-2xl font-black text-black dark:text-white mb-2 font-mono tracking-tight leading-snug">
-            TAP TO SELECT IMAGE OR <span className="underline underline-offset-4 decoration-4 text-black dark:text-[#FFE600]">DROP FILE</span>
-          </h3>
-          <p className="text-xs sm:text-sm text-slate-800 dark:text-slate-100 font-mono max-w-md mb-4 sm:mb-5 font-bold">
-            Camera photo, Gallery, PNG, JPEG, WEBP. Paste with <kbd className="px-1.5 sm:px-2.5 py-0.5 rounded bg-black text-white dark:bg-white dark:text-black font-black border-2 border-black shadow-[1px_1px_0px_#FFE600]">CTRL+V</kbd>
+          <button type="button" disabled={loading}
+            onClick={event => { event.stopPropagation(); fileInputRef.current?.click(); }}
+            className="flex min-h-14 w-full sm:w-auto items-center justify-center gap-3 rounded-lg border-2 border-black bg-[#FFE600] px-8 py-4 text-lg font-black text-black shadow-[4px_4px_0px_#000] focus-visible:outline-blue-600">
+            <UploadCloud aria-hidden="true" className="h-6 w-6" /> Upload image
+          </button>
+          <p className="mt-4 text-sm text-slate-700 dark:text-slate-200">
+            <span className="sm:hidden">Choose a photo from your device.</span>
+            <span className="hidden sm:inline">You can also drop an image here or paste it from your clipboard.</span>
           </p>
-
-          <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2.5 text-[11px] sm:text-xs font-mono font-black">
-            <span className="px-2.5 sm:px-3 py-1 rounded bg-slate-100 dark:bg-[#181824] text-black dark:text-white border-2 border-black dark:border-white shadow-[2px_2px_0px_#000000]">
-              2D FFT Spectrum
-            </span>
-            <span className="px-2.5 sm:px-3 py-1 rounded bg-slate-100 dark:bg-[#181824] text-black dark:text-white border-2 border-black dark:border-white shadow-[2px_2px_0px_#000000]">
-              Multi-Spectral
-            </span>
-            <span className="px-2.5 sm:px-3 py-1 rounded bg-[#00F5A0] text-black border-2 border-black shadow-[2px_2px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF]">
-              Texture Analysis
-            </span>
-          </div>
         </div>
       </div>
     </div>
