@@ -45,6 +45,7 @@ export default function App() {
     let controller;
 
     async function checkHealth() {
+      if (document.hidden || controller) return;
       const version = predictionVersion.current;
       controller = new AbortController();
       const deadline = setTimeout(() => controller.abort(), 30000);
@@ -63,19 +64,29 @@ export default function App() {
       } catch {
         if (!stopped && version === predictionVersion.current) {
           healthFailures.current += 1;
-          setBackendStatus(healthFailures.current >= 2 ? 'offline' : 'checking');
+          if (healthFailures.current >= 2) setBackendStatus('offline');
         }
       } finally {
         clearTimeout(deadline);
-        if (!stopped) timer = setTimeout(checkHealth, healthFailures.current ? 5000 : 15000);
+        controller = null;
+        if (!stopped && !document.hidden) {
+          timer = setTimeout(checkHealth, healthFailures.current ? 5000 : 60000);
+        }
       }
     }
 
+    function onVisibilityChange() {
+      clearTimeout(timer);
+      if (!document.hidden) checkHealth();
+    }
+
+    document.addEventListener('visibilitychange', onVisibilityChange);
     checkHealth();
     return () => {
       stopped = true;
       clearTimeout(timer);
-      controller.abort();
+      controller?.abort();
+      document.removeEventListener('visibilitychange', onVisibilityChange);
     };
   }, []);
 

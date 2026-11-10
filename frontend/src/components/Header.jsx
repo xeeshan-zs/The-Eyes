@@ -13,7 +13,7 @@ export default function Header({
   const status = {
     online: { label: 'BACKEND: ONLINE', color: 'bg-[#00F5A0] text-black' },
     checking: { label: 'CONNECTING', color: 'bg-[#FFE600] text-black' },
-    offline: { label: 'BACKEND: OFFLINE', color: 'bg-[#FF2E63] text-white' },
+    offline: { label: "CAN'T REACH BACKEND", color: 'bg-[#FF2E63] text-white' },
   }[backendStatus];
 
   return (
