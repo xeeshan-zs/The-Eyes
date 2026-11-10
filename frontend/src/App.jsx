@@ -36,7 +36,7 @@ export default function App() {
 
   const [loadingMessage, setLoadingMessage] = useState('Extracting 2D Fourier Harmonics...');
 
-  const [status, setStatus] = useState('Checking');
+  const [status, setStatus] = useState('Starting');
   const revision = React.useRef(0);
   const lastCheck = React.useRef(0);
   const report = React.useCallback(value => {
@@ -55,16 +55,16 @@ export default function App() {
       try {
         const response = await fetch(`${API_BASE_URL}/health`, { cache: 'no-store', signal: controller.signal });
         const ready = response.ok && (await response.json()).model_loaded;
-        if (ticket === revision.current) report(ready ? 'Ready' : 'Unavailable');
+        if (ticket === revision.current) report(ready ? 'Ready' : 'Starting');
       } catch {
-        if (ticket === revision.current) report('Unreachable');
+        if (ticket === revision.current) report(navigator.onLine ? 'Starting' : 'Offline');
       } finally {
         clearTimeout(timer);
         if (pending === controller) pending = null;
       }
     }
     const offline = () => { report('Offline'); pending?.abort(); pending = null; };
-    const online = () => { report('Checking'); check(); };
+    const online = () => { report('Starting'); check(); };
     const resume = () => { if (Date.now() - lastCheck.current > 60000 || lastCheck.current === 0) check(); };
     check();
     window.addEventListener('offline', offline);
