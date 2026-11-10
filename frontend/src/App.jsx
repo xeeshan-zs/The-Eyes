@@ -36,10 +36,48 @@ export default function App() {
 
   const [loadingMessage, setLoadingMessage] = useState('Extracting 2D Fourier Harmonics...');
 
-  // Wake the detector while the visitor chooses an image.
-  useEffect(() => {
-    fetch(`${API_BASE_URL}/health`, { cache: 'no-store' }).catch(() => {});
+  const [status, setStatus] = useState('Checking');
+  const revision = React.useRef(0);
+  const lastCheck = React.useRef(0);
+  const report = React.useCallback(value => {
+    revision.current++;
+    lastCheck.current = Date.now();
+    setStatus(navigator.onLine ? value : 'Offline');
   }, []);
+  useEffect(() => {
+    let pending;
+    async function check() {
+      if (document.hidden || pending) return;
+      if (!navigator.onLine) return report('Offline');
+      const ticket = revision.current;
+      const controller = pending = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 90000);
+      try {
+        const response = await fetch(`${API_BASE_URL}/health`, { cache: 'no-store', signal: controller.signal });
+        const ready = response.ok && (await response.json()).model_loaded;
+        if (ticket === revision.current) report(ready ? 'Ready' : 'Unavailable');
+      } catch {
+        if (ticket === revision.current) report('Unreachable');
+      } finally {
+        clearTimeout(timer);
+        if (pending === controller) pending = null;
+      }
+    }
+    const offline = () => { report('Offline'); pending?.abort(); pending = null; };
+    const online = () => { report('Checking'); check(); };
+    const resume = () => { if (Date.now() - lastCheck.current > 60000 || lastCheck.current === 0) check(); };
+    check();
+    window.addEventListener('offline', offline);
+    window.addEventListener('online', online);
+    document.addEventListener('visibilitychange', resume);
+    return () => {
+      revision.current++;
+      pending?.abort();
+      window.removeEventListener('offline', offline);
+      window.removeEventListener('online', online);
+      document.removeEventListener('visibilitychange', resume);
+    };
+  }, [report]);
 
   const handleFileSelected = async (selectedFile) => {
     if (!selectedFile) return;
@@ -71,14 +109,17 @@ export default function App() {
       });
 
       if (!response.ok) {
+        if (response.status >= 500) report('Unavailable');
         const errData = await response.json().catch(() => ({}));
         throw new Error(errData.detail || `HTTP ${response.status}: Server analysis failed.`);
       }
 
       const data = await response.json();
+      report('Ready');
       setResult(data);
       setCurrentView('detector');
     } catch (backendErr) {
+      if (backendErr instanceof TypeError || backendErr.name === 'AbortError') report('Unreachable');
       setError(backendErr.name === 'AbortError' ? 'The detector took too long. Please try again.' : backendErr.message);
     } finally {
       clearTimeout(msgTimer1);
@@ -98,6 +139,7 @@ export default function App() {
 
       {/* Header */}
       <Header
+        status={status}
         onReset={chooseImage}
         hasResult={!!result}
         theme={theme}

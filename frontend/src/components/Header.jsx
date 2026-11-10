@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Eye, Cpu, Sparkles, Github, RefreshCw, Sun, Moon, Info, Key, Check } from 'lucide-react';
 
 export default function Header({ 
+  status,
   onReset, 
   hasResult, 
   theme, 
@@ -27,6 +28,10 @@ export default function Header({
 
             <span className="hidden lg:inline-block text-xs font-mono text-black dark:text-white font-black border-l-2 border-black/30 dark:border-white/40 pl-3">
               2D FOURIER SPECTRAL FORENSICS
+            </span>
+            <span role="status" title={`Detector: ${status}`} className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-mono font-bold">
+              <span aria-hidden="true" className={`h-2 w-2 rounded-full border border-black/40 ${status === 'Ready' ? 'bg-emerald-400' : status === 'Checking' ? 'bg-slate-400' : 'bg-amber-400'}`} />
+              <span className="sr-only sm:not-sr-only">Detector:</span>{status}
             </span>
           </div>
 
