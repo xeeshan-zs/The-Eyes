@@ -150,7 +150,7 @@ export default function AboutPage({ onBackToDetector }) {
           <div>
             <div className="flex items-center justify-between pb-3 mb-4 border-b-2 border-black/10 dark:border-white/20">
               <span className="text-xs font-mono font-black px-3 py-1 rounded bg-[#00F0FF] text-black border border-black shadow-[2px_2px_0px_#000000]">
-                LAYER 01 // FOURIER PHYSICS
+                FOURIER PHYSICS
               </span>
               <Radio className="w-5 h-5 text-black dark:text-white stroke-[2.5]" />
             </div>

@@ -11,7 +11,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
 <p align="center">
-  <b>An image detector that estimates whether a picture is AI-generated using a trained spectral and texture classifier, with optional cloud vision analysis.</b>
+  <b>An image detector that estimates whether a picture is AI-generated using a trained spectral and texture classifier on the backend.</b>
 </p>
 
 </div>
@@ -66,18 +66,17 @@ The local classifier measures directional frequency energy, block cosine coeffic
 
 ---
 
-## ✨ Features
+## Using The Eyes
 
-- 🖥️ **Forensic Precision Terminal UI**: Built following the **UI-UX Pro Max** design system with a high-contrast dark theme, crisp grid borders, and surgical typography (`Inter` + `JetBrains Mono`).
-- ⚡ **Local classifier**: Scikit-learn scores pixel features on the backend. Configured NVIDIA and Sightengine integrations also send images to their respective services.
-- 🎚️ **Interactive Spatial ↔ Spectral Split Wiper**: Drag-to-wipe comparison slider inspecting original pixels directly against the 2D FFT spectrum with live $(u, v)$ frequency coordinate tracking.
-- 📈 **1D Azimuthal Radial Power Spectrum Chart**: Real-time interactive SVG curve plotting empirical frequency decay against the theoretical natural $1/f^\alpha$ optical baseline with Nyquist anomaly zone highlights.
-- 🧪 **Demo presets** use canvas patterns to preview the interface. The accuracy benchmark uses labeled image files.
-- 🌐 **Commercial Cloud API Benchmarking**: Optional integration with **Sightengine GenAI API** (`https://api.sightengine.com/1.0/check.json`) for live side-by-side consensus validation.
-- 📊 **Numerical Forensic Telemetry**: Real-time readouts for **High-Frequency Residual Energy Ratio**, **Spectral Entropy ($H$)**, **Image Resolution Matrix**, and **Processing Latency**.
-- 📋 **Forensic Export Tools**: Export high-res 2D FFT spectra as PNG or copy complete forensic JSON telemetry payloads with one click.
+Open the [live detector](https://z-eyes.web.app/) and choose an image, drop a file, or paste one from the clipboard. The result shows the classifier score alongside the Fourier spectrum, radial profile, and texture diagnostics. **Test again** analyzes the same file. **New image** opens the file picker. The eye logo returns to the upload screen.
 
----
+The demo presets draw canvas patterns so visitors can explore the interface. The accuracy results below come from labeled image files.
+
+### Install the web app
+
+On the first visit, choose **Install The Eyes**. Browsers that support an install prompt show their confirmation dialog. On iPhone or iPad, open the site in Safari and use **Share → Add to Home Screen**. **Not now** dismisses the invitation on that browser, and the smaller install link remains available.
+
+The installed app opens in its own window. Image analysis requires a connection to the Render backend. When an installed app launches offline, it offers a retry link.
 
 ## 📁 Repository Structure
 
@@ -104,7 +103,7 @@ the eyes/
 │   │   │   ├── ForensicMetrics.jsx       # Diagnostic numerical readouts
 │   │   │   ├── RadialProfileChart.jsx    # 1D Azimuthal radial decay chart
 │   │   │   ├── ImageComparisonSlider.jsx # Interactive split wiper slider
-│   │   │   ├── ApiComparison.jsx         # Model vs Sightengine comparison card
+│   │   │   ├── InstallInvite.jsx         # Browser installation prompt and guidance
 │   │   │   └── ResultDashboard.jsx       # Unified multi-mode workspace
 │   │   ├── App.jsx                       # Application state & routing
 │   │   ├── main.jsx                      # React entrypoint
@@ -189,7 +188,7 @@ The saved local detector combines gradient-boosted trees with a neural network. 
 | Another 2,000 test portraits | 54.85% | 72.20% | 563 → 317 of 1,000 |
 | Publisher's 1,000 test scenes | 43.10% | 84.00% | 378 → 87 of 500 |
 
-On 200 reference portraits, JPEG recompression changed 41 retrained verdicts (previously 64), and halving the resolution changed 60 (previously 102). Exporting every public scene at 256 × 256 JPEG quality 80 reduced the retrained accuracy to 70.1%. The retrained model flagged 34 of 100 photographs from the independent [Berkeley BSDS300 test set](https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/), down from 71. These measurements cover local inference using dataset labels. The hosted app can also combine the local score with NVIDIA's response. See the [full comparison and weight hashes](training/results.json).
+On 200 reference portraits, JPEG recompression changed 41 retrained verdicts (previously 64), and halving the resolution changed 60 (previously 102). Exporting every public scene at 256 × 256 JPEG quality 80 reduced the retrained accuracy to 70.1%. The retrained model flagged 34 of 100 photographs from the independent [Berkeley BSDS300 test set](https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/), down from 71. These measurements cover local inference using dataset labels. See the [full comparison and weight hashes](training/results.json).
 
 From the repository root, install `backend/requirements.txt` and place the portrait archive at `data-set/archive.zip`. To reproduce the run with additional scenes, prepare the [public scene dataset](https://huggingface.co/datasets/julienlucas/midjourney-dalle-sd-dataset) and train a candidate.
 
@@ -216,14 +215,14 @@ For custom features, update the shared extractor and its `FEATURE_VERSION` befor
 
 ## 🌐 Sightengine GenAI API Setup (Optional)
 
-To enable side-by-side commercial comparison on the dashboard:
+To include an optional external benchmark in the API response:
 1. Create a free account at [Sightengine](https://sightengine.com/).
 2. In `backend/.env`, set:
    ```env
    SIGHTENGINE_API_USER=your_user_id
    SIGHTENGINE_API_SECRET=your_secret_key
    ```
-3. Restart the backend server. The dashboard will automatically display live side-by-side consensus validation!
+3. Restart the backend server. When configured, the backend sends the uploaded image to Sightengine and returns its benchmark separately from the detector verdict.
 
 ---
 
