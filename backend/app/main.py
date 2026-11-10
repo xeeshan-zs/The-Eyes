@@ -3,8 +3,6 @@
 Endpoints:
 - POST /predict: Accepts an image file, extracts spectral and texture features for local inference,
                  generates 2D FFT spectrum visualization and spectral diagnostics,
-                 calls NVIDIA DiffusionGemma 26B Vision Forensics,
-                 and computes a Dual-Layer Weighted Ensemble Average verdict with intelligent single-model fallback.
 - GET /health: Health check and model readiness info.
 """
 
@@ -44,7 +42,6 @@ from .feature_extractor import (
     compute_spectral_diagnostics,
 )
 from .sightengine_service import check_image_with_sightengine
-from .nvidia_service import check_image_with_nvidia_vision
 
 warnings.filterwarnings("ignore", category=UserWarning, module="sklearn")
 
@@ -155,7 +152,7 @@ def health_check():
         "feature_version": MODEL_STATE["feature_version"],
         "model_sha256": MODEL_STATE["model_sha256"],
         "classes": MODEL_STATE["classes"],
-        "nvidia_vision_active": bool(os.getenv("NVIDIA_API_KEY")),
+        "inference_mode": "local",
         "sightengine_configured": bool(os.getenv("SIGHTENGINE_API_USER") and os.getenv("SIGHTENGINE_API_SECRET")),
     }
 
@@ -203,118 +200,6 @@ def run_model_inference(features: np.ndarray) -> Optional[tuple[str, float]]:
         return None
 
 
-def compute_ensemble_fusion(
-    fourier_result: Optional[tuple[str, float]],
-    nvidia_res: Optional[Dict[str, Any]]
-) -> tuple[str, float, Dict[str, Any]]:
-    """Calculates a dual-layer weighted average or graceful single-model fallback."""
-    fourier_ok = fourier_result is not None
-    nim_ok = bool(nvidia_res and nvidia_res.get("available"))
-
-    # Case 1: Both models available (Dual-Layer Ensemble)
-    if fourier_ok and nim_ok:
-        fourier_pred, fourier_conf = fourier_result
-        p_fake_fourier = fourier_conf if fourier_pred == "fake" else (1.0 - fourier_conf)
-
-        nim_pred = str(nvidia_res.get("prediction", "real")).lower()
-        nim_conf = float(nvidia_res.get("confidence", 0.85))
-        p_fake_nim = nim_conf if nim_pred == "fake" else (1.0 - nim_conf)
-
-        # Dynamic Calibration:
-        # If NVIDIA Vision is confident that an image is Real (>= 0.80) because it exhibits
-        # natural lighting, coherent anatomy, and real-world scene physics (even if Fourier
-        # frequency analysis is elevated due to smartphone HDR+ or unsharp masking),
-        # weight NVIDIA Vision heavily (0.75) to prevent computational photography false positives.
-        if nim_pred == "real" and nim_conf >= 0.80:
-            w_nim = 0.70
-            w_fourier = 0.30
-        elif nim_pred == "fake" and nim_conf >= 0.80:
-            w_nim = 0.65
-            w_fourier = 0.35
-        else:
-            w_nim = 0.50
-            w_fourier = 0.50
-
-        p_fake_fused = w_fourier * p_fake_fourier + w_nim * p_fake_nim
-
-        if p_fake_fused >= 0.50:
-            final_pred = "fake"
-            final_conf = round(p_fake_fused, 4)
-        else:
-            final_pred = "real"
-            final_conf = round(1.0 - p_fake_fused, 4)
-
-        meta = {
-            "active_engine": "ENSEMBLE",
-            "active_engine_label": "Dual-Layer Ensemble (Fourier Physics + NVIDIA NIM Vision)",
-            "models_count": 2,
-            "fourier_available": True,
-            "nim_available": True,
-            "fourier_p_fake": round(p_fake_fourier, 4),
-            "nim_p_fake": round(p_fake_nim, 4),
-            "fused_p_fake": round(p_fake_fused, 4),
-            "fourier_weight": w_fourier,
-            "nim_weight": w_nim,
-            "fallback_notice": None,
-        }
-        return final_pred, final_conf, meta
-
-    # Case 2: Only Fourier Physics Available (NIM Offline)
-    elif fourier_ok and not nim_ok:
-        fourier_pred, fourier_conf = fourier_result
-        p_fake_fourier = fourier_conf if fourier_pred == "fake" else (1.0 - fourier_conf)
-
-        meta = {
-            "active_engine": "FOURIER_ONLY",
-            "active_engine_label": "Local 2D Fourier Physics Model",
-            "models_count": 1,
-            "fourier_available": True,
-            "nim_available": False,
-            "fourier_p_fake": round(p_fake_fourier, 4),
-            "nim_p_fake": None,
-            "fused_p_fake": round(p_fake_fourier, 4),
-            "fourier_weight": 1.0,
-            "nim_weight": 0.0,
-            "fallback_notice": "NVIDIA NIM was unavailable. Verdict answered solely by the Local 2D Fourier Physics Model.",
-        }
-        return fourier_pred, fourier_conf, meta
-
-    # Case 3: Only NVIDIA NIM Vision Available (Local Model Missing)
-    elif not fourier_ok and nim_ok:
-        nim_pred = str(nvidia_res.get("prediction", "real")).lower()
-        nim_conf = float(nvidia_res.get("confidence", 0.85))
-        is_fake = "fake" in nim_pred or "ai" in nim_pred
-        final_pred = "fake" if is_fake else "real"
-        p_fake_nim = nim_conf if is_fake else (1.0 - nim_conf)
-
-        meta = {
-            "active_engine": "NIM_ONLY",
-            "active_engine_label": "NVIDIA DiffusionGemma 26B (NIM)",
-            "models_count": 1,
-            "fourier_available": False,
-            "nim_available": True,
-            "fourier_p_fake": None,
-            "nim_p_fake": round(p_fake_nim, 4),
-            "fused_p_fake": round(p_fake_nim, 4),
-            "fourier_weight": 0.0,
-            "nim_weight": 1.0,
-            "fallback_notice": "Local Fourier model was unavailable. Verdict answered solely by NVIDIA DiffusionGemma 26B Vision.",
-        }
-        return final_pred, nim_conf, meta
-
-    # Case 4: Neither available (Emergency fallback)
-    else:
-        meta = {
-            "active_engine": "HEURISTIC",
-            "active_engine_label": "Heuristic Frequency Slope Rule",
-            "models_count": 0,
-            "fourier_available": False,
-            "nim_available": False,
-            "fallback_notice": "Both primary inference engines were offline. Falling back to rule-based frequency slope inspection.",
-        }
-        return "real", 0.65, meta
-
-
 @app.post("/predict")
 async def predict_image(file: UploadFile = File(...)):
     start_time = time.time()
@@ -345,13 +230,9 @@ async def predict_image(file: UploadFile = File(...)):
             features = extract_fingerprint(image, MODEL_STATE["feature_version"])
             local_result = run_model_inference(features)
 
-        # 4. NVIDIA DiffusionGemma 26B Multi-Modal Vision Inspection (Async)
-        nvidia_vision_res = await check_image_with_nvidia_vision(image_bytes)
-
-        # 5. Dual-Layer Ensemble Average with Dynamic Fallback
-        ensemble_pred, ensemble_conf, ensemble_meta = compute_ensemble_fusion(
-            local_result, nvidia_vision_res
-        )
+        if local_result is None:
+            raise HTTPException(status_code=503, detail="The image detector is unavailable.")
+        prediction, confidence = local_result
 
         # 6. Optional Sightengine GenAI Benchmark
         sightengine_res = await check_image_with_sightengine(image_bytes, filename=file.filename or "image.jpg")
@@ -362,9 +243,9 @@ async def predict_image(file: UploadFile = File(...)):
         elapsed_ms = round((time.time() - start_time) * 1000, 2)
 
         return {
-            "prediction": ensemble_pred,
-            "confidence": ensemble_conf,
-            "ensemble": ensemble_meta,
+            "prediction": prediction,
+            "confidence": confidence,
+            "ensemble": {"active_engine": "FOURIER_ONLY", "models_count": 1, "fallback_notice": None},
             "local_model": {
                 "available": local_result is not None,
                 "feature_version": MODEL_STATE["feature_version"],
@@ -372,7 +253,6 @@ async def predict_image(file: UploadFile = File(...)):
                 "prediction": local_result[0] if local_result else None,
                 "confidence": local_result[1] if local_result else None,
             },
-            "nvidia_vision": nvidia_vision_res,
             "fft_spectrum_image": fft_spectrum_base64,
             "diagnostics": diagnostics,
             "api_confidence": api_confidence,

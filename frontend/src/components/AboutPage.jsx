@@ -56,7 +56,7 @@ export default function AboutPage({ onBackToDetector }) {
           </h1>
 
           <p className="text-xs sm:text-base text-slate-800 dark:text-slate-100 font-mono mt-3 sm:mt-4 leading-relaxed font-bold">
-            A dual-layer forensic system combining sub-pixel 2D Fourier mathematical physics with multi-modal neural vision to detect generative AI artifacts across Midjourney, ChatGPT (DALL-E 3), Gemini (Imagen 3), and SDXL.
+            The Eyes compares texture and frequency patterns to estimate whether an image is AI-generated.
           </p>
         </div>
       </div>
@@ -134,17 +134,17 @@ export default function AboutPage({ onBackToDetector }) {
           <div className="p-5 sm:p-6 rounded-lg bg-[#F8F9FA] dark:bg-black border-2 border-black dark:border-white shadow-[3px_3px_0px_#000000] flex flex-col justify-between min-h-[140px]">
             <div className="flex items-center gap-2 text-xs font-mono font-black text-[#0369A1] dark:text-[#00F0FF] mb-2">
               <Sparkles className="w-4 h-4 stroke-[3]" />
-              DIFFUSIONGEMMA 26B
+              TEXTURE ANALYSIS
             </div>
             <p className="text-xs text-slate-800 dark:text-slate-200 font-mono font-bold leading-relaxed">
-              Dual-layer consensus fusion with NVIDIA NIM multi-modal vision reasoning.
+              Measures fine texture at multiple image sizes.
             </p>
           </div>
         </div>
       </div>
 
       {/* Engineering Deep-Dive Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6">
         {/* Step 1: Fourier Physics */}
         <div className="glass-brutal-card rounded-xl p-6 sm:p-7 border-2 border-black dark:border-white shadow-[6px_6px_0px_#000000] bg-white dark:bg-[#14141E] flex flex-col justify-between min-h-[280px]">
           <div>
@@ -177,69 +177,8 @@ export default function AboutPage({ onBackToDetector }) {
           </div>
         </div>
 
-        {/* Step 2: NVIDIA Vision LLM */}
-        <div className="glass-brutal-card rounded-xl p-6 sm:p-7 border-2 border-black dark:border-white shadow-[6px_6px_0px_#000000] bg-white dark:bg-[#14141E] flex flex-col justify-between min-h-[280px]">
-          <div>
-            <div className="flex items-center justify-between pb-3 mb-4 border-b-2 border-black/10 dark:border-white/20">
-              <span className="text-xs font-mono font-black px-3 py-1 rounded bg-[#FFE600] text-black border border-black shadow-[2px_2px_0px_#000000]">
-                LAYER 02 // NEURAL VISION
-              </span>
-              <Sparkles className="w-5 h-5 text-black dark:text-white stroke-[2.5]" />
-            </div>
-
-            <h3 className="text-xl font-black font-mono text-black dark:text-white mb-2">
-              NVIDIA DiffusionGemma 26B
-            </h3>
-
-            <p className="text-xs text-slate-800 dark:text-slate-200 font-mono leading-relaxed font-bold">
-              Integrated via the NVIDIA API Catalog to perform semantic visual forensics. Inspects macroscopic features including lighting consistency, texture plausibility, and perspective anomalies.
-            </p>
-
-            <div className="my-3 p-3 rounded-lg bg-black text-[#FFE600] font-mono font-bold text-xs border border-black leading-relaxed">
-              "Checks lighting gradients, masking artifacts, and anatomic coherence."
-            </div>
-
-            <p className="text-xs text-slate-800 dark:text-slate-200 font-mono leading-relaxed font-bold">
-              Provides real-time natural language reasoning alongside mathematical confidence scores.
-            </p>
-          </div>
-
-          <div className="mt-4 pt-3 border-t border-black/10 dark:border-white/10 text-[11px] font-mono font-bold text-slate-600 dark:text-slate-400">
-            Google DiffusionGemma 26B-IT • NVIDIA NIM Inference Microservice
-          </div>
-        </div>
       </div>
 
-      {/* Step 3: Fused Ensemble Average Formula */}
-      <div className="glass-brutal rounded-xl p-6 sm:p-8 shadow-[8px_8px_0px_#000000]">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="px-3 py-1 rounded bg-[#00F5A0] text-black font-mono font-black text-xs border-2 border-black shadow-[2px_2px_0px_#000000]">
-            CONSENSUS ENGINE
-          </span>
-          <h3 className="text-lg sm:text-xl font-black font-mono text-black dark:text-white">
-            Dual-Layer Weighted Ensemble Formula
-          </h3>
-        </div>
-
-        <p className="text-xs sm:text-sm text-slate-800 dark:text-slate-100 font-mono leading-relaxed font-bold mb-4">
-          To achieve robust resilience against both photorealistic synthetic images and noisy real-world screenshots, the system mathematically averages both detection layers:
-        </p>
-
-        <div className="p-4 rounded-xl bg-black text-white font-mono font-black text-sm border-2 border-black dark:border-white shadow-[4px_4px_0px_#000000] overflow-x-auto">
-          <span className="text-[#00F5A0]">P(Fake)_Ensemble</span> = <span className="text-[#00F0FF]">0.50 × P(Fake)_Fourier</span> + <span className="text-[#FFE600]">0.50 × P(Fake)_NVIDIA_Vision</span>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5 text-xs font-mono font-bold text-slate-800 dark:text-slate-200">
-          <div className="flex items-start gap-2">
-            <span className="text-[#059669] dark:text-[#00F5A0] font-black">✓</span>
-            <span>Eliminates false positives on compressed screenshots through semantic validation.</span>
-          </div>
-          <div className="flex items-start gap-2">
-            <span className="text-[#059669] dark:text-[#00F5A0] font-black">✓</span>
-            <span>Catches photorealistic AI portraits through sub-pixel Fourier frequency shelf detection.</span>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

@@ -20,7 +20,6 @@ class LocalModelUploadTest(IsolatedAsyncioTestCase):
         image.save(encoded, format="PNG")
         transport = httpx.ASGITransport(app=main.app)
         with (
-            patch.object(main, "check_image_with_nvidia_vision", AsyncMock(return_value=None)),
             patch.object(main, "check_image_with_sightengine", AsyncMock(return_value=None)),
         ):
             async with main.app.router.lifespan_context(main.app), httpx.AsyncClient(

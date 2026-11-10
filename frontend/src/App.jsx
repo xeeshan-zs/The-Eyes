@@ -4,8 +4,6 @@ import Dropzone from './components/Dropzone';
 import SamplePresets from './components/SamplePresets';
 import ResultDashboard from './components/ResultDashboard';
 import AboutPage from './components/AboutPage';
-import WelcomeModal from './components/WelcomeModal';
-import { directNimClientAnalysis } from './services/nimClientFallback';
 import { AlertCircle, Radio, Sparkles, Shield, Github, Zap } from 'lucide-react';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
@@ -70,30 +68,23 @@ export default function App() {
     setImagePreview(previewUrl);
 
     setLoading(true);
-    setLoadingMessage('Extracting 2D Fourier Harmonics & Neural Features...');
+    setLoadingMessage('Analyzing image texture and frequencies...');
 
     const msgTimer1 = setTimeout(() => {
-      setLoadingMessage('Waking up Cloud Backend (Render free tier boot takes ~25s)...');
+      setLoadingMessage('Waiting for the detector...');
     }, 3500);
 
-    const msgTimer2 = setTimeout(() => {
-      setLoadingMessage('Evaluating Dual-Layer Ensemble (2D Fourier + NVIDIA DiffusionGemma 26B)...');
-    }, 12000);
-
-    // 1. Attempt Backend Inference
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 90000);
     try {
       const formData = new FormData();
       formData.append('file', selectedFile);
-
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 240000); // Allow for Render startup and the NVIDIA request
 
       const response = await fetch(`${API_BASE_URL}/predict`, {
         method: 'POST',
         body: formData,
         signal: controller.signal,
       });
-      clearTimeout(timeoutId);
 
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
@@ -104,34 +95,17 @@ export default function App() {
       setResult(data);
       setCurrentView('detector');
     } catch (backendErr) {
-      console.warn('Backend offline / unreachable. Triggering Direct-to-NVIDIA NIM Browser Engine:', backendErr);
-      setLoadingMessage('Backend unreachable. Running Browser-Direct NVIDIA NIM Fallback...');
-
-      // 2. Seamless Direct-to-NVIDIA NIM Browser Fallback
-      try {
-        const directNimData = await directNimClientAnalysis(selectedFile, previewUrl);
-        setResult(directNimData);
-        setCurrentView('detector');
-      } catch (nimErr) {
-        console.error('Direct NIM fallback error:', nimErr);
-        setError(
-          `Cloud backend is offline, and direct browser inference failed: ${nimErr.message}`
-        );
-      }
+      setError(backendErr.name === 'AbortError' ? 'The detector took too long. Please try again.' : backendErr.message);
     } finally {
       clearTimeout(msgTimer1);
-      clearTimeout(msgTimer2);
+      clearTimeout(timeoutId);
       setLoading(false);
     }
   };
 
-  const handleReset = () => {
-    setFile(null);
-    setImagePreview(null);
-    setResult(null);
-    setError(null);
-    setCurrentView('detector');
-  };
+  const picker = React.useRef(null);
+  const chooseImage = () => picker.current?.click();
+  useEffect(() => () => { if (imagePreview) URL.revokeObjectURL(imagePreview); }, [imagePreview]);
 
   return (
     <div className="min-h-screen bg-[#F4F4F0] dark:bg-[#050508] text-slate-900 dark:text-white flex flex-col relative selection:bg-[#FFE600] selection:text-black transition-colors duration-200">
@@ -141,7 +115,7 @@ export default function App() {
       {/* Header */}
       <Header
         backendHealth={backendHealth}
-        onReset={handleReset}
+        onReset={chooseImage}
         hasResult={!!result}
         theme={theme}
         onToggleTheme={toggleTheme}
@@ -149,8 +123,11 @@ export default function App() {
         onNavigate={setCurrentView}
       />
 
-      {/* First-Time Welcome Modal */}
-      <WelcomeModal />
+      <input ref={picker} type="file" accept="image/*" hidden onChange={event => {
+        const next = event.target.files?.[0];
+        event.target.value = '';
+        if (next) handleFileSelected(next);
+      }} />
 
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-3.5 sm:py-7 z-10">
@@ -204,9 +181,6 @@ export default function App() {
                   <span className="px-3 py-1.5 rounded bg-white dark:bg-[#181824] border-2 border-black dark:border-white text-black dark:text-white font-bold shadow-brutal-sm">
                     Spectral and Texture Analysis
                   </span>
-                  <span className="px-3 py-1.5 rounded bg-[#00F5A0] text-black font-black border-2 border-black shadow-[2px_2px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF]">
-                    Serverless Direct NIM Fallback
-                  </span>
                 </div>
               </div>
             </div>
@@ -250,10 +224,10 @@ export default function App() {
               <div className="glass-brutal-card rounded-xl p-5 sm:p-6 border-2 border-black dark:border-[#B066FF] bg-[#FAF5FF] dark:bg-[#140A1A] flex flex-col justify-between min-h-[140px]">
                 <div className="text-xs font-mono font-black text-[#6D28D9] dark:text-[#B066FF] uppercase mb-2.5 flex items-center gap-2">
                   <Sparkles className="w-4 h-4 stroke-[3]" />
-                  03. Cloud Consensus
+                  03. Texture analysis
                 </div>
                 <p className="text-xs text-slate-800 dark:text-white font-mono leading-relaxed font-bold">
-                  Side-by-side consensus validation with NVIDIA DiffusionGemma 26B Vision AI.
+                  The classifier combines texture and frequency patterns to score the image.
                 </p>
               </div>
             </div>
@@ -262,7 +236,8 @@ export default function App() {
           <ResultDashboard
             result={result}
             originalImagePreview={imagePreview}
-            onReset={handleReset}
+            onNewImage={chooseImage}
+            onTestAgain={() => handleFileSelected(file)}
           />
         )}
       </main>

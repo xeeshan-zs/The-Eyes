@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { Eye, Activity, Crosshair, ArrowRightLeft, Sliders, LineChart, Download, Copy, Check } from 'lucide-react';
 import VerdictBadge from './VerdictBadge';
-import ApiComparison from './ApiComparison';
 import RadialProfileChart from './RadialProfileChart';
 import ImageComparisonSlider from './ImageComparisonSlider';
 import ForensicMetrics from './ForensicMetrics';
 
-export default function ResultDashboard({ result, originalImagePreview, onReset }) {
+export default function ResultDashboard({ result, originalImagePreview, onNewImage, onTestAgain }) {
   const [activeTab, setActiveTab] = useState('dual'); // 'dual' | 'slider' | 'chart'
   const [copied, setCopied] = useState(false);
   const [showReticle, setShowReticle] = useState(true);
@@ -33,7 +32,10 @@ export default function ResultDashboard({ result, originalImagePreview, onReset 
     <div className="space-y-6">
       {/* 1. Hero Verdict Badge */}
       <VerdictBadge result={result} />
-
+      <div className="flex flex-wrap gap-3" aria-label="Image actions">
+        <button type="button" onClick={onNewImage} className="flex-1 sm:flex-none bg-[#FFE600] text-black rounded-lg border-2 border-black px-6 py-3 font-black shadow-[4px_4px_0px_#000] focus-visible:outline-blue-600">New image</button>
+        <button type="button" onClick={onTestAgain} className="flex-1 sm:flex-none bg-white text-black rounded-lg border-2 border-black px-6 py-3 font-bold shadow-[3px_3px_0px_#000] focus-visible:outline-blue-600">Test again</button>
+      </div>
       {/* 2. Forensic Metrics */}
       <ForensicMetrics result={result} />
 
@@ -100,13 +102,6 @@ export default function ResultDashboard({ result, originalImagePreview, onReset 
               <span>EXPORT FFT</span>
             </button>
 
-            <button
-              onClick={onReset}
-              className="flex-1 sm:flex-initial px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-[#FFE600] text-black border-2 border-black text-xs font-mono font-black flex items-center justify-center gap-1 sm:gap-1.5 shadow-[2px_2px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF] cursor-pointer"
-            >
-              <ArrowRightLeft className="w-3.5 h-3.5 stroke-[3]" />
-              <span className="truncate">NEW</span>
-            </button>
           </div>
         </div>
 
@@ -213,8 +208,6 @@ export default function ResultDashboard({ result, originalImagePreview, onReset 
         </div>
       </div>
 
-      {/* 4. Commercial Consensus */}
-      <ApiComparison result={result} />
     </div>
   );
 }
