@@ -109,7 +109,7 @@ export default function ApiComparison({ result }) {
             <div className="flex items-center justify-between text-xs font-mono text-black dark:text-white mb-2.5">
               <span className="text-[#B45309] dark:text-[#FFE600] font-black flex items-center gap-1.5">
                 <Sparkles className="w-4 h-4 text-[#FFE600] fill-[#FFE600]" />
-                NVIDIA DIFFUSIONGEMMA 26B {isBothActive ? '(WEIGHT: 50%)' : '(ACTIVE: 100%)'}
+                NVIDIA DIFFUSIONGEMMA 26B {hasNvidia && !isBothActive ? '(ACTIVE: 100%)' : ''}
               </span>
               <span className={`text-[10px] font-black px-2.5 py-0.5 rounded border border-black shadow-[1px_1px_0px_#000000] ${
                 hasNvidia ? 'bg-[#FFE600] text-black' : 'bg-slate-300 text-slate-700'
@@ -140,10 +140,10 @@ export default function ApiComparison({ result }) {
             ) : (
               <div className="py-3">
                 <span className="text-xs font-mono font-bold text-[#B45309] dark:text-[#FFE600] block mb-1">
-                  NVIDIA NIM Model Offline / Key Not Set
+                  No NVIDIA verdict
                 </span>
                 <p className="text-xs text-slate-800 dark:text-slate-300 font-mono">
-                  Set <code className="text-black dark:text-white bg-slate-200 dark:bg-[#181824] px-1 py-0.5 rounded">NVIDIA_API_KEY</code> in <code className="text-[#B45309] dark:text-[#FFE600]">backend/.env</code> to activate real-time visual reasoning.
+                  {nvidia?.reason || 'NVIDIA did not return a prediction for this upload.'}
                 </p>
               </div>
             )}

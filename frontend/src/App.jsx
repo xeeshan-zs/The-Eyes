@@ -86,7 +86,7 @@ export default function App() {
       formData.append('file', selectedFile);
 
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s timeout for sleeping server
+      const timeoutId = setTimeout(() => controller.abort(), 240000); // Allow for Render startup and the NVIDIA request
 
       const response = await fetch(`${API_BASE_URL}/predict`, {
         method: 'POST',

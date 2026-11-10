@@ -9,6 +9,7 @@ import io
 import json
 import base64
 import logging
+import math
 import asyncio
 import urllib.request
 import urllib.error
@@ -34,11 +35,18 @@ NVIDIA_INVOKE_URL = "https://integrate.api.nvidia.com/v1/chat/completions"
 NVIDIA_MODEL = "google/diffusiongemma-26b-a4b-it"
 
 
+NVIDIA_TIMEOUT_SECONDS = 180
+
+
+def unavailable(reason: str) -> Dict[str, Any]:
+    logger.warning("DiffusionGemma unavailable: %s", reason)
+    return {"available": False, "reason": reason}
+
+
 def _sync_call_nvidia(image_bytes: bytes) -> Optional[Dict[str, Any]]:
     api_key = os.getenv("NVIDIA_API_KEY")
     if not api_key:
-        logger.warning("NVIDIA_API_KEY is not set in environment or .env file.")
-        return None
+        return unavailable("The server has no NVIDIA API key configured.")
 
     try:
         # Resize to max 640px for rapid upload and inference
@@ -97,7 +105,7 @@ def _sync_call_nvidia(image_bytes: bytes) -> Optional[Dict[str, Any]]:
             method="POST"
         )
 
-        with urllib.request.urlopen(req, timeout=25) as response:
+        with urllib.request.urlopen(req, timeout=NVIDIA_TIMEOUT_SECONDS) as response:
             res_data = json.loads(response.read().decode("utf-8"))
             content = res_data["choices"][0]["message"]["content"].strip()
 
@@ -108,36 +116,30 @@ def _sync_call_nvidia(image_bytes: bytes) -> Optional[Dict[str, Any]]:
             elif "```" in clean_content:
                 clean_content = clean_content.split("```")[1].split("```")[0].strip()
 
-            try:
-                parsed = json.loads(clean_content)
-                pred = str(parsed.get("prediction", "real")).lower()
-                is_fake = "fake" in pred or "ai" in pred or "synth" in pred
-                conf = float(parsed.get("confidence", 0.85))
-                expl = str(parsed.get("explanation", content))
+            clean_content = clean_content.rsplit("<channel|>", 1)[-1].strip()
+            parsed = json.loads(clean_content)
+            prediction = parsed["prediction"].strip().lower()
+            confidence = float(parsed["confidence"])
+            if prediction not in {"real", "fake"} or not math.isfinite(confidence) or not 0 <= confidence <= 1:
+                raise ValueError("Invalid NVIDIA verdict")
+            return {
+                "available": True,
+                "model": "DiffusionGemma 26B",
+                "prediction": prediction,
+                "confidence": round(confidence, 2),
+                "explanation": str(parsed.get("explanation", "")),
+            }
 
-                return {
-                    "available": True,
-                    "model": "DiffusionGemma 26B",
-                    "prediction": "fake" if is_fake else "real",
-                    "confidence": round(conf, 2),
-                    "explanation": expl,
-                }
-            except Exception:
-                is_fake = "ai-generated" in content.lower() or "fake" in content.lower() or "synthetic" in content.lower()
-                return {
-                    "available": True,
-                    "model": "DiffusionGemma 26B",
-                    "prediction": "fake" if is_fake else "real",
-                    "confidence": 0.85,
-                    "explanation": content.replace("\n", " ").strip(),
-                }
-
-    except urllib.error.HTTPError as e:
-        logger.warning(f"NVIDIA API HTTP Error {e.code}: {e.read().decode('utf-8')}")
-        return None
-    except Exception as e:
-        logger.warning(f"NVIDIA Vision inference error: {e}")
-        return None
+    except urllib.error.HTTPError as error:
+        return unavailable(f"NVIDIA returned HTTP {error.code}.")
+    except TimeoutError:
+        return unavailable(f"NVIDIA did not respond within {NVIDIA_TIMEOUT_SECONDS} seconds.")
+    except urllib.error.URLError:
+        return unavailable("The server could not reach NVIDIA.")
+    except (ValueError, KeyError, IndexError, TypeError, AttributeError):
+        return unavailable("NVIDIA returned no usable verdict.")
+    except Exception:
+        return unavailable("The NVIDIA request could not be completed.")
 
 
 async def check_image_with_nvidia_vision(image_bytes: bytes) -> Optional[Dict[str, Any]]:
