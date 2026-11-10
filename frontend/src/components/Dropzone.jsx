@@ -107,7 +107,7 @@ export default function Dropzone({ onFileSelected, loading, currentPreview, load
               Multi-Spectral
             </span>
             <span className="px-2.5 sm:px-3 py-1 rounded bg-[#00F5A0] text-black border-2 border-black shadow-[2px_2px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF]">
-              Dual Model
+              Texture Analysis
             </span>
           </div>
         </div>
