@@ -15,7 +15,9 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
-  const [backendHealth, setBackendHealth] = useState(null);
+  const [backendStatus, setBackendStatus] = useState('checking');
+  const predictionVersion = React.useRef(0);
+  const healthFailures = React.useRef(0);
 
   // Theme Management (Light theme default)
   const [theme, setTheme] = useState(() => {
@@ -37,24 +39,44 @@ export default function App() {
 
   const [loadingMessage, setLoadingMessage] = useState('Extracting 2D Fourier Harmonics...');
 
-  const checkHealth = async () => {
-    try {
-      const res = await fetch(`${API_BASE_URL}/health`);
-      if (res.ok) {
-        const data = await res.json();
-        setBackendHealth(data);
-      } else {
-        setBackendHealth({ status: 'offline' });
-      }
-    } catch {
-      setBackendHealth({ status: 'offline' });
-    }
-  };
-
   useEffect(() => {
+    let stopped = false;
+    let timer;
+    let controller;
+
+    async function checkHealth() {
+      const version = predictionVersion.current;
+      controller = new AbortController();
+      const deadline = setTimeout(() => controller.abort(), 30000);
+      try {
+        const response = await fetch(`${API_BASE_URL}/health?t=${Date.now()}`, {
+          cache: 'no-store',
+          signal: controller.signal,
+        });
+        if (!response.ok || (await response.json()).status !== 'online') {
+          throw new Error('Health check unsuccessful');
+        }
+        if (!stopped) {
+          healthFailures.current = 0;
+          setBackendStatus('online');
+        }
+      } catch {
+        if (!stopped && version === predictionVersion.current) {
+          healthFailures.current += 1;
+          setBackendStatus(healthFailures.current >= 2 ? 'offline' : 'checking');
+        }
+      } finally {
+        clearTimeout(deadline);
+        if (!stopped) timer = setTimeout(checkHealth, healthFailures.current ? 5000 : 15000);
+      }
+    }
+
     checkHealth();
-    const interval = setInterval(checkHealth, 15000);
-    return () => clearInterval(interval);
+    return () => {
+      stopped = true;
+      clearTimeout(timer);
+      controller.abort();
+    };
   }, []);
 
   const handleFileSelected = async (selectedFile) => {
@@ -92,6 +114,9 @@ export default function App() {
       }
 
       const data = await response.json();
+      predictionVersion.current += 1;
+      healthFailures.current = 0;
+      setBackendStatus('online');
       setResult(data);
       setCurrentView('detector');
     } catch (backendErr) {
@@ -114,7 +139,7 @@ export default function App() {
 
       {/* Header */}
       <Header
-        backendHealth={backendHealth}
+        backendStatus={backendStatus}
         onReset={chooseImage}
         hasResult={!!result}
         theme={theme}

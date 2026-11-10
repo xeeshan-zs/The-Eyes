@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Eye, Cpu, Sparkles, Github, RefreshCw, Sun, Moon, Info, Key, Check } from 'lucide-react';
 
 export default function Header({ 
-  backendHealth, 
+  backendStatus,
   onReset, 
   hasResult, 
   theme, 
@@ -10,7 +10,11 @@ export default function Header({
   currentView,
   onNavigate
 }) {
-  const isOnline = backendHealth?.status === 'online';
+  const status = {
+    online: { label: 'BACKEND: ONLINE', color: 'bg-[#00F5A0] text-black' },
+    checking: { label: 'CONNECTING', color: 'bg-[#FFE600] text-black' },
+    offline: { label: 'BACKEND: OFFLINE', color: 'bg-[#FF2E63] text-white' },
+  }[backendStatus];
 
   return (
     <>
@@ -27,7 +31,7 @@ export default function Header({
               <span>THE EYES</span>
               <span className="text-[9px] sm:text-[10px] px-1 sm:px-1.5 py-0.2 bg-black text-[#FFE600] font-black rounded">2.0</span>
               {/* Mobile Online Dot */}
-              <span className={`sm:hidden w-2 h-2 rounded-full border border-black ${isOnline ? 'bg-[#00F5A0]' : 'bg-[#FF2E63]'}`} title={isOnline ? 'Backend Online' : 'Detector offline'} />
+              <span className={`sm:hidden w-2 h-2 rounded-full border border-black ${status.color}`} title={status.label} />
             </a>
 
             <span className="hidden lg:inline-block text-xs font-mono text-black dark:text-white font-black border-l-2 border-black/30 dark:border-white/40 pl-3">
@@ -54,12 +58,10 @@ export default function Header({
 
             {/* Server Status Pill (Tablet/Desktop) */}
             <div className={`hidden md:flex items-center gap-1.5 px-3 py-1 rounded-md border-2 border-black shadow-[2px_2px_0px_#000000] dark:shadow-[2px_2px_0px_#FFFFFF] font-black ${
-              isOnline
-                ? 'bg-[#00F5A0] text-black'
-                : 'bg-[#FF2E63] text-white'
+              status.color
             }`}>
-              <span className={`w-2.5 h-2.5 rounded-full ${isOnline ? 'bg-black' : 'bg-white'} animate-pulse`} />
-              <span>{isOnline ? 'BACKEND: ONLINE' : (backendHealth ? 'BACKEND: OFFLINE' : 'CONNECTING')}</span>
+              <span className={`w-2.5 h-2.5 rounded-full bg-current animate-pulse`} />
+              <span>{status.label}</span>
             </div>
 
             {/* Theme Toggle Button */}
